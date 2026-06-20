@@ -1,0 +1,57 @@
+{
+  "nav": {
+    "contribute": "Contribuer",
+    "validate": "Valider",
+    "explore": "Explorer",
+    "signIn": "Se connecter",
+    "join": "Rejoindre"
+  },
+  "landing": {
+    "badge": "Open Source · Ewe · Togo",
+    "title": "La voix de l'Afrique,\nentraîne l'IA de demain.",
+    "subtitle": "Contribue en 2 minutes. Lis une phrase en Ewe, enregistre ta voix. Tu construis l'infrastructure IA africaine.",
+    "ctaPrimary": "Commencer à contribuer",
+    "ctaSecondary": "Voir le dataset",
+    "stats": {
+      "recordings": "Enregistrements",
+      "speakers": "Locuteurs actifs",
+      "hours": "Heures audio"
+    },
+    "how": {
+      "title": "Comment ça marche",
+      "step1Title": "Tu lis",
+      "step1Desc": "On te propose une phrase en Ewe. Tu la lis à voix haute.",
+      "step2Title": "Tu enregistres",
+      "step2Desc": "Tu appuies sur le bouton. Ton micro capte ta voix. C'est tout.",
+      "step3Title": "Tu construis",
+      "step3Desc": "Ta voix rejoint la base de données. L'IA africaine apprend."
+    }
+  },
+  "contribute": {
+    "title": "Enregistre ta voix",
+    "phraseLabel": "Lis cette phrase à voix haute",
+    "startRecording": "Commencer l'enregistrement",
+    "stopRecording": "Arrêter",
+    "submit": "Soumettre",
+    "retry": "Recommencer",
+    "skip": "Passer cette phrase",
+    "submitting": "Envoi en cours...",
+    "success": "Enregistrement soumis !",
+    "nextPhrase": "Phrase suivante"
+  },
+  "validate": {
+    "title": "Valider les enregistrements",
+    "instruction": "Écoute et dis si la phrase est bien prononcée",
+    "play": "Écouter",
+    "valid": "Correct",
+    "invalid": "Incorrect",
+    "sessionCount": "{count} validations cette session"
+  },
+  "explore": {
+    "title": "Explorer le dataset",
+    "downloadTitle": "Télécharger le dataset",
+    "downloadDesc": "Dataset complet des enregistrements approuvés — libre d'utilisation (CC-BY)",
+    "downloadBtn": "Télécharger (ZIP)",
+    "leaderboardTitle": "Top contributeurs"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "nav": {
+    "contribute": "Contribute",
+    "validate": "Validate",
+    "explore": "Explore",
+    "signIn": "Sign in",
+    "join": "Join"
+  },
+  "landing": {
+    "badge": "Open Source · Ewe · Togo",
+    "title": "Africa's voice,\ntraining tomorrow's AI.",
+    "subtitle": "Contribute in 2 minutes. Read a sentence in Ewe, record your voice. You're building Africa's AI infrastructure.",
+    "ctaPrimary": "Start contributing",
+    "ctaSecondary": "View dataset",
+    "stats": {
+      "recordings": "Recordings",
+      "speakers": "Active speakers",
+      "hours": "Audio hours"
+    },
+    "how": {
+      "title": "How it works",
+      "step1Title": "You read",
+      "step1Desc": "We give you a sentence in Ewe. You read it out loud.",
+      "step2Title": "You record",
+      "step2Desc": "Press the button. Your mic captures your voice. That's it.",
+      "step3Title": "You build",
+      "step3Desc": "Your voice joins the dataset. African AI learns."
+    }
+  },
+  "contribute": {
+    "title": "Record your voice",
+    "phraseLabel": "Read this sentence out loud",
+    "startRecording": "Start recording",
+    "stopRecording": "Stop",
+    "submit": "Submit",
+    "retry": "Retry",
+    "skip": "Skip this sentence",
+    "submitting": "Uploading...",
+    "success": "Recording submitted!",
+    "nextPhrase": "Next sentence"
+  },
+  "validate": {
+    "title": "Validate recordings",
+    "instruction": "Listen and tell us if the sentence is well pronounced",
+    "play": "Listen",
+    "valid": "Correct",
+    "invalid": "Incorrect",
+    "sessionCount": "{count} validations this session"
+  },
+  "explore": {
+    "title": "Explore the dataset",
+    "downloadTitle": "Download the dataset",
+    "downloadDesc": "Full dataset of approved recordings — free to use (CC-BY)",
+    "downloadBtn": "Download (ZIP)",
+    "leaderboardTitle": "Top contributors"
+  }
+}
