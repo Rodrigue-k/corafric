@@ -26,7 +26,14 @@ export async function POST(request: Request) {
 
     const durationMs = durationMsStr ? parseInt(durationMsStr, 10) : 0;
     const fileSize = audioFile.size;
-    const fileKey = `${crypto.randomUUID()}.webm`;
+
+    // Fetch the sentence language first to structure the directory in R2
+    const sentenceResult = await sql`
+      SELECT language FROM sentences WHERE id = ${sentenceId}
+    `;
+    const language = sentenceResult[0]?.language || "ewe";
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    const fileKey = `recordings/${language}/${today}/${crypto.randomUUID()}.webm`;
 
     let audioUrl = "";
 
