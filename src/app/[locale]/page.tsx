@@ -127,24 +127,24 @@ export default function Home() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
               <div>
-                <p className="text-display text-primary font-bold mb-1">
-                  {stats.totalRecordings}
+                <p className="text-display text-[#1A1A2E] font-bold mb-1">
+                  {mounted ? stats.totalRecordings.toLocaleString() : "0"}
                 </p>
                 <p className="text-caption text-text-muted uppercase tracking-wider font-semibold">
                   {t("stats.recordings")}
                 </p>
               </div>
               <div>
-                <p className="text-display text-accent font-bold mb-1">
-                  {stats.totalUsers}
+                <p className="text-display text-[#1A1A2E] font-bold mb-1">
+                  {mounted ? stats.totalUsers.toLocaleString() : "0"}
                 </p>
                 <p className="text-caption text-text-muted uppercase tracking-wider font-semibold">
                   {t("stats.speakers")}
                 </p>
               </div>
               <div>
-                <p className="text-display text-foreground font-bold mb-1">
-                  {stats.totalHours}h
+                <p className="text-display text-[#1A1A2E] font-bold mb-1">
+                  {mounted ? (stats.totalHours || 0).toLocaleString() : "0"}h
                 </p>
                 <p className="text-caption text-text-muted uppercase tracking-wider font-semibold">
                   {t("stats.hours")}
