@@ -39,21 +39,16 @@ export default function Home() {
         {/* HERO SECTION */}
         <section className="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28">
           {/* Background SVG Shapes */}
-          <div className="absolute right-0 top-0 w-1/2 h-full opacity-[0.06] pointer-events-none hidden md:block">
-            <svg viewBox="0 0 100 100" fill="none" className="w-full h-full text-primary">
-              <polygon points="50,0 100,0 100,100 0,100" fill="currentColor" />
-              <circle cx="80" cy="30" r="25" stroke="currentColor" strokeWidth="2" fill="none" />
-              <line x1="30" y1="100" x2="100" y2="30" stroke="currentColor" strokeWidth="1" />
-            </svg>
-          </div>
+          <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" viewBox="0 0 1440 800" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="950" y="-150" width="600" height="500" rx="40" fill="#B84A2A" fillOpacity="0.12" transform="rotate(-12 1250 100)" />
+            <rect x="1100" y="200" width="400" height="400" rx="30" fill="#D4A017" fillOpacity="0.08" transform="rotate(-8 1300 400)" />
+            <circle cx="50" cy="750" r="250" fill="#B84A2A" fillOpacity="0.06" />
+          </svg>
 
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
               {/* Left Column info */}
-              <div className="lg:col-span-6 space-y-6 text-center lg:text-left z-10">
-                <Badge variant="default" className="px-4 py-1 text-xs">
-                  {t("badge")}
-                </Badge>
+              <div className="lg:col-span-6 space-y-6 text-center lg:text-left relative z-10">
                 <h1 className="text-display text-foreground leading-tight whitespace-pre-line">
                   {t("title")}
                 </h1>
