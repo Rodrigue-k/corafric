@@ -37,15 +37,15 @@ export default function Home() {
 
       <main className="flex-grow">
         {/* HERO SECTION */}
-        <section className="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28">
+        <section className="relative overflow-x-hidden overflow-y-visible min-h-[calc(100vh-4rem)] flex items-center pt-24 pb-28 lg:pt-28 lg:pb-36">
           {/* Background SVG Shapes */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" viewBox="0 0 1440 800" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="950" y="-150" width="600" height="500" rx="40" fill="#B84A2A" fillOpacity="0.12" transform="rotate(-12 1250 100)" />
-            <rect x="1100" y="200" width="400" height="400" rx="30" fill="#D4A017" fillOpacity="0.08" transform="rotate(-8 1300 400)" />
-            <circle cx="50" cy="750" r="250" fill="#B84A2A" fillOpacity="0.06" />
+            <rect x="950" y="-150" width="600" height="500" rx="40" fill="#C4522A" fillOpacity="0.35" transform="rotate(-12 1250 100)" />
+            <rect x="1100" y="200" width="400" height="400" rx="30" fill="#D4A017" fillOpacity="0.25" transform="rotate(-8 1300 400)" />
+            <circle cx="50" cy="750" r="250" fill="#C4522A" fillOpacity="0.20" />
           </svg>
 
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 overflow-visible">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 overflow-visible w-full">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center overflow-visible">
               {/* Left Column info */}
               <div className="lg:col-span-6 space-y-6 text-center lg:text-left relative z-10">
@@ -70,17 +70,17 @@ export default function Home() {
               </div>
 
               {/* Right Column image and floating components */}
-              <div className="lg:col-span-6 relative flex justify-center items-center overflow-visible">
+              <div className="lg:col-span-6 relative flex justify-center items-center overflow-visible h-[500px] lg:h-[580px] w-full">
                 <div className="absolute w-[80%] h-[80%] bg-primary/5 rounded-full filter blur-3xl -z-10" />
 
-                <div className="relative w-full max-w-[480px] h-[500px] overflow-visible">
-                  <div className="absolute inset-0 z-10 transform hover:scale-[1.02] transition-transform duration-500 ease-out" style={{ marginTop: "-60px", height: "calc(100% + 60px)" }}>
+                <div className="relative w-full max-w-[480px] h-full overflow-visible">
+                  <div className="absolute inset-0 z-10 transform hover:scale-[1.02] transition-transform duration-500 ease-out overflow-visible" style={{ marginTop: "-50px", height: "calc(100% + 50px)" }}>
                     <Image
                       src="/images/hero-person.webp"
                       alt="Jeune Africain enregistrant sa voix"
                       fill
                       priority
-                      className="object-contain overflow-visible"
+                      className="object-contain object-bottom overflow-visible"
                     />
                   </div>
 
