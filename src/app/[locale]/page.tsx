@@ -45,8 +45,8 @@ export default function Home() {
             <circle cx="50" cy="750" r="250" fill="#B84A2A" fillOpacity="0.06" />
           </svg>
 
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 overflow-visible">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center overflow-visible">
               {/* Left Column info */}
               <div className="lg:col-span-6 space-y-6 text-center lg:text-left relative z-10">
                 <h1 className="text-display text-foreground leading-tight whitespace-pre-line">
@@ -70,17 +70,17 @@ export default function Home() {
               </div>
 
               {/* Right Column image and floating components */}
-              <div className="lg:col-span-6 relative flex justify-center items-center">
+              <div className="lg:col-span-6 relative flex justify-center items-center overflow-visible">
                 <div className="absolute w-[80%] h-[80%] bg-primary/5 rounded-full filter blur-3xl -z-10" />
 
-                <div className="relative w-full max-w-[480px] h-[500px]">
-                  <div className="absolute inset-0 z-10 transform hover:scale-[1.02] transition-transform duration-500 ease-out">
+                <div className="relative w-full max-w-[480px] h-[500px] overflow-visible">
+                  <div className="absolute inset-0 z-10 transform hover:scale-[1.02] transition-transform duration-500 ease-out" style={{ marginTop: "-60px", height: "calc(100% + 60px)" }}>
                     <Image
                       src="/images/hero-person.webp"
                       alt="Jeune Africain enregistrant sa voix"
                       fill
                       priority
-                      className="object-contain"
+                      className="object-contain overflow-visible"
                     />
                   </div>
 
