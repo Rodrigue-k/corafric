@@ -14,6 +14,21 @@ export const Navbar: React.FC = () => {
   const currentLocale = useLocale();
   const t = useTranslations("nav");
   const { isSignedIn } = useAuth();
+  const [isScrolled, setIsScrolled] = React.useState(false);
+
+  // Check if we are on the homepage (localized or root)
+  const isHomePage = pathname === "/" || pathname === "" || pathname === "/fr" || pathname === "/en";
+
+  React.useEffect(() => {
+    if (!isHomePage) return;
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 100);
+    };
+    window.addEventListener("scroll", handleScroll);
+    // Initial check
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isHomePage]);
 
   const links = [
     { name: t("contribute"), href: "/contribute" as const },
@@ -27,7 +42,17 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-white/80 backdrop-blur-md">
+    <header
+      className={
+        isHomePage
+          ? `fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 transform ${
+              isScrolled
+                ? "translate-y-0 opacity-100 border-b border-border bg-white/80 backdrop-blur-md shadow-sm"
+                : "-translate-y-full opacity-0 pointer-events-none"
+            }`
+          : "sticky top-0 z-50 w-full border-b border-border bg-white/80 backdrop-blur-md"
+      }
+    >
       <div className="mx-auto flex max-w-7xl h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
