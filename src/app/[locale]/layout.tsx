@@ -20,6 +20,9 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "Corafric — Collecte de données vocales en langues africaines",
   description: "Plateforme communautaire open source de collecte de données vocales pour le développement d'IA en langues africaines.",
+  icons: {
+    icon: "/images/logo.svg",
+  },
 };
 
 export default async function LocaleLayout({
