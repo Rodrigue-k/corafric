@@ -176,7 +176,7 @@ export default function Home() {
               {/* Step 1 */}
               <div className="relative p-6 flex flex-col justify-between">
                 <div>
-                  <span className="text-display text-primary/10 select-none block mb-4 font-extrabold text-7xl leading-none">
+                  <span className="text-primary/30 select-none block mb-4 font-extrabold text-[80px] leading-none font-display">
                     01
                   </span>
                   <h3 className="text-h2 text-foreground mb-2">{t("how.step1Title")}</h3>
@@ -189,7 +189,7 @@ export default function Home() {
               {/* Step 2 */}
               <div className="relative p-6 flex flex-col justify-between">
                 <div>
-                  <span className="text-display text-accent/10 select-none block mb-4 font-extrabold text-7xl leading-none">
+                  <span className="text-primary/30 select-none block mb-4 font-extrabold text-[80px] leading-none font-display">
                     02
                   </span>
                   <h3 className="text-h2 text-foreground mb-2">{t("how.step2Title")}</h3>
@@ -202,7 +202,7 @@ export default function Home() {
               {/* Step 3 */}
               <div className="relative p-6 flex flex-col justify-between">
                 <div>
-                  <span className="text-display text-foreground/5 select-none block mb-4 font-extrabold text-7xl leading-none">
+                  <span className="text-primary/30 select-none block mb-4 font-extrabold text-[80px] leading-none font-display">
                     03
                   </span>
                   <h3 className="text-h2 text-foreground mb-2">{t("how.step3Title")}</h3>
