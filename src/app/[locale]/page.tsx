@@ -113,6 +113,13 @@ export default function Home() {
               </div>
             </div>
           </div>
+
+          {/* Angular Transition Shape */}
+          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-10 transform translate-y-[1px]">
+            <svg viewBox="0 0 1440 80" preserveAspectRatio="none" className="relative block w-full h-[80px]">
+              <polygon points="0,0 1440,0 1440,80 720,20 0,80" fill="#F7F3EE" />
+            </svg>
+          </div>
         </section>
 
         {/* STATS SECTION */}
