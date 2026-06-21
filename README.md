@@ -1,44 +1,56 @@
-# 🎙️ Corafric
+# Corafric
 
 > **La voix de l'Afrique, entraîne l'IA de demain.**  
 > *Africa's voice, training tomorrow's AI.*
 
-Corafric is a community-driven, open-source platform designed to collect and validate voice datasets in African languages, starting with **Ewe** (Togo). Our mission is to bridge the massive gap in artificial intelligence models, where African languages are unrepresented, and preserve our rich oral heritage for future generations.
+Corafric is a community-driven, open-source platform designed to collect and validate voice datasets in African languages, beginning with **Ewe** (Togo). Our mission is to bridge the massive gap in artificial intelligence models where African languages are unrepresented, preserving our rich oral heritage for future generations.
 
 ---
 
-## 🚀 The Mission
+## The Mission
 
 Most modern AI voice models do not understand African languages. Corafric aims to solve this by building high-quality, open-license (**CC-BY**) voice datasets directly contributed and validated by the communities themselves. 
 
 We enable:
-- **Speakers** to record short localized sentences in Ewe and other languages.
-- **Validators** to vote on the pronunciation quality of contributions to ensure clean datasets.
-- **Developers & Researchers** to download these free datasets and build translation, dictation, and assistant models.
+* **Speakers** to record short localized sentences in Ewe and other languages.
+* **Validators** to vote on pronunciation quality to ensure clean datasets.
+* **Developers & Researchers** to download these free datasets and build translation, dictation, and assistant models.
 
 ---
 
-## 🛠️ Tech Stack
+## Design Philosophy & Identity
 
-- **Framework**: [Next.js 15](https://nextjs.org/) (App Router, Turbopack)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Internationalization (i18n)**: [next-intl](https://next-intl-docs.vercel.app/) (FR & EN support)
-- **Authentication**: [Clerk](https://clerk.com/)
-- **Database**: [Neon](https://neon.tech/) (Serverless PostgreSQL)
-- **Audio Storage**: [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) (S3-compatible bucket)
-- **Deployment**: [Vercel](https://vercel.com/)
+Unlike typical utility platforms, Corafric is built with a strong focus on editorial aesthetic, warmth, and premium design, drawing inspiration from contemporary premium African web designs. 
+
+Our core identity guidelines:
+* **Typography**: Playfair Display (Serif) for display headers to convey heritage and trust, paired with Inter (Sans-serif) for clean, readable body copy.
+* **Color System**: Warm off-white background (`#F7F3EE`), balanced with terracotta (`#B84A2A`) and subtle gold (`#D4A017`) accents.
+* **Layout Structure**: Zéro generic flat background color blocks. We use overlapping geometric shapes, depth, and vertical splits to create a dynamic, premium space.
+* **Minimalism**: Zéro generic icon grids or redundant badges/capsules. Every visual element is intentional and spacious.
 
 ---
 
-## 💻 Local Setup & Installation
+## Tech Stack
 
-To run this project locally, make sure you have [Node.js](https://nodejs.org/) installed.
+* **Framework**: Next.js 15 (App Router, Turbopack)
+* **Language**: TypeScript
+- **Styling**: Tailwind CSS
+* **Localization**: next-intl (Bilingual French & English support)
+* **Authentication**: Clerk
+* **Database**: Neon (Serverless PostgreSQL)
+* **Audio Storage**: Cloudflare R2 (S3-compatible bucket)
+* **Deployment**: Vercel
+
+---
+
+## Local Setup & Installation
+
+Make sure you have Node.js installed locally.
 
 ### 1. Clone the repository
 ```bash
 git clone https://github.com/Rodrigue-k/corafric.git
-cd corafric
+cd /corafric
 ```
 
 ### 2. Install dependencies
@@ -47,7 +59,7 @@ npm install
 ```
 
 ### 3. Configure Environment Variables
-Create a `.env` file in the root directory and configure the keys (refer to Clerk, Neon PostgreSQL, and Cloudflare R2 configurations):
+Create a `.env` file in the root directory and add the following keys:
 ```env
 # Clerk Authentication
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
@@ -68,50 +80,27 @@ R2_BUCKET_NAME=corafric-audio
 R2_PUBLIC_URL=https://your_public_bucket_url
 ```
 
-### 4. Start the development server
+### 4. Run the development server
 ```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open `http://localhost:3000` in your browser.
 
 ---
 
-## 📂 Project Structure
+## How to Contribute
 
-```
-├── public/                 # Static assets (images, logo, illustrations)
-└── src/
-    ├── app/                # Next.js App Router Pages
-    │   └── [locale]/       # Localized pages (page.tsx, /contribute, /contribuer...)
-    ├── components/         # Reusable React UI & Layout Components
-    │   ├── layout/         # Navbar, Footer
-    │   ├── sections/       # BrandShowcase, Hero etc.
-    │   └── ui/             # Buttons, Cards, Badges, AfricaMap SVG
-    ├── i18n/               # Internationalization routing & translation files
-    │   ├── messages/       # Localized JSON files (fr.json, en.json)
-    │   └── routing.ts      # next-intl configuration
-    ├── lib/                # Database/R2 client initializations
-    └── types/              # TypeScript types and definitions
-```
+We welcome contributions from developers, linguists, designers, and organizations.
+
+1. **Record & Validate**: Visit the website to contribute audio files or validate existing recordings.
+2. **Code**: Explore our open issues on GitHub, submit Pull Requests (PRs), or improve the audio recording pipeline.
+3. **Design**: Help us maintain the premium look by adhering strictly to our editorial layout constraints.
+4. **Outreach**: Spread the word about Corafric within your university, local community, or networks.
+
+*Contact us at `contact@corafric.com` to explore formal partnerships.*
 
 ---
 
-## 🤝 How to Contribute
-
-Whether you are a developer, linguist, organization, or simply believe in the project, there are several ways to get involved:
-
-1. **Speak & Validate**: Visit the live website and contribute audio files or validate existing recordings.
-2. **Code**: Explore our open issues, submit Pull Requests (PRs), or improve the audio recording workflow.
-3. **Outreach**: Share Corafric within your university, local community, or networks.
-4. **Partner**: If you represent an NGO, university, or tech company, write to us at `contact@corafric.com` to explore formal partnerships.
-
-### Contribution Guidelines
-- Formats code using standard Next.js and Tailwind patterns.
-- Ensure all visible texts are added to translation files (`en.json`/`fr.json`) to keep the multi-language support functional.
-- Run `npm run build` to verify there are no TypeScript or build warnings before pushing.
-
----
-
-## 📄 License
+## License
 
 Corafric is open-source software licensed under the **MIT License**. Collected voice datasets are published under **Creative Commons Attribution (CC-BY)**.

@@ -14,6 +14,7 @@ export default function SignUpPage() {
             width={600}
             height={600}
             className="object-contain"
+            style={{ height: "auto" }}
           />
         </div>
 
@@ -26,6 +27,7 @@ export default function SignUpPage() {
                 width={24}
                 height={24}
                 className="object-contain"
+                style={{ height: "auto" }}
               />
             </div>
             <span className="text-h3 font-semibold font-display tracking-tight text-white">
