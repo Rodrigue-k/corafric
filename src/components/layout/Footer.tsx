@@ -3,7 +3,7 @@ import { Link } from "@/i18n/routing";
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="w-full border-t border-border bg-white mt-auto">
+    <footer className="w-full bg-white mt-auto">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
         <p className="text-caption text-text-muted">
           &copy; {new Date().getFullYear()} Corafric. Projet communautaire open-source.

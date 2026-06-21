@@ -37,18 +37,20 @@ export default function Home() {
 
       <main className="flex-grow">
         {/* HERO SECTION */}
-        <section className="relative overflow-x-hidden overflow-y-visible min-h-[calc(100vh-4rem)] flex items-center pt-24 pb-28 lg:pt-28 lg:pb-36">
-          {/* Background SVG Shapes */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" viewBox="0 0 1440 800" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="950" y="-150" width="600" height="500" rx="40" fill="#C4522A" fillOpacity="0.35" transform="rotate(-12 1250 100)" />
-            <rect x="1100" y="200" width="400" height="400" rx="30" fill="#D4A017" fillOpacity="0.25" transform="rotate(-8 1300 400)" />
-            <circle cx="50" cy="750" r="250" fill="#C4522A" fillOpacity="0.20" />
-          </svg>
+        <section className="relative overflow-hidden h-[100dvh] min-h-[700px] flex pt-20 lg:pt-24 bg-[#F7F3EE]">
+          {/* Formes géométriques structurelles d'arrière-plan (grands blocs de mise en page) */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+            {/* Grand bloc oblique terracotta à droite pour cadrer le personnage */}
+            <div className="absolute right-[-15%] top-[-20%] w-[70vw] lg:w-[55vw] h-[140%] bg-[#C4522A] opacity-[0.9] rotate-[-12deg] origin-top-right rounded-[80px]" />
+            {/* Accent oblique or en bas à gauche pour équilibrer la composition */}
+            <div className="absolute left-[-15%] bottom-[-20%] w-[50vw] lg:w-[40vw] h-[60%] bg-[#D4A017] opacity-[0.25] rotate-[15deg] origin-bottom-left rounded-[60px]" />
+          </div>
 
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 overflow-visible w-full">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center overflow-visible">
+
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 overflow-visible w-full h-full">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 h-full">
               {/* Left Column info */}
-              <div className="lg:col-span-6 space-y-6 text-center lg:text-left relative z-10">
+              <div className="lg:col-span-6 flex flex-col justify-center space-y-6 text-center lg:text-left relative z-10 pb-10 lg:pb-20">
                 <h1 className="text-display text-foreground leading-tight whitespace-pre-line">
                   {t("title")}
                 </h1>
@@ -61,69 +63,37 @@ export default function Home() {
                       {t("ctaPrimary")}
                     </Button>
                   </Link>
-                  <Link href="/explore">
-                    <Button variant="secondary" size="lg" className="w-full sm:w-auto">
-                      {t("ctaSecondary")}
-                    </Button>
-                  </Link>
                 </div>
               </div>
 
               {/* Right Column image and floating components */}
-              <div className="lg:col-span-6 relative flex justify-center items-center overflow-visible h-[500px] lg:h-[580px] w-full">
-                <div className="absolute w-[80%] h-[80%] bg-primary/5 rounded-full filter blur-3xl -z-10" />
+              <div className="lg:col-span-6 relative flex justify-center items-end h-full w-full">
+                <div className="relative w-full max-w-[650px] h-[75%] lg:h-[85%]">
+                  <Image
+                    src="/images/hero-person.webp"
+                    alt="Jeune Africain enregistrant sa voix"
+                    width={800}
+                    height={1000}
+                    priority
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[115%] lg:h-[125%] w-auto max-w-none object-contain object-bottom z-10 transform hover:scale-[1.02] transition-transform duration-500 ease-out origin-bottom"
+                  />
 
-                <div className="relative w-full max-w-[480px] h-full overflow-visible">
-                  <div className="absolute inset-0 z-10 transform hover:scale-[1.02] transition-transform duration-500 ease-out overflow-visible" style={{ marginTop: "-50px", height: "calc(100% + 50px)" }}>
-                    <Image
-                      src="/images/hero-person.webp"
-                      alt="Jeune Africain enregistrant sa voix"
-                      fill
-                      priority
-                      className="object-contain object-bottom overflow-visible"
-                    />
-                  </div>
 
-                  {/* Floating Card 1 */}
-                  <div className="absolute -left-4 top-[20%] z-20 animate-bounce [animation-duration:5s] hover:scale-105 transition-transform duration-200">
-                    <Card className="p-4 shadow-xl border-primary/10 flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                        <Mic className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <p className="text-label text-text-muted">{t("stats.recordings")}</p>
-                        <p className="text-h3 font-bold text-primary">{mounted ? stats.totalRecordings.toLocaleString() : "1248"}</p>
-                      </div>
-                    </Card>
-                  </div>
-
-                  {/* Floating Card 2 */}
-                  <div className="absolute right-0 bottom-[15%] z-20 animate-pulse hover:scale-105 transition-transform duration-200">
-                    <Card className="p-4 shadow-xl border-accent/20 flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent">
-                        <Globe className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <p className="text-label text-text-muted">Langue</p>
-                        <p className="text-h3 font-bold text-foreground">Ewe (ɛʋɛgbɛ)</p>
-                      </div>
-                    </Card>
-                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Angular Transition Shape */}
-          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-10 transform translate-y-[1px]">
+          {/* Transition sous forme d'onde sonore (Soundwave Transition) unique à l'identité audio de Corafric */}
+          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-0 transform translate-y-[1px]">
             <svg viewBox="0 0 1440 80" preserveAspectRatio="none" className="relative block w-full h-[80px]">
-              <polygon points="0,0 1440,0 1440,80 720,20 0,80" fill="#F7F3EE" />
+              <polygon points="0,80 0,45 120,65 240,30 360,60 480,25 600,70 720,35 840,70 960,20 1080,55 1200,25 1320,65 1440,40 1440,80" fill="#FDF0EB" />
             </svg>
           </div>
         </section>
 
         {/* STATS SECTION */}
-        <section className="bg-primary-tint/30 py-16 border-y border-border">
+        <section className="bg-primary-tint py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
               <div>
