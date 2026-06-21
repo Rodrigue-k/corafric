@@ -24,6 +24,9 @@ export const metadata: Metadata = {
   icons: {
     icon: "/images/logo.svg",
   },
+  other: {
+    "msedge-visual-search": "no",
+  },
 };
 
 export default async function LocaleLayout({

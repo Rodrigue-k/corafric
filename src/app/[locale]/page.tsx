@@ -68,7 +68,7 @@ export default function Home() {
               </div>
 
               {/* Right Column image and floating components */}
-              <div className="lg:col-span-6 relative flex justify-center items-end h-[40dvh] lg:h-full w-full">
+              <div className="lg:col-span-6 relative flex justify-center items-end h-[40dvh] lg:h-full w-full group">
                 <div className="relative w-full max-w-[650px] h-full lg:h-[85%]">
                   <Image
                     src="/images/hero-person.webp"
@@ -76,7 +76,7 @@ export default function Home() {
                     fill
                     priority
                     unoptimized
-                    className="object-contain object-bottom z-10 transform scale-[1.10] lg:scale-[1.25] transition-transform duration-500 ease-out origin-bottom hover:scale-[1.12] lg:hover:scale-[1.27]"
+                    className="pointer-events-none select-none object-contain object-bottom z-10 transform scale-[1.10] lg:scale-[1.25] transition-transform duration-500 ease-out origin-bottom group-hover:scale-[1.12] lg:group-hover:scale-[1.27]"
                   />
 
 
