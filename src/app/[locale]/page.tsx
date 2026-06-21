@@ -88,7 +88,7 @@ export default function Home() {
 
           {/* Transition sous forme d'onde sonore (Soundwave Transition) unique à l'identité audio de Corafric */}
           <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-0 transform translate-y-[1px]">
-            <svg viewBox="0 0 1440 80" preserveAspectRatio="none" className="relative block w-full h-[80px]">
+            <svg viewBox="0 0 1440 80" preserveAspectRatio="none" className="relative block w-full h-[24px] sm:h-[40px] lg:h-[80px]">
               <polygon points="0,80 0,45 120,65 240,30 360,60 480,25 600,70 720,35 840,70 960,20 1080,55 1200,25 1320,65 1440,40 1440,80" fill="#FDF0EB" />
             </svg>
           </div>

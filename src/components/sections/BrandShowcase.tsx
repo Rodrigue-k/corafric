@@ -20,7 +20,7 @@ export const BrandShowcase: React.FC = () => {
                 width={200}
                 height={200}
                 className="w-36 h-auto md:w-44 object-contain transition-transform duration-500 group-hover:scale-105"
-                style={{ height: "auto" }}
+                style={{ width: "auto", height: "auto" }}
                 priority
               />
             </div>

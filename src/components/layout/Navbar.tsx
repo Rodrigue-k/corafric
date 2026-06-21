@@ -64,7 +64,7 @@ export const Navbar: React.FC = () => {
               width={24}
               height={24}
               className="object-contain"
-              style={{ height: "auto" }}
+              style={{ width: "auto", height: "auto" }}
             />
           </div>
           <span className="text-h3 font-semibold font-display tracking-tight text-foreground group-hover:text-primary transition-colors">
