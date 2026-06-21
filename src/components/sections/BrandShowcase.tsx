@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { Mail, Heart } from "lucide-react";
 
@@ -54,13 +55,13 @@ export const BrandShowcase: React.FC = () => {
                 <span>{t("github")}</span>
               </a>
               <span className="hidden sm:inline text-text-muted/40">|</span>
-              <a
-                href="mailto:hello@corafric.com?subject=Soutien%20au%20projet%20Corafric"
+              <Link
+                href="/contribuer"
                 className="flex items-center gap-2 text-primary font-semibold hover:opacity-85 transition-opacity duration-200"
               >
                 <Heart className="w-4 h-4 text-primary fill-primary/10" />
                 <span>{t("support")}</span>
-              </a>
+              </Link>
             </div>
           </div>
         </div>

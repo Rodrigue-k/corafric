@@ -87,12 +87,12 @@ export const Navbar: React.FC = () => {
               </Link>
             );
           })}
-          <a
-            href="mailto:hello@corafric.com?subject=Soutien%20au%20projet%20Corafric"
+          <Link
+            href="/contribuer"
             className="text-sm font-semibold transition-colors text-primary hover:opacity-85"
           >
             {t("support")}
-          </a>
+          </Link>
         </nav>
 
         {/* Right action area: language switcher + auth */}
@@ -177,13 +177,13 @@ export const Navbar: React.FC = () => {
                 </Link>
               );
             })}
-            <a
-              href="mailto:hello@corafric.com?subject=Soutien%20au%20projet%20Corafric"
+            <Link
+              href="/contribuer"
               onClick={() => setIsMobileMenuOpen(false)}
               className="text-base font-semibold px-2 py-1 rounded-md transition-colors text-primary hover:bg-primary/5"
             >
               {t("support")}
-            </a>
+            </Link>
           </nav>
           
           {!isSignedIn && (
