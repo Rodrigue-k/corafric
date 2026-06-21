@@ -6,9 +6,10 @@ import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { BrandShowcase } from "@/components/sections/BrandShowcase";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { AfricaMap } from "@/components/ui/AfricaMap";
 import { Globe, Mic, Users } from "lucide-react";
 import { GlobalStats } from "@/types";
 
@@ -41,16 +42,16 @@ export default function Home() {
           {/* Formes géométriques structurelles d'arrière-plan (grands blocs de mise en page) */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
             {/* Grand bloc oblique terracotta à droite pour cadrer le personnage */}
-            <div className="absolute right-[-15%] top-[-20%] w-[70vw] lg:w-[55vw] h-[140%] bg-[#C4522A] opacity-[0.9] rotate-[-12deg] origin-top-right rounded-[80px]" />
+            <div className="absolute bottom-0 left-0 right-0 w-full h-[40dvh] lg:h-[140%] lg:w-[55vw] lg:right-[-15%] lg:top-[-20%] lg:bottom-auto lg:left-auto bg-[#C4522A] opacity-[0.95] lg:opacity-[0.9] rotate-0 lg:rotate-[-12deg] origin-top-right rounded-t-[40px] lg:rounded-t-none lg:rounded-[80px]" />
             {/* Accent oblique or en bas à gauche pour équilibrer la composition */}
-            <div className="absolute left-[-15%] bottom-[-20%] w-[50vw] lg:w-[40vw] h-[60%] bg-[#D4A017] opacity-[0.25] rotate-[15deg] origin-bottom-left rounded-[60px]" />
+            <div className="hidden lg:block absolute left-[-15%] bottom-[-20%] w-[40vw] h-[60%] bg-[#D4A017] opacity-[0.25] rotate-[15deg] origin-bottom-left rounded-[60px]" />
           </div>
 
 
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 overflow-visible w-full h-full">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 h-full">
+            <div className="flex flex-col lg:grid lg:grid-cols-12 lg:gap-12 h-full justify-between lg:justify-normal">
               {/* Left Column info */}
-              <div className="lg:col-span-6 flex flex-col justify-center space-y-6 text-center lg:text-left relative z-10 pb-10 lg:pb-20">
+              <div className="lg:col-span-6 flex flex-col justify-start lg:justify-center space-y-4 lg:space-y-6 text-center lg:text-left relative z-10 h-[50dvh] lg:h-auto pt-2 pb-2 lg:pt-0 lg:pb-20 shrink-0">
                 <h1 className="text-display text-foreground leading-tight whitespace-pre-line">
                   {t("title")}
                 </h1>
@@ -67,15 +68,15 @@ export default function Home() {
               </div>
 
               {/* Right Column image and floating components */}
-              <div className="lg:col-span-6 relative flex justify-center items-end h-full w-full">
-                <div className="relative w-full max-w-[650px] h-[75%] lg:h-[85%]">
+              <div className="lg:col-span-6 relative flex justify-center items-end h-[40dvh] lg:h-full w-full">
+                <div className="relative w-full max-w-[650px] h-full lg:h-[85%]">
                   <Image
                     src="/images/hero-person.webp"
                     alt="Jeune Africain enregistrant sa voix"
                     width={800}
                     height={1000}
                     priority
-                    className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[115%] lg:h-[125%] w-auto max-w-none object-contain object-bottom z-10 transform hover:scale-[1.02] transition-transform duration-500 ease-out origin-bottom"
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[110%] lg:h-[125%] w-auto max-w-none object-contain object-bottom z-10 transform hover:scale-[1.02] transition-transform duration-500 ease-out origin-bottom"
                   />
 
 
@@ -184,8 +185,42 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* MARKETS MAP SECTION */}
+        <section className="relative py-24 overflow-hidden bg-[#F7F3EE]">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col lg:grid lg:grid-cols-12 gap-10 lg:gap-24 items-center">
+              {/* Left Column Text / Top Column on Mobile */}
+              <div className="lg:col-span-5 w-full space-y-4 text-center lg:text-left">
+                <span className="text-caption text-primary uppercase tracking-wider font-semibold block">
+                  {t("markets.label")}
+                </span>
+                <h2 className="text-display text-foreground leading-tight">
+                  {t("markets.title")}
+                </h2>
+                {/* Subtitle (Desktop only here) */}
+                <p className="hidden lg:block text-body text-text-muted max-w-md mx-auto lg:mx-0">
+                  {t("markets.subtitle")}
+                </p>
+              </div>
+
+              {/* Right Column Map / Middle Column on Mobile */}
+              <div className="lg:col-span-7 flex justify-center items-center w-full max-w-[800px] lg:max-w-none mx-auto">
+                <AfricaMap className="w-full h-auto max-h-[600px] text-[#C4B8A8]" />
+              </div>
+
+              {/* Subtitle (Mobile only here, displayed below the map) */}
+              <div className="block lg:hidden w-full text-center">
+                <p className="text-body text-text-muted max-w-md mx-auto">
+                  {t("markets.subtitle")}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
 
+      <BrandShowcase />
       <Footer />
     </div>
   );

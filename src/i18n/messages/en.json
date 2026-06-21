@@ -25,6 +25,12 @@
       "step2Desc": "Press the button. Your mic captures your voice. That's it.",
       "step3Title": "You build",
       "step3Desc": "Your voice joins the dataset. African AI learns."
+    },
+    "markets": {
+      "label": "OUR IMPACT ZONE",
+      "title": "We start in Togo.",
+      "subtitle": "Every African language deserves to be heard by AI. We start with Ewe. The rest belongs to the continent.",
+      "badge": "Active: Togo — Ewe"
     }
   },
   "contribute": {
@@ -53,5 +59,25 @@
     "downloadDesc": "Full dataset of approved recordings — free to use (CC-BY)",
     "downloadBtn": "Download (ZIP)",
     "leaderboardTitle": "Top contributors"
+  },
+  "brandShowcase": {
+    "tagline": "voice & tomorrow's technology",
+    "description": "Corafric is a community open-source project building free voice datasets to integrate our African languages into the artificial intelligence infrastructure.",
+    "email": "hello@corafric.com",
+    "github": "Join on GitHub",
+    "support": "Support the project",
+    "privacy": "Privacy Policy",
+    "cookies": "Cookies Policy",
+    "copyright": "Corafric. Community open-source project."
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "content": "This platform is managed in a transparent and community-driven way. All recorded and approved voice data are shared under the open CC-BY license for the public good. We do not collect any sensitive personal data without your consent. Audio recordings are anonymized and do not contain public names or personal identifiers.",
+    "back": "Back to Home"
+  },
+  "cookies": {
+    "title": "Cookies Policy",
+    "content": "Corafric uses only essential technical cookies to manage your session (for example to keep you signed in or for data validation needs). We do not use any tracking cookies or commercial profiling tools.",
+    "back": "Back to Home"
   }
 }

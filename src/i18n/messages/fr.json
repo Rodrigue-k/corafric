@@ -25,6 +25,12 @@
       "step2Desc": "Tu appuies sur le bouton. Ton micro capte ta voix. C'est tout.",
       "step3Title": "Tu construis",
       "step3Desc": "Ta voix rejoint la base de données. L'IA africaine apprend."
+    },
+    "markets": {
+      "label": "NOTRE ZONE D'IMPACT",
+      "title": "Nous commençons au Togo.",
+      "subtitle": "Chaque langue africaine mérite d'être entendue par l'IA. Nous démarrons avec l'Ewe. La suite appartient au continent.",
+      "badge": "Actif : Togo — Ewe"
     }
   },
   "contribute": {
@@ -53,5 +59,25 @@
     "downloadDesc": "Dataset complet des enregistrements approuvés — libre d'utilisation (CC-BY)",
     "downloadBtn": "Télécharger (ZIP)",
     "leaderboardTitle": "Top contributeurs"
+  },
+  "brandShowcase": {
+    "tagline": "la voix & les technologies de demain",
+    "description": "Corafric est un projet communautaire open-source pour construire des jeux de données vocales libres, afin d'intégrer nos langues africaines dans l'infrastructure de l'intelligence artificielle.",
+    "email": "hello@corafric.com",
+    "github": "Rejoindre sur GitHub",
+    "support": "Soutenir le projet",
+    "privacy": "Politique de confidentialité",
+    "cookies": "Gestion des cookies",
+    "copyright": "Corafric. Projet communautaire open-source."
+  },
+  "privacy": {
+    "title": "Politique de Confidentialité",
+    "content": "Cette plateforme est gérée de manière transparente et communautaire. Toutes les données vocales enregistrées et validées sont partagées sous licence libre CC-BY, pour le bien commun. Nous ne collectons aucune donnée personnelle sensible à votre insu. Les enregistrements audio sont anonymisés et ne contiennent pas d'identifiant nominatif public.",
+    "back": "Retour à l'accueil"
+  },
+  "cookies": {
+    "title": "Gestion des Cookies",
+    "content": "Corafric utilise uniquement des cookies techniques essentiels pour gérer votre session (par exemple pour rester connecté ou pour les besoins de validation des données). Nous n'utilisons aucun traceur publicitaire ou outil de profilage commercial.",
+    "back": "Retour à l'accueil"
   }
 }
