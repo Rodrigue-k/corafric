@@ -61,6 +61,7 @@ export default function ContribuerPage() {
                   alt="Corafric Contributor"
                   width={450}
                   height={675}
+                  unoptimized
                   className="object-contain w-auto h-full max-h-[540px] drop-shadow-2xl translate-y-8 scale-[1.18] origin-bottom duration-500"
                   priority
                 />
