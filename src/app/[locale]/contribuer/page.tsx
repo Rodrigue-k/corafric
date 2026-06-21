@@ -1,191 +1,153 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { ArrowRight } from "lucide-react";
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "contribuer" });
-  return {
-    title: `${t("hero.tag")} — Corafric`,
+export default function ContribuerPage() {
+  const t = useTranslations("contribuer");
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    const shareData = {
+      title: "Corafric",
+      text: t("hero.subtitle"),
+      url: typeof window !== "undefined" ? window.location.origin : "https://corafric.com",
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.log("Error sharing:", err);
+      }
+    } else {
+      // Fallback: Copy to clipboard
+      try {
+        await navigator.clipboard.writeText(shareData.url);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        console.error("Failed to copy link:", err);
+      }
+    }
   };
-}
-
-export default async function ContribuerPage() {
-  const t = await getTranslations("contribuer");
 
   return (
-    <div className="min-h-screen flex flex-col bg-background font-sans overflow-hidden">
+    <div className="h-screen flex flex-col bg-[#F7F3EE] font-sans overflow-hidden">
       <Navbar />
 
-      <main className="flex-grow">
-        {/* SECTION 1 - HERO SPLIT */}
-        <section className="relative overflow-hidden min-h-[calc(100vh-64px)] flex items-center bg-[#F7F3EE]">
-          {/* Background decorative shapes */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-            {/* Left terracotta light shape */}
-            <div className="absolute top-[10%] left-[-10%] w-[50vw] h-[70vh] bg-[#B84A2A] opacity-[0.04] rotate-[-12deg] rounded-[60px]" />
-            {/* Right gold light shape behind the image */}
-            <div className="absolute bottom-[-10%] right-[-5%] w-[45vw] h-[80vh] bg-[#D4A017] opacity-[0.06] rotate-[8deg] rounded-[80px]" />
-          </div>
+      <main className="flex-grow relative flex items-center justify-center z-10 overflow-visible">
+        {/* Background decorative shapes */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+          {/* Left terracotta light shape */}
+          <div className="absolute top-[10%] left-[-5%] w-[45vw] h-[80vh] bg-[#B84A2A] opacity-[0.04] rotate-[-12deg] rounded-[60px]" />
+          {/* Right gold light shape behind the text */}
+          <div className="absolute bottom-[5%] right-[-5%] w-[50vw] h-[80vh] bg-[#D4A017] opacity-[0.04] rotate-[8deg] rounded-[80px]" />
+        </div>
 
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center min-h-[calc(100vh-160px)]">
-              {/* Left Column (55%) */}
-              <div className="lg:col-span-7 flex flex-col justify-center space-y-6 text-center lg:text-left py-12 lg:py-0">
-                <span className="text-caption text-primary uppercase tracking-widest font-semibold block">
-                  {t("hero.tag")}
-                </span>
-                <h1 className="text-display text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight tracking-tight whitespace-pre-line">
-                  {t("hero.title")}
-                </h1>
-                <p className="text-body text-text-muted max-w-xl mx-auto lg:mx-0 text-base sm:text-lg">
-                  {t("hero.subtitle")}
-                </p>
-              </div>
-
-              {/* Right Column (45%) */}
-              <div className="lg:col-span-5 flex justify-center lg:justify-end items-end h-full relative self-end w-full max-w-[450px] lg:max-w-none mx-auto lg:mx-0">
-                <div className="relative w-full aspect-[2/3] lg:h-[75vh] lg:w-auto max-h-[600px] flex items-end">
-                  <Image
-                    src="/images/contribute-person.webp"
-                    alt="Corafric Contributor"
-                    width={450}
-                    height={675}
-                    className="object-contain w-full h-full max-h-[600px] select-none pointer-events-none drop-shadow-2xl"
-                    priority
-                  />
-                </div>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 w-full h-full flex items-center overflow-visible">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center w-full h-full lg:max-h-[85vh] overflow-visible">
+            
+            {/* Left Column (45%) - Hidden on Mobile */}
+            <div className="hidden lg:flex lg:col-span-5 items-end justify-center h-full relative self-end overflow-visible select-none pointer-events-none z-20">
+              <div className="relative w-full h-[70vh] max-h-[580px] flex items-end overflow-visible">
+                <Image
+                  src="/images/contribute-person.webp"
+                  alt="Corafric Contributor"
+                  width={450}
+                  height={675}
+                  className="object-contain w-auto h-full max-h-[540px] drop-shadow-2xl translate-y-8 scale-[1.18] origin-bottom duration-500"
+                  priority
+                />
               </div>
             </div>
-          </div>
-        </section>
 
-        {/* SECTION 2 - 3 WAYS TO CONTRIBUTE */}
-        <section className="relative py-24 bg-white border-t border-[#EADCC9]/40">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Card 1 */}
-              <div className="relative bg-[#F7F3EE]/40 border border-[#EADCC9]/50 rounded-3xl p-8 flex flex-col justify-between overflow-hidden group hover:shadow-md transition-all duration-300">
-                {/* Number Background */}
-                <span className="absolute right-4 top-2 text-7xl font-display font-bold text-[#B84A2A] opacity-[0.07] select-none group-hover:scale-110 transition-transform duration-300">
-                  {t("cards.card1.num")}
+            {/* Right Column (55%) */}
+            <div className="lg:col-span-7 flex flex-col justify-center space-y-6 sm:space-y-8 text-center lg:text-left py-8 lg:py-0 w-full z-10">
+              {/* Eyebrow Tag */}
+              <div>
+                <span className="text-caption text-primary uppercase tracking-widest font-semibold text-xs sm:text-sm">
+                  {t("hero.tag")}
                 </span>
-                <div className="space-y-4 relative z-10">
-                  <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground pr-8">
-                    {t("cards.card1.title")}
-                  </h3>
-                  <p className="text-sm text-text-muted leading-relaxed">
-                    {t("cards.card1.desc")}
-                  </p>
-                </div>
-                <div className="pt-8">
-                  <Link
-                    href="/contribute"
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:underline"
-                  >
-                    <span>{t("cards.card1.cta")}</span>
-                  </Link>
-                </div>
               </div>
 
-              {/* Card 2 */}
-              <div className="relative bg-[#F7F3EE]/40 border border-[#EADCC9]/50 rounded-3xl p-8 flex flex-col justify-between overflow-hidden group hover:shadow-md transition-all duration-300">
-                {/* Number Background */}
-                <span className="absolute right-4 top-2 text-7xl font-display font-bold text-[#B84A2A] opacity-[0.07] select-none group-hover:scale-110 transition-transform duration-300">
-                  {t("cards.card2.num")}
-                </span>
-                <div className="space-y-4 relative z-10">
-                  <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground pr-8">
-                    {t("cards.card2.title")}
-                  </h3>
-                  <p className="text-sm text-text-muted leading-relaxed">
-                    {t("cards.card2.desc")}
-                  </p>
+              {/* Slogan */}
+              <h1 className="text-display text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight tracking-tight whitespace-pre-line">
+                {t("hero.title")}
+              </h1>
+
+              {/* Subtitle */}
+              <p className="text-body text-text-muted text-sm sm:text-base max-w-xl mx-auto lg:mx-0 whitespace-pre-line leading-relaxed">
+                {t("hero.subtitle")}
+              </p>
+
+              {/* Three simple actions list */}
+              <div className="flex flex-col space-y-3 pt-2 max-w-xl mx-auto lg:mx-0 w-full">
+                {/* Action 1 */}
+                <div className="flex items-center justify-between py-3 border-b border-[#EADCC9]/40 hover:border-primary/50 transition-colors duration-200 group">
+                  <span className="text-sm font-semibold text-text-muted">{t("ways.way1.text")}</span>
+                  <Link
+                    href="/contribute"
+                    className="inline-flex items-center text-sm font-semibold text-primary hover:underline"
+                  >
+                    <span>{t("ways.way1.action")}</span>
+                  </Link>
                 </div>
-                <div className="pt-8">
+
+                {/* Action 2 */}
+                <div className="flex items-center justify-between py-3 border-b border-[#EADCC9]/40 hover:border-primary/50 transition-colors duration-200 group">
+                  <span className="text-sm font-semibold text-text-muted">{t("ways.way2.text")}</span>
                   <a
                     href="https://github.com/Rodrigue-k/corafric"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:underline"
+                    className="inline-flex items-center text-sm font-semibold text-primary hover:underline"
                   >
-                    <span>{t("cards.card2.cta")}</span>
+                    <span>{t("ways.way2.action")}</span>
                   </a>
+                </div>
+
+                {/* Action 3 */}
+                <div className="flex items-center justify-between py-3 border-b border-[#EADCC9]/40 hover:border-primary/50 transition-colors duration-200 group relative">
+                  <span className="text-sm font-semibold text-text-muted">{t("ways.way3.text")}</span>
+                  <button
+                    onClick={handleShare}
+                    className="inline-flex items-center text-sm font-semibold text-primary hover:underline focus:outline-none"
+                  >
+                    <span>{t("ways.way3.action")}</span>
+                  </button>
+
+                  {/* Toast/Tooltip for Clipboard copy feedback */}
+                  {copied && (
+                    <div className="absolute right-0 -top-8 bg-foreground text-background text-xs font-semibold px-2 py-1 rounded shadow-md animate-fade-in-down">
+                      Lien copié !
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Card 3 */}
-              <div className="relative bg-[#F7F3EE]/40 border border-[#EADCC9]/50 rounded-3xl p-8 flex flex-col justify-between overflow-hidden group hover:shadow-md transition-all duration-300">
-                {/* Number Background */}
-                <span className="absolute right-4 top-2 text-7xl font-display font-bold text-[#B84A2A] opacity-[0.07] select-none group-hover:scale-110 transition-transform duration-300">
-                  {t("cards.card3.num")}
-                </span>
-                <div className="space-y-4 relative z-10">
-                  <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground pr-8">
-                    {t("cards.card3.title")}
-                  </h3>
-                  <p className="text-sm text-text-muted leading-relaxed">
-                    {t("cards.card3.desc")}
-                  </p>
-                </div>
-                <div className="pt-8">
-                  <a
-                    href="mailto:hello@corafric.com?subject=Partage%20et%20promotion%20du%20projet%20Corafric"
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:underline"
-                  >
-                    <span>{t("cards.card3.cta")}</span>
-                  </a>
-                </div>
+              {/* Fine gold gradient separator */}
+              <div className="w-full max-w-xl mx-auto lg:mx-0 h-[1.5px] bg-gradient-to-r from-[#D4A017]/10 via-[#D4A017]/60 to-[#D4A017]/10" />
+
+              {/* Partnership Contact */}
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-2 pt-1 text-sm text-text-muted">
+                <span>{t("partnership.text")}</span>
+                <a
+                  href="mailto:contact@corafric.com?subject=Partenariat%20Corafric"
+                  className="text-primary font-semibold hover:underline inline-flex items-center gap-1"
+                >
+                  <span>{t("partnership.cta")}</span>
+                </a>
               </div>
             </div>
-          </div>
-        </section>
 
-        {/* SECTION 3 - WHY THIS PROJECT EXISTS (MANIFESTO) */}
-        <section className="relative py-24 bg-[#F2ECE4] border-t border-[#EADCC9]/40 overflow-hidden">
-          {/* Decorative subtle background shape */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-            <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[70vw] h-[70vw] bg-[#B84A2A] opacity-[0.02] rotate-45 rounded-[120px]" />
           </div>
-
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-foreground leading-snug max-w-3xl mx-auto whitespace-pre-line">
-              {t("manifesto.title")}
-            </h2>
-            
-            {/* Custom terracotta -> gold gradient separator */}
-            <div className="w-48 h-[3px] bg-gradient-to-r from-[#B84A2A] to-[#D4A017] mx-auto rounded-full" />
-            
-            <p className="text-body text-text-muted max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
-              {t("manifesto.body")}
-            </p>
-          </div>
-        </section>
-
-        {/* SECTION 4 - PARTNERSHIPS */}
-        <section className="relative py-20 bg-white border-t border-[#EADCC9]/30">
-          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
-            <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground">
-              {t("partnership.title")}
-            </h2>
-            <p className="text-body text-text-muted max-w-xl mx-auto text-sm sm:text-base leading-relaxed">
-              {t("partnership.body")}
-            </p>
-            <div className="pt-4">
-              <a
-                href="mailto:contact@corafric.com?subject=Partenariat%20Corafric"
-                className="inline-flex items-center gap-2 bg-[#B84A2A] hover:bg-[#A33D20] text-white font-semibold px-6 py-3 rounded-full text-sm shadow-md hover:shadow-lg transition-all duration-300"
-              >
-                <span>{t("partnership.cta")}</span>
-                <ArrowRight className="w-4 h-4" />
-              </a>
-            </div>
-          </div>
-        </section>
+        </div>
       </main>
 
       <Footer />

@@ -83,38 +83,27 @@
   },
   "contribuer": {
     "hero": {
-      "tag": "Join the movement",
-      "title": "African languages\ndeserve to exist\nin AI.",
-      "subtitle": "Corafric is an open community project. It grows thanks to people like you — developers, researchers, organizations, enthusiasts."
+      "tag": "JOIN THE MOVEMENT",
+      "title": "African languages\ndeserve to exist in AI.",
+      "subtitle": "Corafric grows through people like you.\nHere's how you can help."
     },
-    "cards": {
-      "card1": {
-        "num": "01",
-        "title": "Do you speak Ewe or a local language?",
-        "desc": "The most valuable contribution. Each recorded sentence is a fragment of linguistic memory preserved for future generations.",
-        "cta": "Start contributing →"
+    "ways": {
+      "way1": {
+        "text": "You speak Ewe",
+        "action": "Start recording"
       },
-      "card2": {
-        "num": "02",
-        "title": "Are you a developer?",
-        "desc": "Corafric is open source. Backend, frontend, audio pipeline, validation models — there is room for all specialties.",
-        "cta": "View GitHub Repository →"
+      "way2": {
+        "text": "You code",
+        "action": "View GitHub"
       },
-      "card3": {
-        "num": "03",
-        "title": "Do you believe in this project?",
-        "desc": "Spread the word about Corafric — in your university, your network, your community. Visibility is a form of real contribution.",
-        "cta": "Share the project →"
+      "way3": {
+        "text": "You believe in this",
+        "action": "Share it"
       }
     },
-    "manifesto": {
-      "title": "\"The world's most powerful AI models\ndon't understand Ewe. Nor Dioula. Nor Fon.\"",
-      "body": "Corafric will not solve this problem alone. But it lays the first stone: data, collected by the communities themselves, for tools that look like them."
-    },
     "partnership": {
-      "title": "Do you represent an organization?",
-      "body": "Universities, NGOs, cultural institutions, tech companies — contact us to discuss a formal partnership.",
-      "cta": "Write to the team →"
+      "text": "Representing an org?",
+      "cta": "Write to us"
     }
   }
 }

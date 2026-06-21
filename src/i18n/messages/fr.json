@@ -83,38 +83,27 @@
   },
   "contribuer": {
     "hero": {
-      "tag": "Rejoindre le mouvement",
-      "title": "Les langues africaines\nméritent d'exister\ndans l'IA.",
-      "subtitle": "Corafric est un projet communautaire ouvert. Il grandit grâce à des gens comme vous — développeurs, chercheurs, organisations, passionnés."
+      "tag": "REJOINDRE LE MOUVEMENT",
+      "title": "Les langues africaines\nméritent d'exister dans l'IA.",
+      "subtitle": "Corafric grandit grâce à des gens comme vous.\nVoici comment vous pouvez aider."
     },
-    "cards": {
-      "card1": {
-        "num": "01",
-        "title": "Vous parlez Ewe ou une langue locale ?",
-        "desc": "La contribution la plus précieuse. Chaque phrase enregistrée est un fragment de mémoire linguistique préservé pour les générations futures.",
-        "cta": "Commencer à contribuer →"
+    "ways": {
+      "way1": {
+        "text": "Vous parlez Ewe",
+        "action": "Commencer à contribuer"
       },
-      "card2": {
-        "num": "02",
-        "title": "Vous êtes développeur ?",
-        "desc": "Corafric est open source. Backend, frontend, pipeline audio, modèles de validation — il y a de la place pour toutes les spécialités.",
-        "cta": "Voir le dépôt GitHub →"
+      "way2": {
+        "text": "Vous codez",
+        "action": "Voir le GitHub"
       },
-      "card3": {
-        "num": "03",
-        "title": "Vous croyez à ce projet ?",
-        "desc": "Parlez de Corafric autour de vous — dans votre université, votre réseau, votre communauté. La visibilité est une forme de contribution réelle.",
-        "cta": "Partager le projet →"
+      "way3": {
+        "text": "Vous croyez au projet",
+        "action": "Partager le projet"
       }
     },
-    "manifesto": {
-      "title": "\"Les modèles d'IA les plus puissants du monde\nne comprennent pas l'Ewe. Ni le Dioula. Ni le Fon.\"",
-      "body": "Corafric ne résoudra pas ce problème seul. Mais il pose la première pierre : des données, collectées par les communautés elles-mêmes, pour des outils qui leur ressemblent."
-    },
     "partnership": {
-      "title": "Vous représentez une organisation ?",
-      "body": "Universités, ONG, institutions culturelles, entreprises tech — contactez-nous pour discuter d'un partenariat formel.",
-      "cta": "Écrire à l'équipe →"
+      "text": "Vous représentez une organisation ?",
+      "cta": "Écrivez-nous"
     }
   }
 }
