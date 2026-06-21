@@ -73,11 +73,10 @@ export default function Home() {
                   <Image
                     src="/images/hero-person.webp"
                     alt="Jeune Africain enregistrant sa voix"
-                    width={800}
-                    height={1000}
+                    fill
                     priority
                     unoptimized
-                    className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[110%] lg:h-[125%] w-auto max-w-none object-contain object-bottom z-10 transform hover:scale-[1.02] transition-transform duration-500 ease-out origin-bottom"
+                    className="object-contain object-bottom z-10 transform scale-[1.10] lg:scale-[1.25] transition-transform duration-500 ease-out origin-bottom hover:scale-[1.12] lg:hover:scale-[1.27]"
                   />
 
 
