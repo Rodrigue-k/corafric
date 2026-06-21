@@ -19,8 +19,8 @@ export const BrandShowcase: React.FC = () => {
                 alt="Corafric Logo"
                 width={200}
                 height={200}
-                className="w-36 h-auto md:w-44 object-contain transition-transform duration-500 group-hover:scale-105"
-                style={{ width: "auto", height: "auto" }}
+                className="w-24 h-auto md:w-32 object-contain transition-transform duration-500 group-hover:scale-105"
+                style={{ height: "auto" }}
                 priority
               />
             </div>
