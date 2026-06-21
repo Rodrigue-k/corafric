@@ -38,7 +38,7 @@ export default function Home() {
 
       <main className="flex-grow">
         {/* HERO SECTION */}
-        <section className="relative overflow-hidden h-[100dvh] min-h-[700px] flex pt-20 lg:pt-24 bg-[#F7F3EE]">
+        <section className="relative overflow-hidden h-auto lg:h-[100dvh] lg:min-h-[700px] flex pt-20 lg:pt-24 bg-[#F7F3EE]">
           {/* Formes géométriques structurelles d'arrière-plan (grands blocs de mise en page) */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
             {/* Grand bloc oblique terracotta à droite pour cadrer le personnage */}
@@ -51,7 +51,7 @@ export default function Home() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 overflow-visible w-full h-full">
             <div className="flex flex-col lg:grid lg:grid-cols-12 lg:gap-12 h-full justify-between lg:justify-normal">
               {/* Left Column info */}
-              <div className="lg:col-span-6 flex flex-col justify-start lg:justify-center space-y-4 lg:space-y-6 text-center lg:text-left relative z-10 h-[50dvh] lg:h-auto pt-2 pb-2 lg:pt-0 lg:pb-20 shrink-0">
+              <div className="lg:col-span-6 flex flex-col justify-start lg:justify-center space-y-4 lg:space-y-6 text-center lg:text-left relative z-10 h-auto lg:h-auto pt-6 pb-10 lg:pt-0 lg:pb-20 shrink-0">
                 <h1 className="text-display text-foreground leading-tight whitespace-pre-line">
                   {t("title")}
                 </h1>
