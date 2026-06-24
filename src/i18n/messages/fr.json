@@ -3,6 +3,7 @@
     "contribute": "Contribuer",
     "validate": "Valider",
     "explore": "Explorer",
+    "alphabet": "Alphabet",
     "signIn": "Se connecter",
     "join": "Rejoindre",
     "support": "Soutenir"
@@ -105,5 +106,13 @@
       "text": "Vous représentez une organisation ?",
       "cta": "Écrivez-nous"
     }
+  },
+  "alphabet": {
+    "title": "L'alphabet Ewe",
+    "subtitle": "30 lettres. Chaque son, une identité.",
+    "listen": "Écouter",
+    "tone": "Ton :",
+    "notes": "Prononciation :",
+    "fallbackWarning": "Lecture alternative (voix française utilisée)"
   }
 }

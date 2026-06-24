@@ -3,6 +3,7 @@
     "contribute": "Contribute",
     "validate": "Validate",
     "explore": "Explore",
+    "alphabet": "Alphabet",
     "signIn": "Sign in",
     "join": "Join",
     "support": "Support"
@@ -105,5 +106,13 @@
       "text": "Representing an org?",
       "cta": "Write to us"
     }
+  },
+  "alphabet": {
+    "title": "The Ewe Alphabet",
+    "subtitle": "30 letters. Every sound, an identity.",
+    "listen": "Listen",
+    "tone": "Tone:",
+    "notes": "Pronunciation:",
+    "fallbackWarning": "Audio fallback (using French voice)"
   }
 }
