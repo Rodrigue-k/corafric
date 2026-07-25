@@ -35,7 +35,7 @@ export const Navbar: React.FC = () => {
     { name: t("contribute"), href: "/contribute" as const },
     { name: t("validate"), href: "/validate" as const },
     { name: t("explore"), href: "/explore" as const },
-    { name: t("alphabet"), href: "/alphabet" as const },
+    { name: t("dictionary") || "Dictionnaire", href: "/dictionary" as const },
   ];
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
