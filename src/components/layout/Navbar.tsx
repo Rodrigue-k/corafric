@@ -45,15 +45,11 @@ export const Navbar: React.FC = () => {
 
   return (
     <header
-      className={
-        isHomePage
-          ? `fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 transform ${
-              isScrolled
-                ? "translate-y-0 opacity-100 border-b border-border bg-white/80 backdrop-blur-md shadow-sm"
-                : "-translate-y-full opacity-0 pointer-events-none"
-            }`
-          : "sticky top-0 z-50 w-full border-b border-border bg-white/80 backdrop-blur-md"
-      }
+      className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 transform ${
+        isHomePage && !isScrolled
+          ? "-translate-y-full opacity-0 pointer-events-none"
+          : "translate-y-0 opacity-100 border-b border-border bg-white/80 backdrop-blur-md shadow-sm"
+      }`}
     >
       <div className="mx-auto flex max-w-7xl h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
