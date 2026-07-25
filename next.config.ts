@@ -4,6 +4,7 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ["text2wav"],
   async headers() {
     return [
       {
@@ -24,6 +25,15 @@ const nextConfig: NextConfig = {
           {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(self), geolocation=()",
+          },
+        ],
+      },
+      {
+        source: "/audios/:path*",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "audio/mp4",
           },
         ],
       },

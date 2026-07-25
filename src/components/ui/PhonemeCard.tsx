@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Play } from "lucide-react";
+import { Play, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface Phoneme {
@@ -15,37 +15,41 @@ interface Phoneme {
 export const PhonemeCard: React.FC<{ phoneme: Phoneme }> = ({ phoneme }) => {
   const t = useTranslations("alphabet");
   const [isPlaying, setIsPlaying] = useState(false);
-  const [showFallbackMsg, setShowFallbackMsg] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSpeak = (e: React.MouseEvent) => {
+  const handleSpeak = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (typeof window === "undefined" || !window.speechSynthesis) return;
+    if (isPlaying || isLoading) return;
 
     try {
-      window.speechSynthesis.cancel();
+      setIsLoading(true);
       
-      const textToSpeak = phoneme.character;
-      const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      utterance.lang = "ee";
+      const audioUrl = window.location.origin + `/audios/${phoneme.character.toLowerCase()}.mp4?v=1`;
+      const audio = new Audio(audioUrl);
 
-      const voices = window.speechSynthesis.getVoices();
-      const hasEweVoice = voices.some(
-        (v) => v.lang.startsWith("ee") || v.lang.toLowerCase().includes("ewe")
-      );
+      audio.onplay = () => {
+        setIsLoading(false);
+        setIsPlaying(true);
+      };
 
-      if (!hasEweVoice) {
-        utterance.lang = "fr-FR";
-        setShowFallbackMsg(true);
-        setTimeout(() => setShowFallbackMsg(false), 2500);
-      }
+      audio.onended = () => {
+        setIsPlaying(false);
+      };
 
-      utterance.onstart = () => setIsPlaying(true);
-      utterance.onend = () => setIsPlaying(false);
-      utterance.onerror = () => setIsPlaying(false);
+      audio.onerror = (e) => {
+        console.error("Audio element error:", audio.error?.message || audio.error || e);
+        setIsLoading(false);
+        setIsPlaying(false);
+      };
 
-      window.speechSynthesis.speak(utterance);
+      audio.play().catch(error => {
+        console.error("Audio playback rejected:", error);
+        setIsLoading(false);
+        setIsPlaying(false);
+      });
     } catch (error) {
-      console.error("Speech Synthesis error:", error);
+      console.error("Audio Engine error:", error);
+      setIsLoading(false);
       setIsPlaying(false);
     }
   };
@@ -71,18 +75,23 @@ export const PhonemeCard: React.FC<{ phoneme: Phoneme }> = ({ phoneme }) => {
             </p>
           </div>
 
-          {/* Action button: listen (discrete play icon) */}
+          {/* Action button: listen (discrete play icon or loader) */}
           <button
             onClick={handleSpeak}
+            disabled={isLoading}
             className={`p-2.5 rounded-full border transition-all duration-300 flex items-center justify-center cursor-pointer ${
               isPlaying
                 ? "bg-primary text-white border-primary animate-pulse"
                 : "bg-background text-primary border-border/80 hover:bg-primary hover:text-white hover:border-primary"
-            }`}
+            } disabled:opacity-70 disabled:cursor-not-allowed`}
             aria-label={t("listen")}
             title={t("listen")}
           >
-            <Play className={`w-3.5 h-3.5 fill-current ${isPlaying ? "text-white" : ""}`} />
+            {isLoading ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-primary hover:text-white" />
+            ) : (
+              <Play className={`w-3.5 h-3.5 fill-current ${isPlaying ? "text-white" : ""}`} />
+            )}
           </button>
         </div>
 
@@ -104,13 +113,7 @@ export const PhonemeCard: React.FC<{ phoneme: Phoneme }> = ({ phoneme }) => {
           </span>
         )}
       </div>
-
-      {/* Floating Temporary Fallback Voice Message */}
-      {showFallbackMsg && (
-        <div className="absolute bottom-2 left-2 right-2 bg-foreground text-background text-[10px] text-center py-1 rounded px-2 animate-fade-in z-10 shadow-lg">
-          {t("fallbackWarning")}
-        </div>
-      )}
     </div>
   );
 };
+

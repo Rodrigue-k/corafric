@@ -35,20 +35,38 @@ export default function ValidateClientPage() {
       }
 
       setRecording(data.recording);
-    } catch (err: any) {
-      setErrorMessage(err.message || "Erreur de chargement.");
+    } catch (err: unknown) {
+      setErrorMessage(err instanceof Error ? err.message : "Erreur de chargement.");
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchNextRecording();
+    let ignore = false;
+    async function loadInitial() {
+      try {
+        const res = await fetch("/api/recordings/next");
+        const data = await res.json();
+        if (!ignore) {
+          if (data.error) throw new Error(data.error);
+          setRecording(data.recording);
+        }
+      } catch (err: unknown) {
+        if (!ignore) setErrorMessage(err instanceof Error ? err.message : "Erreur de chargement.");
+      } finally {
+        if (!ignore) setIsLoading(false);
+      }
+    }
+    void loadInitial();
+    return () => {
+      ignore = true;
+    };
   }, []);
 
-  const handleVoteSubmitted = (status: string) => {
+  const handleVoteSubmitted = () => {
     setSessionCount((prev) => prev + 1);
-    fetchNextRecording();
+    void fetchNextRecording();
   };
 
   return (

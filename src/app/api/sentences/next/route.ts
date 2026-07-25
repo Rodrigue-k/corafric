@@ -20,7 +20,7 @@ export async function GET(request: Request) {
     const language = searchParams.get("language") || "ewe";
 
     // Query sentences that are active, match language, and have NOT been recorded by this user
-    const result = await sql`
+    const result = (await sql`
       SELECT s.id, s.text, s.language, s.source
       FROM sentences s
       LEFT JOIN recordings r ON r.sentence_id = s.id AND r.user_id = ${userId}
@@ -29,7 +29,7 @@ export async function GET(request: Request) {
         AND r.id IS NULL
       ORDER BY RANDOM()
       LIMIT 1
-    `;
+    `) as Record<string, unknown>[];
 
     if (result.length === 0) {
       return NextResponse.json({ sentence: null, message: "Toutes les phrases ont été enregistrées !" });

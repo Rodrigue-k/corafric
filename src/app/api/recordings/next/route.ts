@@ -12,7 +12,7 @@ export async function GET() {
     }
 
     // Get next pending recording recorded by someone else and not yet validated by the current user
-    const result = await sql`
+    const result = (await sql`
       SELECT r.id, r.audio_url, s.text as sentence_text, s.language as sentence_language
       FROM recordings r
       JOIN sentences s ON r.sentence_id = s.id
@@ -21,7 +21,7 @@ export async function GET() {
         AND r.user_id != ${userId}
         AND v.id IS NULL
       LIMIT 1
-    `;
+    `) as Record<string, unknown>[];
 
     if (result.length === 0) {
       return NextResponse.json({ recording: null, message: "Aucun enregistrement en attente de validation !" });

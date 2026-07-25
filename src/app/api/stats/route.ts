@@ -5,19 +5,19 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const recordingsResult = await sql`SELECT COUNT(*)::int as count FROM recordings`;
-    const approvedResult = await sql`SELECT COUNT(*)::int as count FROM recordings WHERE status = 'approved'`;
-    const usersResult = await sql`SELECT COUNT(*)::int as count FROM users`;
-    const durationResult = await sql`SELECT SUM(duration_ms)::bigint as total_ms FROM recordings`;
-    const sentencesResult = await sql`SELECT COUNT(*)::int as count FROM sentences`;
+    const recordingsResult = (await sql`SELECT COUNT(*)::int as count FROM recordings`) as Record<string, unknown>[];
+    const approvedResult = (await sql`SELECT COUNT(*)::int as count FROM recordings WHERE status = 'approved'`) as Record<string, unknown>[];
+    const usersResult = (await sql`SELECT COUNT(*)::int as count FROM users`) as Record<string, unknown>[];
+    const durationResult = (await sql`SELECT SUM(duration_ms)::bigint as total_ms FROM recordings`) as Record<string, unknown>[];
+    const sentencesResult = (await sql`SELECT COUNT(*)::int as count FROM sentences`) as Record<string, unknown>[];
 
     // Query top 10 contributors for the leaderboard
-    const leaderboardResult = await sql`
+    const leaderboardResult = (await sql`
       SELECT username, total_contributions, total_validations
       FROM users
       ORDER BY total_contributions DESC, total_validations DESC
       LIMIT 10
-    `;
+    `) as Record<string, unknown>[];
 
     const totalRecordings = recordingsResult[0]?.count || 0;
     const approvedRecordings = approvedResult[0]?.count || 0;

@@ -39,7 +39,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
 
   // Validate if locale is supported
-  if (!routing.locales.includes(locale as any)) {
+  if (!routing.locales.includes(locale as unknown as typeof routing.locales[number])) {
     notFound();
   }
 

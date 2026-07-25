@@ -28,10 +28,11 @@ export async function POST(request: Request) {
     const fileSize = audioFile.size;
 
     // Fetch the sentence language first to structure the directory in R2
-    const sentenceResult = await sql`
+    const sentenceResult = (await sql`
       SELECT language FROM sentences WHERE id = ${sentenceId}
-    `;
-    const language = sentenceResult[0]?.language || "ewe";
+    `) as Record<string, unknown>[];
+
+    const language = (sentenceResult[0]?.language as string) || "ewe";
     const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
     const fileKey = `recordings/${language}/${today}/${crypto.randomUUID()}.webm`;
 
@@ -60,11 +61,11 @@ export async function POST(request: Request) {
     }
 
     // Insert recording into database
-    const recordingResult = await sql`
+    const recordingResult = (await sql`
       INSERT INTO recordings (sentence_id, user_id, audio_url, duration_ms, file_size_bytes, status)
       VALUES (${sentenceId}, ${userId}, ${audioUrl}, ${durationMs}, ${fileSize}, 'pending')
       RETURNING id
-    `;
+    `) as Record<string, unknown>[];
 
     // Increment user contribution counts
     await sql`

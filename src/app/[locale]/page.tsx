@@ -8,9 +8,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { BrandShowcase } from "@/components/sections/BrandShowcase";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import { AfricaMap } from "@/components/ui/AfricaMap";
-import { Globe, Mic, Users } from "lucide-react";
 import { GlobalStats } from "@/types";
 
 export default function Home() {
@@ -25,11 +23,20 @@ export default function Home() {
   });
 
   useEffect(() => {
-    setMounted(true);
-    fetch("/api/stats")
-      .then((res) => res.json())
-      .then((data) => setStats(data))
-      .catch((err) => console.error("Error fetching live stats:", err));
+    let ignore = false;
+    void (async () => {
+      setMounted(true);
+      try {
+        const res = await fetch("/api/stats");
+        const data = await res.json();
+        if (!ignore) setStats(data);
+      } catch (err) {
+        console.error("Error fetching live stats:", err);
+      }
+    })();
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   return (

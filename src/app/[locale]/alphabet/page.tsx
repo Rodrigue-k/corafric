@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { sql } from "@/lib/db";
 import { PhonemeCard } from "@/components/ui/PhonemeCard";
+import { WordSpellerCard } from "@/components/ui/WordSpellerCard";
 
 interface Phoneme {
   id: number;
@@ -97,6 +98,11 @@ export default async function AlphabetPage({ params }: { params: Promise<{ local
           <p className="text-lg sm:text-xl text-text-muted/80 font-sans leading-relaxed font-light">
             {t("subtitle")}
           </p>
+        </div>
+
+        {/* Interactive Word Speller (Concatenative Engine Demo) */}
+        <div className="mb-12">
+          <WordSpellerCard />
         </div>
 
         {/* Letters Grid */}

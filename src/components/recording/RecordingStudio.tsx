@@ -45,16 +45,32 @@ export const RecordingStudio: React.FC = () => {
       }
 
       setSentence(data.sentence);
-    } catch (err: any) {
-      setErrorMessage(err.message || "Erreur.");
+    } catch (err: unknown) {
+      setErrorMessage(err instanceof Error ? err.message : "Erreur.");
     } finally {
       setIsLoadingSentence(false);
     }
   };
 
   useEffect(() => {
-    fetchNextSentence();
+    let ignore = false;
+    async function loadInitial() {
+      try {
+        const res = await fetch("/api/sentences/next");
+        const data = await res.json();
+        if (!ignore) {
+          if (data.error) throw new Error(data.error);
+          setSentence(data.sentence);
+        }
+      } catch (err: unknown) {
+        if (!ignore) setErrorMessage(err instanceof Error ? err.message : "Erreur.");
+      } finally {
+        if (!ignore) setIsLoadingSentence(false);
+      }
+    }
+    void loadInitial();
     return () => {
+      ignore = true;
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, []);
@@ -92,7 +108,7 @@ export const RecordingStudio: React.FC = () => {
       timerRef.current = setInterval(() => {
         setRecordingSeconds((prev) => prev + 1);
       }, 1000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Microphone access denied:", err);
       setErrorMessage("Impossible d'accéder au microphone.");
     }
@@ -146,10 +162,10 @@ export const RecordingStudio: React.FC = () => {
       setStudioState("submitted");
 
       setTimeout(() => {
-        fetchNextSentence();
+        void fetchNextSentence();
       }, 1500);
-    } catch (err: any) {
-      setErrorMessage(err.message || "Erreur de soumission.");
+    } catch (err: unknown) {
+      setErrorMessage(err instanceof Error ? err.message : "Erreur de soumission.");
       setStudioState("recorded");
     }
   };

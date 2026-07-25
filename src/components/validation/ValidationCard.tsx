@@ -53,8 +53,8 @@ export const ValidationCard: React.FC<ValidationCardProps> = ({ recording, onVot
         setVoteSuccess(false);
         onVoteSubmitted(data.status);
       }, 800);
-    } catch (err: any) {
-      setErrorMessage(err.message || "Erreur de soumission.");
+    } catch (err: unknown) {
+      setErrorMessage(err instanceof Error ? err.message : "Erreur de soumission.");
     } finally {
       setIsSubmitting(false);
     }

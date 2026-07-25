@@ -8,7 +8,7 @@ export const sql = databaseUrl
   : (() => {
       console.warn("Warning: DATABASE_URL is not set. Database queries will return empty arrays.");
       const mockSql = async () => [];
-      return mockSql as any;
+      return mockSql as unknown as ReturnType<typeof neon>;
     })();
 
 export async function ensureDbUser(userId: string, username: string) {
