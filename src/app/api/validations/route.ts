@@ -32,7 +32,7 @@ export async function POST(request: Request) {
         COUNT(CASE WHEN is_valid = FALSE THEN 1 END)::int as negative
       FROM validations
       WHERE recording_id = ${recordingId}
-    `) as Record<string, unknown>[];
+    `) as { positive: number; negative: number }[];
 
     const positiveCount = votes[0]?.positive || 0;
     const negativeCount = votes[0]?.negative || 0;

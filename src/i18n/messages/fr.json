@@ -107,12 +107,13 @@
       "cta": "Écrivez-nous"
     }
   },
-  "alphabet": {
-    "title": "L'alphabet Ewe",
-    "subtitle": "30 lettres. Chaque son, une identité.",
+  "dictionary": {
+    "title": "Dictionnaire Trilingue",
+    "subtitle": "Éwé - Français - Anglais. Base de données en construction.",
+    "searchPlaceholder": "Rechercher un mot...",
     "listen": "Écouter",
-    "tone": "Ton :",
-    "notes": "Prononciation :",
-    "fallbackWarning": "Lecture alternative (voix française utilisée)"
+    "noResults": "Aucun mot trouvé pour \"{query}\".",
+    "confidenceScore": "Score de fiabilité : {score}",
+    "sources": "Sources : {sources}"
   }
 }

@@ -107,12 +107,13 @@
       "cta": "Write to us"
     }
   },
-  "alphabet": {
-    "title": "The Ewe Alphabet",
-    "subtitle": "30 letters. Every sound, an identity.",
+  "dictionary": {
+    "title": "Trilingual Dictionary",
+    "subtitle": "Ewe - French - English. Database under construction.",
+    "searchPlaceholder": "Search for a word...",
     "listen": "Listen",
-    "tone": "Tone:",
-    "notes": "Pronunciation:",
-    "fallbackWarning": "Audio fallback (using French voice)"
+    "noResults": "No words found for \"{query}\".",
+    "confidenceScore": "Confidence score: {score}",
+    "sources": "Sources: {sources}"
   }
 }

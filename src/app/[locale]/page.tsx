@@ -1,49 +1,18 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import { useTranslations } from "next-intl";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
+import { getTranslations } from "next-intl/server";
 import { BrandShowcase } from "@/components/sections/BrandShowcase";
 import { Button } from "@/components/ui/Button";
 import { AfricaMap } from "@/components/ui/AfricaMap";
-import { GlobalStats } from "@/types";
+import { LiveStats } from "@/components/sections/LiveStats";
 
-export default function Home() {
-  const t = useTranslations("landing");
-  const [mounted, setMounted] = useState(false);
-  const [stats, setStats] = useState<GlobalStats>({
-    totalRecordings: 1248,
-    approvedRecordings: 980,
-    totalUsers: 84,
-    totalHours: 3.4,
-    totalSentences: 150,
-  });
-
-  useEffect(() => {
-    let ignore = false;
-    void (async () => {
-      setMounted(true);
-      try {
-        const res = await fetch("/api/stats");
-        const data = await res.json();
-        if (!ignore) setStats(data);
-      } catch (err) {
-        console.error("Error fetching live stats:", err);
-      }
-    })();
-    return () => {
-      ignore = true;
-    };
-  }, []);
+export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "landing" });
 
   return (
-    <div className="min-h-screen flex flex-col bg-background font-sans">
-      <Navbar />
-
-      <main className="flex-grow">
+    <div className="w-full">
         {/* HERO SECTION */}
         <section className="relative overflow-hidden h-auto lg:h-[100dvh] lg:min-h-[700px] flex pt-20 lg:pt-24 bg-[#F7F3EE]">
           {/* Formes géométriques structurelles d'arrière-plan (grands blocs de mise en page) */}
@@ -101,36 +70,7 @@ export default function Home() {
         </section>
 
         {/* STATS SECTION */}
-        <section className="bg-primary-tint py-16">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-              <div>
-                <p className="text-display text-[#1A1A2E] font-bold mb-1">
-                  {mounted ? stats.totalRecordings.toLocaleString() : "0"}
-                </p>
-                <p className="text-caption text-text-muted uppercase tracking-wider font-semibold">
-                  {t("stats.recordings")}
-                </p>
-              </div>
-              <div>
-                <p className="text-display text-[#1A1A2E] font-bold mb-1">
-                  {mounted ? stats.totalUsers.toLocaleString() : "0"}
-                </p>
-                <p className="text-caption text-text-muted uppercase tracking-wider font-semibold">
-                  {t("stats.speakers")}
-                </p>
-              </div>
-              <div>
-                <p className="text-display text-[#1A1A2E] font-bold mb-1">
-                  {mounted ? (stats.totalHours || 0).toLocaleString() : "0"}h
-                </p>
-                <p className="text-caption text-text-muted uppercase tracking-wider font-semibold">
-                  {t("stats.hours")}
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <LiveStats />
 
         {/* HOW IT WORKS SECTION */}
         <section className="relative py-20 overflow-hidden">
@@ -225,10 +165,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-      </main>
-
       <BrandShowcase />
-      <Footer />
     </div>
   );
 }

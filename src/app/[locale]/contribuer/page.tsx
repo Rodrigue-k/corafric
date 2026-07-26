@@ -4,8 +4,6 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
 
 export default function ContribuerPage() {
   const t = useTranslations("contribuer");
@@ -38,10 +36,8 @@ export default function ContribuerPage() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-[#F7F3EE] font-sans overflow-hidden">
-      <Navbar />
-
-      <main className="flex-grow relative flex items-center justify-center z-10 overflow-visible">
+    <div className="h-[calc(100vh-80px)] flex flex-col bg-[#F7F3EE] overflow-hidden">
+      <div className="flex-grow relative flex items-center justify-center z-10 overflow-visible">
         {/* Background decorative shapes */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
           {/* Left terracotta light shape */}
@@ -149,9 +145,7 @@ export default function ContribuerPage() {
 
           </div>
         </div>
-      </main>
-
-      <Footer />
+      </div>
     </div>
   );
 }

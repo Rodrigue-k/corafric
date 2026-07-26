@@ -29,6 +29,9 @@ export const metadata: Metadata = {
   },
 };
 
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
+
 export default async function LocaleLayout({
   children,
   params,
@@ -54,7 +57,11 @@ export default async function LocaleLayout({
       >
         <body className="min-h-full flex flex-col bg-background text-foreground">
           <NextIntlClientProvider messages={messages}>
-            {children}
+            <Navbar />
+            <main className="flex-grow">
+              {children}
+            </main>
+            <Footer />
           </NextIntlClientProvider>
           <Analytics />
         </body>

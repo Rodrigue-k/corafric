@@ -1,7 +1,5 @@
 import React from "react";
 import { getTranslations } from "next-intl/server";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
 import ValidateClientPage from "./ValidateClientPage";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -14,14 +12,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function ValidatePage() {
   return (
-    <div className="min-h-screen flex flex-col bg-background font-sans">
-      <Navbar />
-
-      <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
-        <ValidateClientPage />
-      </main>
-
-      <Footer />
+    <div className="py-12 px-4 sm:px-6 lg:px-8">
+      <ValidateClientPage />
     </div>
   );
 }

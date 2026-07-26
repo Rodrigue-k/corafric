@@ -56,7 +56,7 @@ INSERT INTO sentences (text, language, source) VALUES
 ('Dɔdɔ le ku dzi.', 'ewe', 'system')
 ON CONFLICT DO NOTHING;
 
--- Table du Dictionnaire Trilingue
+-- Table du dictionnaire (Éwé, Français, Anglais) avec croisement de sources
 CREATE TABLE IF NOT EXISTS dictionary_words (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   word_ewe TEXT NOT NULL UNIQUE,
@@ -64,8 +64,8 @@ CREATE TABLE IF NOT EXISTS dictionary_words (
   word_en TEXT,
   definition TEXT,
   audio_url TEXT,
-  sources JSONB DEFAULT '[]'::jsonb, -- Liste des sources ayant validé le mot (ex: ["google", "gbelexicon"])
-  confidence_score INTEGER DEFAULT 1, -- Degré de fiabilité basé sur le croisement
+  sources JSONB DEFAULT '[]'::jsonb, -- Liste des sources ayant validé (ex: ["google", "wiktionary"])
+  confidence_score INTEGER DEFAULT 0, -- Niveau de fiabilité (augmente avec le croisement)
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
