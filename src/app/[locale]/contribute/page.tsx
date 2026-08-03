@@ -14,11 +14,13 @@ export default async function ContributePage() {
   const t = await getTranslations("contribute");
 
   return (
-    <div className="py-12 px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-4xl space-y-8">
-        <div className="text-center space-y-2">
-          <h1 className="text-h1 text-foreground font-display">{t("title")}</h1>
-          <p className="text-body text-text-muted max-w-lg mx-auto">
+    <div className="min-h-[calc(100vh-160px)] flex flex-col justify-center py-4 px-4 sm:px-6">
+      <div className="mx-auto max-w-2xl w-full space-y-4">
+        <div className="text-center space-y-1">
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground font-display">
+            {t("title")}
+          </h1>
+          <p className="text-xs text-text-muted max-w-md mx-auto">
             {t("phraseLabel")}
           </p>
         </div>

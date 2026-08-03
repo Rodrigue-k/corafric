@@ -2,20 +2,23 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { Sentence } from "@/types";
+import { DictionaryWord } from "@/types";
 import { Button } from "../ui/Button";
-import { SentenceDisplay } from "./SentenceDisplay";
+import { WordDisplay } from "./WordDisplay";
+import { CustomAudioPlayer } from "./CustomAudioPlayer";
 import { AudioVisualizer } from "./AudioVisualizer";
 import { Card } from "../ui/Card";
-import { Mic, Square, RotateCcw, Send, CheckCircle, AlertCircle } from "lucide-react";
+import { Mic, Square, RotateCcw, Send, CheckCircle, AlertCircle, SkipForward, Flag } from "lucide-react";
 
-type StudioState = "idle" | "recording" | "recorded" | "submitting" | "submitted";
+import { cleanAudioBlob } from "@/lib/audioProcessing";
+
+type StudioState = "idle" | "recording" | "recorded" | "cleaning" | "submitting" | "submitted";
 
 export const RecordingStudio: React.FC = () => {
   const t = useTranslations("contribute");
   const [studioState, setStudioState] = useState<StudioState>("idle");
-  const [sentence, setSentence] = useState<Sentence | null>(null);
-  const [isLoadingSentence, setIsLoadingSentence] = useState<boolean>(true);
+  const [word, setWord] = useState<DictionaryWord | null>(null);
+  const [isLoadingWord, setIsLoadingWord] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Recording audio resources
@@ -28,27 +31,27 @@ export const RecordingStudio: React.FC = () => {
   const [recordingSeconds, setRecordingSeconds] = useState<number>(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const fetchNextSentence = async () => {
+  const fetchNextWord = async () => {
     try {
-      setIsLoadingSentence(true);
+      setIsLoadingWord(true);
       setErrorMessage(null);
       setAudioBlob(null);
       setAudioUrl(null);
       setRecordingSeconds(0);
       setStudioState("idle");
 
-      const res = await fetch("/api/sentences/next");
+      const res = await fetch("/api/words/next");
       const data = await res.json();
 
       if (data.error) {
         throw new Error(data.error);
       }
 
-      setSentence(data.sentence);
+      setWord(data.word);
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : "Erreur.");
     } finally {
-      setIsLoadingSentence(false);
+      setIsLoadingWord(false);
     }
   };
 
@@ -56,16 +59,16 @@ export const RecordingStudio: React.FC = () => {
     let ignore = false;
     async function loadInitial() {
       try {
-        const res = await fetch("/api/sentences/next");
+        const res = await fetch("/api/words/next");
         const data = await res.json();
         if (!ignore) {
           if (data.error) throw new Error(data.error);
-          setSentence(data.sentence);
+          setWord(data.word);
         }
       } catch (err: unknown) {
         if (!ignore) setErrorMessage(err instanceof Error ? err.message : "Erreur.");
       } finally {
-        if (!ignore) setIsLoadingSentence(false);
+        if (!ignore) setIsLoadingWord(false);
       }
     }
     void loadInitial();
@@ -75,9 +78,12 @@ export const RecordingStudio: React.FC = () => {
     };
   }, []);
 
+  const [audioDuration, setAudioDuration] = useState<number>(0);
+
   const startRecording = async () => {
     try {
       setErrorMessage(null);
+      setAudioDuration(0);
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       setMediaStream(stream);
 
@@ -94,10 +100,20 @@ export const RecordingStudio: React.FC = () => {
         }
       };
 
-      recorder.onstop = () => {
-        const blob = new Blob(chunks, { type: mimeType });
-        setAudioBlob(blob);
-        setAudioUrl(URL.createObjectURL(blob));
+      recorder.onstop = async () => {
+        const rawBlob = new Blob(chunks, { type: mimeType });
+        try {
+          setStudioState("cleaning");
+          const cleaned = await cleanAudioBlob(rawBlob);
+          setAudioBlob(cleaned);
+          setAudioUrl(URL.createObjectURL(cleaned));
+          setStudioState("recorded");
+        } catch (err) {
+          console.error("Audio cleaning error, using raw audio:", err);
+          setAudioBlob(rawBlob);
+          setAudioUrl(URL.createObjectURL(rawBlob));
+          setStudioState("recorded");
+        }
       };
 
       recorder.start();
@@ -128,26 +144,26 @@ export const RecordingStudio: React.FC = () => {
       mediaStream.getTracks().forEach((track) => track.stop());
       setMediaStream(null);
     }
-
-    setStudioState("recorded");
   };
 
   const resetRecording = () => {
     setAudioBlob(null);
     setAudioUrl(null);
     setRecordingSeconds(0);
+    setAudioDuration(0);
     setStudioState("idle");
   };
 
   const submitRecording = async () => {
-    if (!audioBlob || !sentence) return;
+    if (!audioBlob || !word) return;
 
     try {
       setStudioState("submitting");
       const formData = new FormData();
       formData.append("audio", audioBlob);
-      formData.append("sentenceId", sentence.id);
-      formData.append("durationMs", (recordingSeconds * 1000).toString());
+      formData.append("wordId", word.id);
+      const finalDuration = audioDuration > 0 ? audioDuration * 1000 : recordingSeconds * 1000;
+      formData.append("durationMs", Math.round(finalDuration).toString());
 
       const res = await fetch("/api/recordings/upload", {
         method: "POST",
@@ -162,7 +178,7 @@ export const RecordingStudio: React.FC = () => {
       setStudioState("submitted");
 
       setTimeout(() => {
-        void fetchNextSentence();
+        void fetchNextWord();
       }, 1500);
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : "Erreur de soumission.");
@@ -170,11 +186,11 @@ export const RecordingStudio: React.FC = () => {
     }
   };
 
-  if (isLoadingSentence) {
+  if (isLoadingWord) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[300px] gap-4">
-        <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-        <p className="text-body text-text-muted">Chargement...</p>
+        <div className="w-10 h-10 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+        <p className="text-sm text-text-muted">Chargement...</p>
       </div>
     );
   }
@@ -182,25 +198,25 @@ export const RecordingStudio: React.FC = () => {
   if (errorMessage && studioState === "idle") {
     return (
       <Card className="max-w-xl mx-auto p-8 border-red-200 bg-red-50/50 text-center space-y-4">
-        <AlertCircle className="w-12 h-12 text-red-500 mx-auto" />
-        <h3 className="text-h3 font-semibold text-red-800">Erreur</h3>
-        <p className="text-body text-red-700">{errorMessage}</p>
-        <Button onClick={fetchNextSentence} variant="primary">
+        <AlertCircle className="w-10 h-10 text-red-500 mx-auto" />
+        <h3 className="text-lg font-semibold text-red-800">Erreur</h3>
+        <p className="text-sm text-red-700">{errorMessage}</p>
+        <Button onClick={fetchNextWord} variant="primary">
           Réessayer
         </Button>
       </Card>
     );
   }
 
-  if (!sentence) {
+  if (!word) {
     return (
       <Card className="max-w-xl mx-auto p-8 text-center space-y-6">
-        <CheckCircle className="w-16 h-16 text-green-500 mx-auto" />
-        <h3 className="text-h1">Félicitations !</h3>
-        <p className="text-body text-text-muted">
-          Toutes les phrases ont été enregistrées.
+        <CheckCircle className="w-12 h-12 text-green-600 mx-auto" />
+        <h3 className="text-2xl font-bold">Tous les mots ont été enregistrés</h3>
+        <p className="text-sm text-text-muted">
+          Merci pour votre contribution !
         </p>
-        <Button onClick={fetchNextSentence} variant="primary">
+        <Button onClick={fetchNextWord} variant="primary">
           Actualiser
         </Button>
       </Card>
@@ -208,12 +224,12 @@ export const RecordingStudio: React.FC = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
-      {/* Phrase display */}
-      <SentenceDisplay sentence={sentence} />
+    <div className="max-w-2xl mx-auto space-y-4">
+      {/* Word display */}
+      <WordDisplay word={word} />
 
       {/* Recording Studio Status */}
-      <Card className="p-8 flex flex-col items-center justify-center space-y-6 relative overflow-hidden">
+      <Card className="p-5 flex flex-col items-center justify-center space-y-4 relative overflow-hidden">
         {studioState === "idle" && (
           <div className="text-center space-y-6 w-full">
             <AudioVisualizer stream={null} isRecording={false} />
@@ -222,16 +238,17 @@ export const RecordingStudio: React.FC = () => {
                 onClick={startRecording}
                 variant="primary"
                 size="lg"
-                className="w-full sm:w-auto shadow-lg shadow-primary/20"
+                className="w-full sm:w-auto shadow-md"
               >
                 <Mic className="w-5 h-5 mr-2" />
                 {t("startRecording")}
               </Button>
               <button
-                onClick={fetchNextSentence}
-                className="text-caption text-text-muted hover:text-primary transition-colors hover:underline"
+                onClick={fetchNextWord}
+                className="text-xs text-text-muted hover:text-foreground transition-colors flex items-center gap-1 py-1 px-3"
               >
-                {t("skip")}
+                <SkipForward className="w-3.5 h-3.5" />
+                Passer au mot suivant
               </button>
             </div>
           </div>
@@ -241,15 +258,15 @@ export const RecordingStudio: React.FC = () => {
           <div className="text-center space-y-6 w-full">
             <AudioVisualizer stream={mediaStream} isRecording={true} />
             <div className="flex flex-col items-center gap-4">
-              <div className="flex items-center gap-2 px-3 py-1 bg-red-100 rounded-full text-red-700 animate-pulse text-xs font-semibold">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-600 block" />
+              <div className="flex items-center gap-2 px-3 py-1 bg-red-100 dark:bg-red-950/40 rounded-full text-red-700 dark:text-red-400 text-xs font-semibold">
+                <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
                 {recordingSeconds}s
               </div>
               <Button
                 onClick={stopRecording}
                 variant="destructive"
                 size="lg"
-                className="w-full sm:w-auto shadow-lg shadow-red-600/20 animate-pulse"
+                className="w-full sm:w-auto"
               >
                 <Square className="w-5 h-5 mr-2 fill-white" />
                 {t("stopRecording")}
@@ -259,14 +276,12 @@ export const RecordingStudio: React.FC = () => {
         )}
 
         {studioState === "recorded" && (
-          <div className="text-center space-y-6 w-full">
+          <div className="text-center space-y-4 w-full">
             {audioUrl && (
-              <div className="w-full py-4 px-6 bg-primary-tint/20 rounded-xl border border-primary/10 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-label text-text-muted">Audio ({recordingSeconds}s)</span>
-                </div>
-                <audio src={audioUrl} controls className="h-10 max-w-[240px]" />
-              </div>
+              <CustomAudioPlayer
+                src={audioUrl}
+                durationInSeconds={audioDuration}
+              />
             )}
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
               <Button
@@ -287,7 +302,23 @@ export const RecordingStudio: React.FC = () => {
                 <Send className="w-4 h-4 mr-2" />
                 {t("submit")}
               </Button>
+              <Button
+                onClick={fetchNextWord}
+                variant="ghost"
+                size="md"
+                className="w-full sm:w-auto text-text-muted hover:text-foreground"
+              >
+                <SkipForward className="w-4 h-4 mr-2" />
+                Passer
+              </Button>
             </div>
+          </div>
+        )}
+
+        {studioState === "cleaning" && (
+          <div className="text-center py-8 space-y-4">
+            <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin mx-auto" />
+            <p className="text-sm text-text-muted">Traitement audio en cours...</p>
           </div>
         )}
 

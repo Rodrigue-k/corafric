@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
-import { sql } from "@/lib/db";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { sql, ensureDbUser } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -8,6 +8,11 @@ export async function POST(request: Request) {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Ensure validator exists in users table to prevent FK constraint failure
+    const clerkUser = await currentUser();
+    const username = clerkUser?.username || clerkUser?.firstName || `validateur_${userId.substring(0, 8)}`;
+    await ensureDbUser(userId, username);
 
     const { recordingId, isValid } = await request.json();
 
@@ -45,13 +50,23 @@ export async function POST(request: Request) {
     }
 
     // Update status and validation count
-    await sql`
+    const updatedRecs = (await sql`
       UPDATE recordings
       SET status = ${newStatus}, validation_count = ${positiveCount + negativeCount}
       WHERE id = ${recordingId}
-    `;
+      RETURNING word_id, audio_url
+    `) as { word_id: string | null; audio_url: string }[];
 
-    // 3. Increment validator total_validations
+    // 3. If approved and linked to a word, update dictionary_words with official human voice audio_url!
+    if (newStatus === "approved" && updatedRecs[0]?.word_id) {
+      await sql`
+        UPDATE dictionary_words
+        SET audio_url = ${updatedRecs[0].audio_url}, updated_at = NOW()
+        WHERE id = ${updatedRecs[0].word_id}
+      `;
+    }
+
+    // 4. Increment validator total_validations
     await sql`
       UPDATE users
       SET total_validations = total_validations + 1

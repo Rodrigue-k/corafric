@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { ValidationCard } from "@/components/validation/ValidationCard";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { CheckCircle2, Headphones, Sparkles, AlertCircle } from "lucide-react";
+import { CheckCircle2, Headphones, AlertCircle } from "lucide-react";
 
 interface ValidationRecording {
   id: string;
@@ -85,7 +85,6 @@ export default function ValidateClientPage() {
 
         {/* Session Stats badge */}
         <div className="bg-primary-tint border border-primary/20 px-4 py-2 rounded-2xl flex items-center gap-2.5">
-          <Sparkles className="w-5 h-5 text-primary" />
           <div>
             <p className="text-[10px] uppercase font-semibold text-text-muted">Session</p>
             <p className="text-sm font-bold text-primary">

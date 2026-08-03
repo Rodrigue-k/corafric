@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Card } from "../ui/Card";
 import { Badge } from "../ui/Badge";
 import { ValidationControls } from "./ValidationControls";
+import { CustomAudioPlayer } from "../recording/CustomAudioPlayer";
 import { Volume2, AlertCircle, CheckCircle } from "lucide-react";
 
 interface ValidationRecording {
@@ -76,25 +77,23 @@ export const ValidationCard: React.FC<ValidationCardProps> = ({ recording, onVot
         </div>
       </div>
 
-      {/* Sentence Display */}
+      {/* Text / Word Display */}
       <div className="space-y-2 py-4">
         <p className="text-caption text-text-muted uppercase tracking-wider font-semibold">
-          Texte :
+          Mot à valider :
         </p>
-        <p className="text-h2 font-display text-foreground leading-relaxed">
+        <p className="text-h2 text-3xl font-display font-bold text-foreground leading-relaxed">
           {recording.sentence.text}
         </p>
+        {recording.sentence.language && recording.sentence.language !== "ewe" && (
+          <p className="text-body text-text-muted italic">
+            🇫🇷 {recording.sentence.language}
+          </p>
+        )}
       </div>
 
       {/* Audio playback row */}
-      <div className="py-6 px-4 bg-primary-tint/25 border border-primary/10 rounded-xl flex items-center justify-center">
-        <audio
-          src={recording.audioUrl}
-          controls
-          className="w-full max-w-[360px] focus:outline-none"
-          autoPlay={false}
-        />
-      </div>
+      <CustomAudioPlayer src={recording.audioUrl} />
 
       {/* Interaction Controls */}
       {!voteSuccess ? (

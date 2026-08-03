@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS sentences (
 CREATE TABLE IF NOT EXISTS recordings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   sentence_id UUID REFERENCES sentences(id) ON DELETE CASCADE,
+  word_id UUID REFERENCES dictionary_words(id) ON DELETE CASCADE,
   user_id TEXT REFERENCES users(id),
   audio_url TEXT NOT NULL,
   duration_ms INTEGER,
@@ -32,7 +33,9 @@ CREATE TABLE IF NOT EXISTS recordings (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Table des validations (votes)
+-- Migration pour lier les enregistrements aux mots du dictionnaire
+ALTER TABLE recordings ADD COLUMN IF NOT EXISTS word_id UUID REFERENCES dictionary_words(id) ON DELETE CASCADE;
+ALTER TABLE recordings ALTER COLUMN sentence_id DROP NOT NULL;
 CREATE TABLE IF NOT EXISTS validations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   recording_id UUID REFERENCES recordings(id) ON DELETE CASCADE,

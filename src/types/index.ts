@@ -17,6 +17,14 @@ export interface Sentence {
   created_at: Date;
 }
 
+export interface DictionaryWord {
+  id: string;
+  word_ewe: string;
+  word_fr: string | null;
+  word_en: string | null;
+  definition: string | null;
+}
+
 export interface Recording {
   id: string;
   sentence_id: string;
