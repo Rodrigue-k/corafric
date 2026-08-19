@@ -37,7 +37,7 @@ export const BrandShowcase: React.FC = () => {
             
             <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-5 pt-1 text-sm text-foreground/80 font-medium">
               <a
-                href="mailto:hello@corafric.com"
+                href="mailto:contact@corafric.com"
                 className="flex items-center gap-2 hover:text-primary transition-colors duration-200"
               >
                 <Mail className="w-4 h-4 text-primary" />
