@@ -1,19 +1,27 @@
 {
   "nav": {
+    "home": "Home",
     "contribute": "Contribute",
+    "dictionary": "Dictionary",
+    "leaderboard": "Leaderboard",
     "validate": "Validate",
     "explore": "Explore",
-    "dictionary": "Dictionary",
     "signIn": "Sign in",
     "join": "Join",
     "support": "Support"
   },
+
   "landing": {
     "badge": "Open Source · Ewe · Togo",
     "title": "Africa's voice,\ntraining tomorrow's AI.",
     "subtitle": "Contribute in 2 minutes. Read a sentence in Ewe, record your voice. You're building Africa's AI infrastructure.",
     "ctaPrimary": "Start contributing",
     "ctaSecondary": "View dataset",
+    "voicePreview": {
+      "lang": "Ewe Language · Togo",
+      "phrase": "« Eŋlɔ wò gbe ɖe mɔ̃ me »",
+      "meaning": "Your voice trains the AI"
+    },
     "stats": {
       "recordings": "Recordings",
       "speakers": "Active speakers",

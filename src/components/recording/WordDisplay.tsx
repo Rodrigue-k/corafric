@@ -7,30 +7,36 @@ interface WordDisplayProps {
 
 export const WordDisplay: React.FC<WordDisplayProps> = ({ word }) => {
   return (
-    <div className="w-full text-center space-y-2 py-5 px-6 rounded-2xl bg-card border border-border shadow-sm">
-      <span className="text-[10px] font-semibold text-primary uppercase tracking-widest block">
-        Éwé (ɛʋɛgbɛ)
-      </span>
-      <h2 className="text-3xl md:text-4xl font-bold font-display text-foreground leading-snug">
+    <div className="w-full text-center space-y-4 py-8 px-6 sm:px-10 rounded-2xl bg-white border border-border shadow-xs">
+      <div className="flex items-center justify-center gap-2">
+        <span className="text-xs font-semibold uppercase tracking-widest text-primary">
+          Langue Éwé · Dictionnaire
+        </span>
+      </div>
+
+      {/* Main Ewe Word */}
+      <h2 className="text-3xl sm:text-5xl font-bold font-display text-foreground leading-tight tracking-tight">
         {word.word_ewe}
       </h2>
-      <div className="space-y-0.5">
-        {word.word_fr && (
-          <p className="text-sm text-foreground font-medium">
-            {word.word_fr}
+
+      {/* Meaning & Translation */}
+      <div className="space-y-1 pt-1">
+        {(word.word_fr || word.word_en) && (
+          <p className="text-base sm:text-lg font-medium text-foreground">
+            {word.word_fr || word.word_en}
           </p>
         )}
-        {word.word_en && (
+        {word.word_fr && word.word_en && (
           <p className="text-xs text-text-muted">
-            {word.word_en}
+            Anglais : {word.word_en}
+          </p>
+        )}
+        {word.definition && (
+          <p className="text-xs text-text-muted italic max-w-md mx-auto pt-2">
+            « {word.definition} »
           </p>
         )}
       </div>
-      {word.definition && (
-        <p className="text-[11px] text-text-muted italic max-w-md mx-auto pt-1">
-          "{word.definition}"
-        </p>
-      )}
     </div>
   );
 };

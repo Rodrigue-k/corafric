@@ -1,20 +1,30 @@
 # Corafric
 
+🌍 *[Lire la version française ci-dessous](#-version-française)*
+
 > **La voix de l'Afrique, entraîne l'IA de demain.**  
 > *Africa's voice, training tomorrow's AI.*
 
-Corafric is a community-driven, open-source platform designed to collect and validate voice datasets in African languages, beginning with **Ewe** (Togo). Our mission is to bridge the massive gap in artificial intelligence models where African languages are unrepresented, preserving our rich oral heritage for future generations.
+Corafric is a community-driven, open-source platform designed to collect and validate voice datasets in **African languages**. While our journey **begins with Ewe** (Togo, Ghana, Benin) as our starting point, our ultimate mission is to bridge the massive gap in artificial intelligence models for multiple unrepresented African languages, preserving our rich oral heritage for future generations.
 
 ---
 
-## The Mission
+## The Vision: A Digital Language Academy
 
-Most modern AI voice models do not understand African languages. Corafric aims to solve this by building high-quality, open-license (**CC-BY**) voice datasets directly contributed and validated by the communities themselves. 
+Corafric is more than a data collection tool; it is the **Digital Academy for African Languages**. We aim to standardize, preserve, and digitize our linguistic heritage.
+
+Most modern AI voice models do not understand African languages. Corafric aims to solve this through a **Two-Pillar Strategy**:
+
+### Pillar 1: The Product (Audio Dictionary)
+A fully accessible, community-validated online dictionary. Users can search for words, see their definitions, and hear the exact tonal pronunciation. This preserves the language today and provides immediate value to learners and the diaspora.
+
+### Pillar 2: The AI Engine (Sentence Studio)
+Behind the scenes, contributors record their voices reading full, natural sentences from our massive text corpus. This context-rich audio is the "oil" required to train the next generation of Text-to-Speech (TTS) and Speech-to-Text (STT) neural networks.
 
 We enable:
-* **Speakers** to record short localized sentences in Ewe and other languages.
-* **Validators** to vote on pronunciation quality to ensure clean datasets.
-* **Developers & Researchers** to download these free datasets and build translation, dictation, and assistant models.
+* **Contributors** to preserve their culture by recording words and sentences.
+* **Validators** to ensure linguistic accuracy and tone correctness.
+* **The Future** of African AI, built by Africans, for the world.
 
 ---
 
@@ -26,7 +36,6 @@ Our core identity guidelines:
 * **Typography**: Playfair Display (Serif) for display headers to convey heritage and trust, paired with Inter (Sans-serif) for clean, readable body copy.
 * **Color System**: Warm off-white background (`#F7F3EE`), balanced with terracotta (`#B84A2A`) and subtle gold (`#D4A017`) accents.
 * **Layout Structure**: Zéro generic flat background color blocks. We use overlapping geometric shapes, depth, and vertical splits to create a dynamic, premium space.
-* **Minimalism**: Zéro generic icon grids or redundant badges/capsules. Every visual element is intentional and spacious.
 
 ---
 
@@ -34,7 +43,7 @@ Our core identity guidelines:
 
 * **Framework**: Next.js 15 (App Router, Turbopack)
 * **Language**: TypeScript
-- **Styling**: Tailwind CSS
+* **Styling**: Tailwind CSS
 * **Localization**: next-intl (Bilingual French & English support)
 * **Authentication**: Clerk
 * **Database**: Neon (Serverless PostgreSQL)
@@ -42,65 +51,45 @@ Our core identity guidelines:
 * **Deployment**: Vercel
 
 ---
+<br>
 
-## Local Setup & Installation
+# 🇫🇷 Version Française
 
-Make sure you have Node.js installed locally.
-
-### 1. Clone the repository
-```bash
-git clone https://github.com/Rodrigue-k/corafric.git
-cd /corafric
-```
-
-### 2. Install dependencies
-```bash
-npm install
-```
-
-### 3. Configure Environment Variables
-Create a `.env` file in the root directory and add the following keys:
-```env
-# Clerk Authentication
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-CLERK_SECRET_KEY=your_clerk_secret_key
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/contribute
-NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/contribute
-
-# Database (Neon PostgreSQL)
-DATABASE_URL=postgresql://your_db_credentials
-
-# Storage (Cloudflare R2)
-R2_ACCOUNT_ID=your_cloudflare_account_id
-R2_ACCESS_KEY_ID=your_access_key_id
-R2_SECRET_ACCESS_KEY=your_secret_access_key
-R2_BUCKET_NAME=corafric-audio
-R2_PUBLIC_URL=https://your_public_bucket_url
-```
-
-### 4. Run the development server
-```bash
-npm run dev
-```
-Open `http://localhost:3000` in your browser.
+Corafric est une plateforme communautaire open-source conçue pour collecter et valider des jeux de données vocales dans les **langues africaines**. Bien que notre aventure **commence avec l'Éwé** (Togo, Ghana, Bénin) comme point de départ, notre mission ultime est de combler le gouffre massif dans les modèles d'intelligence artificielle pour de multiples langues africaines sous-représentées.
 
 ---
 
-## How to Contribute
+## La Vision : Une Académie Linguistique Numérique
 
-We welcome contributions from developers, linguists, designers, and organizations.
+Corafric est plus qu'un outil de collecte de données ; c'est **l'Académie Numérique des Langues Africaines**. Notre but est de standardiser, préserver et numériser notre patrimoine linguistique.
 
-1. **Record & Validate**: Visit the website to contribute audio files or validate existing recordings.
-2. **Code**: Explore our open issues on GitHub, submit Pull Requests (PRs), or improve the audio recording pipeline.
-3. **Design**: Help us maintain the premium look by adhering strictly to our editorial layout constraints.
-4. **Outreach**: Spread the word about Corafric within your university, local community, or networks.
+La plupart des modèles vocaux d'IA modernes ne comprennent pas les langues africaines. Corafric vise à résoudre ce problème grâce à une **Stratégie à Deux Piliers** :
 
-*Contact us at `contact@corafric.com` to explore formal partnerships.*
+### Pilier 1 : Le Produit (Dictionnaire Vocal)
+Un dictionnaire en ligne entièrement accessible et validé par la communauté. Les utilisateurs peuvent chercher des mots, voir leurs définitions et écouter la prononciation tonale exacte. Cela préserve la langue dès aujourd'hui et apporte une valeur immédiate aux apprenants.
+
+### Pilier 2 : Le Moteur IA (Studio d'Enregistrement)
+En coulisses, les contributeurs enregistrent leurs voix en lisant des phrases complètes et naturelles issues de notre corpus textuel. Cet audio riche en contexte est le "pétrole" nécessaire pour entraîner la prochaine génération de réseaux de neurones Text-to-Speech (Voix off) et Speech-to-Text (Transcription).
+
+Nous permettons :
+* Aux **Contributeurs** de préserver leur culture en enregistrant des mots et des phrases.
+* Aux **Validateurs** de garantir l'exactitude linguistique.
+* **L'avenir** de l'IA africaine, construite par des Africains, pour le monde.
 
 ---
 
-## License
+## Comment Contribuer
 
-Corafric is open-source software licensed under the **MIT License**. Collected voice datasets are published under **Creative Commons Attribution (CC-BY)**.
+Nous accueillons les contributions des développeurs, linguistes, designers et organisations.
+
+1. **Enregistrer & Valider** : Visitez le site web pour contribuer en audio ou valider les enregistrements existants.
+2. **Code** : Explorez nos tickets ouverts sur GitHub et soumettez des Pull Requests (PRs).
+3. **Communication** : Faites connaître Corafric au sein de votre université ou de vos réseaux locaux.
+
+*Contactez-nous à `contact@corafric.com` pour explorer des partenariats.*
+
+---
+
+## Licence
+
+Corafric est un logiciel open-source sous **Licence MIT**. Les données vocales collectées sont publiées sous licence **Creative Commons Attribution (CC-BY)**.

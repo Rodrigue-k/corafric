@@ -1,19 +1,27 @@
 {
   "nav": {
+    "home": "Accueil",
     "contribute": "Contribuer",
+    "dictionary": "Dictionnaire",
+    "leaderboard": "Classement",
     "validate": "Valider",
     "explore": "Explorer",
-    "dictionary": "Dictionnaire",
     "signIn": "Se connecter",
     "join": "Rejoindre",
     "support": "Soutenir"
   },
+
   "landing": {
     "badge": "Open Source · Ewe · Togo",
     "title": "La voix de l'Afrique,\nentraîne l'IA de demain.",
     "subtitle": "Contribue en 2 minutes. Lis une phrase en Ewe, enregistre ta voix. Tu construis l'infrastructure IA africaine.",
     "ctaPrimary": "Commencer à contribuer",
     "ctaSecondary": "Voir le dataset",
+    "voicePreview": {
+      "lang": "Langue Éwé · Togo",
+      "phrase": "« Eŋlɔ wò gbe ɖe mɔ̃ me »",
+      "meaning": "Ta voix entraîne l'IA"
+    },
     "stats": {
       "recordings": "Enregistrements",
       "speakers": "Locuteurs actifs",

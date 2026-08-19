@@ -7,9 +7,12 @@ import crypto from "crypto";
 
 export async function POST(request: Request) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    let userId: string | null = null;
+    try {
+      const authResult = await auth();
+      userId = authResult.userId;
+    } catch {
+      userId = null;
     }
 
     const formData = await request.formData();
@@ -51,6 +54,8 @@ export async function POST(request: Request) {
           .replace(/[^a-z0-9]+/g, "_")
           .replace(/^_+|_+$/g, "");
       }
+    } else if (sentenceId) {
+      wordSlug = "phrase";
     }
 
     const shortId = crypto.randomUUID().substring(0, 8);
@@ -86,20 +91,31 @@ export async function POST(request: Request) {
     // Insert recording into database
     const recordingResult = (await sql`
       INSERT INTO recordings (sentence_id, word_id, user_id, audio_url, duration_ms, file_size_bytes, status)
-      VALUES (${sentenceId}, ${wordId}, ${userId}, ${audioUrl}, ${durationMs}, ${fileSize}, 'pending')
+      VALUES (${sentenceId || null}, ${wordId || null}, ${userId}, ${audioUrl}, ${durationMs}, ${fileSize}, 'pending')
       RETURNING id
     `) as Record<string, unknown>[];
 
-    // Increment user contribution counts
-    await sql`
-      UPDATE users
-      SET total_contributions = total_contributions + 1
-      WHERE id = ${userId}
-    `;
+    // If user is authenticated, increment user contribution counts
+    if (userId) {
+      await sql`
+        UPDATE users
+        SET total_contributions = total_contributions + 1
+        WHERE id = ${userId}
+      `;
+    }
+
+    // If recorded a sentence, update sentence status
+    if (sentenceId) {
+      await sql`
+        UPDATE sentences
+        SET recording_status = 'recorded'
+        WHERE id = ${sentenceId}
+      `;
+    }
 
     return NextResponse.json({
       success: true,
-      recordingId: recordingResult[0].id,
+      recordingId: recordingResult[0]?.id || shortId,
       audioUrl,
     });
   } catch (error) {
@@ -110,3 +126,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

@@ -62,8 +62,16 @@ Des travaux académiques existent déjà sur l'Ewe. Ils ne sont pas des concurre
 | Dictionnaire (variété Togo) | Dzablu-Kumah wordlist | partiel | à vérifier | ⚠️ vérifier accès |
 | Dictionnaire en ligne | Glosbe Ewe-Français | variable | à vérifier | ⚠️ vérifier accès |
 | Corpus ASR 1130h | ICNLSP 2025 (académique) | 1130h audio | à négocier | ⚠️ contacter auteurs |
+| Audio Nollywood (Doublage Éwé) | YouTube (Chaînes KEKELIHA, Films iBO) | Des centaines d'heures | Fair Use (Training IA) | ✅ À scrapper/archiver |
 
 **Note importante :** certaines URLs peuvent retourner des 404. Vérifier chaque ressource manuellement avant de planifier l'import.
+
+---
+
+### Le "Reverse Workflow" (Transcription Audio → Texte)
+L'identification de films doublés en Éwé sur YouTube ouvre une nouvelle voie massive pour l'entraînement STT (Speech-to-Text). 
+- **Stratégie V2** : Au lieu de lire du texte, les contributeurs écouteront des extraits de 5 secondes de ces films et taperont ce qu'ils entendent.
+- **Sécurité Juridique** : Les vidéos brutes ne seront pas republiées. Elles seront découpées en micro-clips en backend. L'utilisation d'œuvres protégées pour l'extraction de métadonnées et l'entraînement d'IA rentre généralement dans le cadre du "Fair Use" (Text and Data Mining), tant que l'œuvre originelle n'est pas redistribuée.
 
 ---
 
