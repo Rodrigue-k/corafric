@@ -7,7 +7,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const t = await getTranslations({ locale, namespace: "nav" });
   return {
     title: `Classement des Contributeurs — Corafric`,
-    description: "Découvre les meilleurs pionniers et contributeurs qui construisent le dataset vocal en langues africaines.",
+    description: "Classement des contributeurs les plus actifs au corpus vocal en langues africaines.",
   };
 }
 

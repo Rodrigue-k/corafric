@@ -56,7 +56,7 @@ export async function GET() {
       isAuthenticated: true,
       rank: 42,
       totalUsers: 100,
-      username: "Pionnier",
+      username: "Contributeur",
       totalContributions: 3,
     });
   }

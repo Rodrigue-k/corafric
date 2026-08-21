@@ -5,123 +5,129 @@
     "dictionary": "Dictionnaire",
     "leaderboard": "Classement",
     "validate": "Valider",
-    "explore": "Explorer",
-    "signIn": "Se connecter",
-    "join": "Rejoindre",
+    "explore": "Corpus",
+    "signIn": "Connexion",
+    "join": "S'inscrire",
     "support": "Soutenir"
   },
-
   "landing": {
-    "badge": "Open Source · Ewe · Togo",
-    "title": "La voix de l'Afrique,\nentraîne l'IA de demain.",
-    "subtitle": "Contribue en 2 minutes. Lis une phrase en Ewe, enregistre ta voix. Tu construis l'infrastructure IA africaine.",
-    "ctaPrimary": "Commencer à contribuer",
-    "ctaSecondary": "Voir le dataset",
+    "badge": "Académie Numérique",
+    "title": "Préserver la voix\nde l'Afrique.",
+    "subtitle": "L'académie numérique pour standardiser, documenter et numériser notre patrimoine linguistique.",
+    "ctaPrimary": "Contribuer",
+    "ctaSecondary": "Dictionnaire",
     "voicePreview": {
-      "lang": "Langue Éwé · Togo",
+      "lang": "Éwé",
       "phrase": "« Eŋlɔ wò gbe ɖe mɔ̃ me »",
-      "meaning": "Ta voix entraîne l'IA"
+      "meaning": "L'héritage par la voix"
     },
     "stats": {
-      "recordings": "Enregistrements",
-      "speakers": "Locuteurs actifs",
-      "hours": "Heures audio"
+      "recordings": "Audios",
+      "speakers": "Voix",
+      "hours": "Heures"
     },
     "how": {
-      "title": "Comment ça marche",
-      "step1Title": "Tu lis",
-      "step1Desc": "On te propose une phrase en Ewe. Tu la lis à voix haute.",
-      "step2Title": "Tu enregistres",
-      "step2Desc": "Tu appuies sur le bouton. Ton micro capte ta voix. C'est tout.",
-      "step3Title": "Tu construis",
-      "step3Desc": "Ta voix rejoint la base de données. L'IA africaine apprend."
+      "title": "Deux Piliers Complémentaires",
+      "step1Title": "Dictionnaire Vocal",
+      "step1Desc": "Enregistrement de termes isolés avec définitions et tons.",
+      "step2Title": "Corpus de Phrases",
+      "step2Desc": "Lecture en contexte naturel pour la syntaxe et la prosodie.",
+      "step3Title": "Validation Communautaire",
+      "step3Desc": "Contrôle qualité par des locuteurs natifs pour garantir la conformité."
     },
     "markets": {
-      "label": "NOTRE ZONE D'IMPACT",
-      "title": "Nous commençons au Togo.",
-      "subtitle": "Chaque langue africaine mérite d'être entendue par l'IA. Nous démarrons avec l'Ewe. La suite appartient au continent.",
-      "badge": "Actif : Togo — Ewe"
+      "label": "DÉPLOIEMENT",
+      "title": "Initiation au Togo.",
+      "subtitle": "Phase 1 : l'Éwé. L'académie a vocation à s'étendre aux autres langues africaines.",
+      "badge": "Statut : Actif"
     }
   },
   "contribute": {
-    "title": "Enregistre ta voix",
-    "phraseLabel": "Lis cette phrase à voix haute",
-    "startRecording": "Commencer l'enregistrement",
-    "stopRecording": "Arrêter",
-    "submit": "Soumettre",
+    "title": "Studio Vocal",
+    "phraseLabel": "Lecture",
+    "startRecording": "Enregistrer",
+    "stopRecording": "Terminer",
+    "submit": "Valider",
     "retry": "Recommencer",
-    "skip": "Passer cette phrase",
-    "submitting": "Envoi en cours...",
-    "success": "Enregistrement soumis !",
-    "nextPhrase": "Phrase suivante"
+    "skip": "Ignorer",
+    "submitting": "Traitement...",
+    "success": "Sauvegardé.",
+    "nextPhrase": "Suivant"
   },
   "validate": {
-    "title": "Valider les enregistrements",
-    "instruction": "Écoute et dis si la phrase est bien prononcée",
+    "title": "Contrôle Qualité",
+    "instruction": "L'audio correspond-il précisément au texte ?",
     "play": "Écouter",
-    "valid": "Correct",
-    "invalid": "Incorrect",
-    "sessionCount": "{count} validations cette session"
+    "valid": "Conforme",
+    "invalid": "Rejeter",
+    "sessionCount": "{count} validations"
+  },
+  "leaderboard": {
+    "title": "Classement",
+    "subtitle": "Les contributeurs les plus actifs du corpus vocal.",
+    "rank": "Rang",
+    "user": "Contributeur",
+    "score": "Audios"
+  },
+  "dictionary": {
+    "title": "Dictionnaire Vocal",
+    "subtitle": "Notre patrimoine lexical numérisé.",
+    "searchPlaceholder": "Rechercher un mot...",
+    "noResults": "Aucun résultat.",
+    "listen": "Écouter",
+    "wordFr": "Français",
+    "wordEn": "Anglais"
   },
   "explore": {
-    "title": "Explorer le dataset",
-    "downloadTitle": "Télécharger le dataset",
-    "downloadDesc": "Dataset complet des enregistrements approuvés — libre d'utilisation (CC-BY)",
-    "downloadBtn": "Télécharger (ZIP)",
-    "leaderboardTitle": "Top contributeurs"
+    "title": "Le Corpus",
+    "leaderboardTitle": "Top Contributeurs",
+    "downloadTitle": "Accès aux données",
+    "downloadDesc": "L'intégralité du corpus audio est libre d'accès pour la recherche et les technologies vocales.",
+    "downloadBtn": "Télécharger le Dataset"
   },
   "brandShowcase": {
-    "tagline": "La voix et les technologies de demain",
-    "description": "Corafric est un projet communautaire open-source pour construire des jeux de données vocales libres, afin d'intégrer nos langues africaines dans l'infrastructure de l'intelligence artificielle.",
+    "tagline": "L'Académie Numérique.",
+    "description": "Corafric : plateforme libre pour la numérisation et la préservation des langues africaines.",
     "email": "contact@corafric.com",
-    "github": "Rejoindre sur GitHub",
+    "github": "GitHub",
     "support": "Soutenir le projet",
-    "privacy": "Politique de confidentialité",
-    "cookies": "Gestion des cookies",
-    "copyright": "Corafric. Projet communautaire open-source."
+    "privacy": "Confidentialité",
+    "cookies": "Cookies",
+    "copyright": "Corafric. Patrimoine linguistique ouvert."
   },
   "privacy": {
-    "title": "Politique de Confidentialité",
-    "content": "Cette plateforme est gérée de manière transparente et communautaire. Toutes les données vocales enregistrées et validées sont partagées sous licence libre CC-BY, pour le bien commun. Nous ne collectons aucune donnée personnelle sensible à votre insu. Les enregistrements audio sont anonymisés et ne contiennent pas d'identifiant nominatif public.",
-    "back": "Retour à l'accueil"
+    "title": "Confidentialité",
+    "content": "Plateforme communautaire transparente. Données sous licence libre CC-BY. Aucune collecte de données personnelles sensibles. Enregistrements anonymisés.",
+    "back": "Retour"
   },
   "cookies": {
-    "title": "Gestion des Cookies",
-    "content": "Corafric utilise uniquement des cookies techniques essentiels pour gérer votre session (par exemple pour rester connecté ou pour les besoins de validation des données). Nous n'utilisons aucun traceur publicitaire ou outil de profilage commercial.",
-    "back": "Retour à l'accueil"
+    "title": "Cookies",
+    "content": "Uniquement des cookies techniques pour votre session. Aucun traceur publicitaire. Aucun profilage.",
+    "back": "Retour"
   },
   "contribuer": {
     "hero": {
-      "tag": "REJOINDRE LE MOUVEMENT",
-      "title": "Les langues africaines\nméritent d'exister dans l'IA.",
-      "subtitle": "Corafric grandit grâce à des gens comme vous.\nVoici comment vous pouvez aider."
+      "tag": "TRANSMISSION",
+      "title": "Transmettre et pérenniser\nnos langues.",
+      "subtitle": "Corafric est un bien commun construit par ses locuteurs."
     },
     "ways": {
       "way1": {
-        "text": "Vous parlez Ewe",
-        "action": "Commencer à contribuer"
+        "text": "Vous parlez Éwé",
+        "action": "Contribuer"
       },
       "way2": {
-        "text": "Vous codez",
-        "action": "Voir le GitHub"
+        "text": "Vous développez",
+        "action": "GitHub"
       },
       "way3": {
-        "text": "Vous croyez au projet",
-        "action": "Partager le projet"
+        "text": "Vous soutenez",
+        "action": "Partager"
       }
     },
     "partnership": {
-      "text": "Vous représentez une organisation ?",
-      "cta": "Écrivez-nous"
+      "text": "Institution, ONG ou Université ?",
+      "cta": "Contactez-nous"
     }
-  },
-  "dictionary": {
-    "title": "Dictionnaire Trilingue",
-    "subtitle": "Éwé - Français - Anglais. Base de données en construction.",
-    "searchPlaceholder": "Rechercher un mot...",
-    "listen": "Écouter",
-    "noResults": "Aucun mot trouvé pour \"{query}\".",
-    "confidenceScore": "Score de fiabilité : {score}",
-    "sources": "Sources : {sources}"
   }
 }

@@ -21,7 +21,7 @@ export async function GET() {
 
     const rankedLeaderboard = leaderboardResult.map((entry, idx) => ({
       rank: idx + 1,
-      username: (entry.username as string) || `Pionnier #${idx + 1}`,
+      username: (entry.username as string) || `Contributeur #${idx + 1}`,
       country: (entry.country as string) || "Togo",
       total_contributions: Number(entry.total_contributions || 0),
       total_validations: Number(entry.total_validations || 0),

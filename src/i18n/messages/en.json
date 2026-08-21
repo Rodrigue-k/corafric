@@ -5,123 +5,129 @@
     "dictionary": "Dictionary",
     "leaderboard": "Leaderboard",
     "validate": "Validate",
-    "explore": "Explore",
-    "signIn": "Sign in",
+    "explore": "Corpus",
+    "signIn": "Sign In",
     "join": "Join",
     "support": "Support"
   },
-
   "landing": {
-    "badge": "Open Source · Ewe · Togo",
-    "title": "Africa's voice,\ntraining tomorrow's AI.",
-    "subtitle": "Contribute in 2 minutes. Read a sentence in Ewe, record your voice. You're building Africa's AI infrastructure.",
-    "ctaPrimary": "Start contributing",
-    "ctaSecondary": "View dataset",
+    "badge": "Digital Academy",
+    "title": "Preserving Africa's\nvoice.",
+    "subtitle": "The digital academy to standardize, document, and digitize our linguistic heritage.",
+    "ctaPrimary": "Contribute",
+    "ctaSecondary": "Dictionary",
     "voicePreview": {
-      "lang": "Ewe Language · Togo",
+      "lang": "Ewe",
       "phrase": "« Eŋlɔ wò gbe ɖe mɔ̃ me »",
-      "meaning": "Your voice trains the AI"
+      "meaning": "Heritage through voice"
     },
     "stats": {
-      "recordings": "Recordings",
-      "speakers": "Active speakers",
-      "hours": "Audio hours"
+      "recordings": "Audios",
+      "speakers": "Voices",
+      "hours": "Hours"
     },
     "how": {
-      "title": "How it works",
-      "step1Title": "You read",
-      "step1Desc": "We give you a sentence in Ewe. You read it out loud.",
-      "step2Title": "You record",
-      "step2Desc": "Press the button. Your mic captures your voice. That's it.",
-      "step3Title": "You build",
-      "step3Desc": "Your voice joins the dataset. African AI learns."
+      "title": "Two Complementary Pillars",
+      "step1Title": "Audio Dictionary",
+      "step1Desc": "Recording isolated terms with definitions, tones, and parts of speech.",
+      "step2Title": "Sentence Corpus",
+      "step2Desc": "Reading in natural context to model syntax and prosody.",
+      "step3Title": "Community Validation",
+      "step3Desc": "Quality control by native speakers to ensure accuracy."
     },
     "markets": {
-      "label": "OUR IMPACT ZONE",
-      "title": "We start in Togo.",
-      "subtitle": "Every African language deserves to be heard by AI. We start with Ewe. The rest belongs to the continent.",
-      "badge": "Active: Togo — Ewe"
+      "label": "DEPLOYMENT",
+      "title": "Starting in Togo.",
+      "subtitle": "Phase 1: Ewe. The academy is built to expand across other African languages.",
+      "badge": "Status: Active"
     }
   },
   "contribute": {
-    "title": "Record your voice",
-    "phraseLabel": "Read this sentence out loud",
-    "startRecording": "Start recording",
-    "stopRecording": "Stop",
+    "title": "Voice Studio",
+    "phraseLabel": "Reading",
+    "startRecording": "Record",
+    "stopRecording": "Finish",
     "submit": "Submit",
     "retry": "Retry",
-    "skip": "Skip this sentence",
-    "submitting": "Uploading...",
-    "success": "Recording submitted!",
-    "nextPhrase": "Next sentence"
+    "skip": "Skip",
+    "submitting": "Processing...",
+    "success": "Saved.",
+    "nextPhrase": "Next"
   },
   "validate": {
-    "title": "Validate recordings",
-    "instruction": "Listen and tell us if the sentence is well pronounced",
+    "title": "Quality Control",
+    "instruction": "Does the audio accurately match the text?",
     "play": "Listen",
-    "valid": "Correct",
-    "invalid": "Incorrect",
-    "sessionCount": "{count} validations this session"
+    "valid": "Accurate",
+    "invalid": "Reject",
+    "sessionCount": "{count} validations"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "subtitle": "The most active contributors to the voice corpus.",
+    "rank": "Rank",
+    "user": "Contributor",
+    "score": "Audios"
+  },
+  "dictionary": {
+    "title": "Audio Dictionary",
+    "subtitle": "Our digitized lexical heritage.",
+    "searchPlaceholder": "Search a term...",
+    "noResults": "No results.",
+    "listen": "Listen",
+    "wordFr": "French",
+    "wordEn": "English"
   },
   "explore": {
-    "title": "Explore the dataset",
-    "downloadTitle": "Download the dataset",
-    "downloadDesc": "Full dataset of approved recordings — free to use (CC-BY)",
-    "downloadBtn": "Download (ZIP)",
-    "leaderboardTitle": "Top contributors"
+    "title": "The Corpus",
+    "leaderboardTitle": "Top Contributors",
+    "downloadTitle": "Data Access",
+    "downloadDesc": "The full audio corpus is openly accessible for research and speech technologies.",
+    "downloadBtn": "Download Dataset"
   },
   "brandShowcase": {
-    "tagline": "Voice and tomorrow's technology",
-    "description": "Corafric is a community open-source project building free voice datasets to integrate our African languages into the artificial intelligence infrastructure.",
+    "tagline": "The Digital Academy.",
+    "description": "Corafric: open-source platform for the digitization and preservation of African languages.",
     "email": "contact@corafric.com",
-    "github": "Join on GitHub",
+    "github": "GitHub",
     "support": "Support the project",
-    "privacy": "Privacy Policy",
-    "cookies": "Cookies Policy",
-    "copyright": "Corafric. Community open-source project."
+    "privacy": "Privacy",
+    "cookies": "Cookies",
+    "copyright": "Corafric. Open linguistic heritage."
   },
   "privacy": {
-    "title": "Privacy Policy",
-    "content": "This platform is managed in a transparent and community-driven way. All recorded and approved voice data are shared under the open CC-BY license for the public good. We do not collect any sensitive personal data without your consent. Audio recordings are anonymized and do not contain public names or personal identifiers.",
-    "back": "Back to Home"
+    "title": "Privacy",
+    "content": "Transparent community platform. Data under CC-BY open license. No collection of sensitive personal data. Recordings are anonymized.",
+    "back": "Back"
   },
   "cookies": {
     "title": "Cookies Policy",
-    "content": "Corafric uses only essential technical cookies to manage your session (for example to keep you signed in or for data validation needs). We do not use any tracking cookies or commercial profiling tools.",
-    "back": "Back to Home"
+    "content": "Corafric uses only essential technical cookies for your session. No advertising trackers. No profiling.",
+    "back": "Back"
   },
   "contribuer": {
     "hero": {
-      "tag": "JOIN THE MOVEMENT",
-      "title": "African languages\ndeserve to exist in AI.",
-      "subtitle": "Corafric grows through people like you.\nHere's how you can help."
+      "tag": "TRANSMISSION",
+      "title": "Preserve and sustain\nour languages.",
+      "subtitle": "Corafric is a digital commons built by its native speakers."
     },
     "ways": {
       "way1": {
         "text": "You speak Ewe",
-        "action": "Start recording"
+        "action": "Contribute"
       },
       "way2": {
         "text": "You code",
-        "action": "View GitHub"
+        "action": "GitHub"
       },
       "way3": {
-        "text": "You believe in this",
-        "action": "Share it"
+        "text": "You support",
+        "action": "Share"
       }
     },
     "partnership": {
-      "text": "Representing an org?",
-      "cta": "Write to us"
+      "text": "Institution, NGO or University?",
+      "cta": "Contact us"
     }
-  },
-  "dictionary": {
-    "title": "Trilingual Dictionary",
-    "subtitle": "Ewe - French - English. Database under construction.",
-    "searchPlaceholder": "Search for a word...",
-    "listen": "Listen",
-    "noResults": "No words found for \"{query}\".",
-    "confidenceScore": "Confidence score: {score}",
-    "sources": "Sources: {sources}"
   }
 }
