@@ -54,7 +54,7 @@ export const ValidationCard: React.FC<ValidationCardProps> = ({
       setTimeout(() => {
         setVoteSuccess(false);
         onVoteSubmitted(data.status);
-      }, 500);
+      }, 450);
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : "Erreur de soumission.");
     } finally {
@@ -63,42 +63,44 @@ export const ValidationCard: React.FC<ValidationCardProps> = ({
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto space-y-10 py-4">
-      {/* Header Info */}
-      <div className="flex justify-between items-center border-b border-border/50 pb-3">
+    <div className="w-full max-w-xl mx-auto space-y-8 py-2">
+      {/* Subtle Meta Bar */}
+      <div className="flex justify-between items-center text-xs border-b border-border/40 pb-2.5">
         <span className="text-[10px] font-bold font-mono uppercase tracking-widest text-primary/70">
           Enregistrement #{recording.id.substring(0, 8)}
         </span>
-        <span className="text-xs font-display tracking-widest uppercase text-text-muted">
+        <span className="text-[10px] font-display tracking-widest uppercase text-text-muted font-medium">
           {recording.sentence.language || "Éwé"}
         </span>
       </div>
 
-      {/* Main Focus: The text to validate */}
-      <div className="text-center py-6 sm:py-8 space-y-3">
+      {/* Big Focal Text */}
+      <div className="text-center py-4 sm:py-6">
         <p className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-foreground leading-tight tracking-tight">
           « {recording.sentence.text} »
         </p>
       </div>
 
-      {/* Solid Custom Audio Player */}
+      {/* Seamless Custom Audio Player */}
       <div className="w-full">
         <CustomAudioPlayer src={recording.audioUrl} />
       </div>
 
       {/* Validation Controls */}
-      <div className="pt-6 border-t border-border/50">
+      <div className="pt-4 border-t border-border/40">
         {!voteSuccess ? (
           <ValidationControls onVote={handleVote} disabled={isSubmitting} />
         ) : (
-          <div className="flex items-center justify-center gap-2.5 p-4 bg-[#FAF8F5] rounded-2xl border border-primary/20 max-w-md mx-auto">
-            <CheckCircle className="w-5 h-5 text-primary" />
-            <p className="text-sm font-semibold text-foreground">Vote enregistré ! Suivant...</p>
+          <div className="flex items-center justify-center gap-2 py-3 px-4 bg-[#FAF8F5] rounded-full border border-primary/20 max-w-xs mx-auto">
+            <CheckCircle className="w-4 h-4 text-primary" />
+            <p className="text-xs font-semibold text-foreground font-display uppercase tracking-wider">
+              Vote validé
+            </p>
           </div>
         )}
 
         {errorMessage && (
-          <div className="flex items-center gap-2 p-3 mt-4 bg-red-50 text-red-600 rounded-xl border border-red-100 text-xs sm:text-sm max-w-md mx-auto">
+          <div className="flex items-center gap-2 p-3 mt-4 bg-red-50 text-red-600 rounded-xl border border-red-100 text-xs max-w-md mx-auto">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <p>{errorMessage}</p>
           </div>

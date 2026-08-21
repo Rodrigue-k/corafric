@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { LeaderboardEntry } from "@/types";
-import { Trophy, Mic } from "lucide-react";
+import { Trophy } from "lucide-react";
 
 export const LeaderboardClientPage: React.FC = () => {
   const t = useTranslations("leaderboard");
@@ -40,20 +40,20 @@ export const LeaderboardClientPage: React.FC = () => {
   const rest = leaderboard.slice(3);
 
   return (
-    <div className="max-w-4xl mx-auto space-y-10 py-6">
-      {/* Editorial Header */}
-      <div className="text-center space-y-3">
+    <div className="max-w-4xl mx-auto space-y-8 py-2">
+      {/* Compact Editorial Header */}
+      <div className="text-center space-y-2">
         <span className="text-[10px] sm:text-xs font-bold font-display uppercase tracking-widest text-primary block">
           Reconnaissance communautaire
         </span>
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-display text-foreground tracking-tight">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-display text-foreground tracking-tight">
           {t("title")}
         </h1>
-        <p className="text-sm text-text-muted max-w-xl mx-auto">
+        <p className="text-xs sm:text-sm text-text-muted max-w-lg mx-auto">
           {t("subtitle")}
         </p>
 
-        <div className="flex items-center justify-center gap-3 pt-2 text-xs font-display tracking-wider uppercase text-text-muted">
+        <div className="flex items-center justify-center gap-3 pt-1 text-xs font-display tracking-wider uppercase text-text-muted">
           <span>
             <strong className="text-foreground">{totalAudios.toLocaleString()}</strong> audios
           </span>
@@ -65,33 +65,33 @@ export const LeaderboardClientPage: React.FC = () => {
       </div>
 
       {loading ? (
-        <div className="flex flex-col items-center justify-center min-h-[260px] border-y border-border/40 py-16">
+        <div className="flex flex-col items-center justify-center min-h-[220px] border-y border-border/40 py-12">
           <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
-        <div className="space-y-10">
-          {/* Top 3 Podium Layout — Elegant, Warm Structure */}
+        <div className="space-y-8">
+          {/* Top 3 Podium — Flat, Cardless Structure, Zero Shadows */}
           {top3.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
               {top3.map((entry, index) => {
                 const rankLabels = ["1er", "2ème", "3ème"];
-                const rankColors = [
-                  "bg-amber-500/10 text-amber-600 border-amber-500/30",
-                  "bg-slate-400/10 text-slate-600 border-slate-400/30",
-                  "bg-amber-700/10 text-amber-700 border-amber-700/30",
+                const rankPillStyles = [
+                  "text-amber-700 border-amber-500/40 bg-amber-500/10",
+                  "text-slate-700 border-slate-400/40 bg-slate-400/10",
+                  "text-amber-900 border-amber-700/40 bg-amber-700/10",
                 ];
 
                 return (
                   <div
                     key={entry.username + index}
-                    className="bg-white border border-border/80 rounded-3xl p-6 sm:p-7 flex flex-col justify-between shadow-2xs hover:border-primary/50 transition-all group"
+                    className="border border-border/70 rounded-2xl p-5 sm:p-6 flex flex-col justify-between hover:border-primary/50 transition-colors bg-transparent group"
                   >
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${rankColors[index]}`}>
+                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${rankPillStyles[index]}`}>
                           {rankLabels[index]}
                         </span>
-                        {index === 0 && <Trophy className="w-4 h-4 text-amber-500" />}
+                        {index === 0 && <Trophy className="w-4 h-4 text-amber-600" />}
                       </div>
 
                       <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground group-hover:text-primary transition-colors truncate tracking-tight">
@@ -99,7 +99,7 @@ export const LeaderboardClientPage: React.FC = () => {
                       </h3>
                     </div>
 
-                    <div className="mt-8 pt-4 border-t border-border/40 flex justify-between text-xs font-display tracking-wider uppercase">
+                    <div className="mt-6 pt-3 border-t border-border/40 flex justify-between text-xs font-display tracking-wider uppercase">
                       <div className="space-y-0.5">
                         <span className="text-text-muted/60 text-[10px]">Audios</span>
                         <p className="font-bold text-sm text-foreground">{entry.total_contributions}</p>
@@ -117,8 +117,8 @@ export const LeaderboardClientPage: React.FC = () => {
 
           {/* Minimalist List for the rest */}
           {rest.length > 0 && (
-            <div className="pt-4">
-              <div className="flex items-center justify-between pb-3 border-b border-border/60 text-[10px] sm:text-xs font-bold font-display uppercase tracking-widest text-text-muted">
+            <div className="pt-2">
+              <div className="flex items-center justify-between pb-2.5 border-b border-border/60 text-[10px] sm:text-xs font-bold font-display uppercase tracking-widest text-text-muted">
                 <span>{t("rank")} · {t("user")}</span>
                 <div className="flex gap-8 sm:gap-12 text-right">
                   <span className="w-16">Audios</span>
@@ -130,7 +130,7 @@ export const LeaderboardClientPage: React.FC = () => {
                 {rest.map((user, idx) => (
                   <div 
                     key={user.username + idx} 
-                    className="flex items-center justify-between py-4 hover:bg-[#FAF8F5] -mx-4 px-4 rounded-xl transition-colors"
+                    className="flex items-center justify-between py-3.5 hover:bg-[#FAF8F5] -mx-3 px-3 rounded-xl transition-colors"
                   >
                     <div className="flex items-center gap-4 sm:gap-6">
                       <span className="text-xs sm:text-sm font-mono text-text-muted/60 w-6 font-semibold">

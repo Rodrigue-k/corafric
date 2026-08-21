@@ -21,7 +21,6 @@ export const CustomAudioPlayer: React.FC<CustomAudioPlayerProps> = ({
   const progressBarRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    // Reset state when audio source changes
     setIsPlaying(false);
     setCurrentTime(0);
     setDuration(durationInSeconds || 0);
@@ -84,9 +83,7 @@ export const CustomAudioPlayer: React.FC<CustomAudioPlayerProps> = ({
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div
-      className={`w-full max-w-lg mx-auto bg-[#FAF8F5] border border-border/80 rounded-2xl p-4 sm:p-5 shadow-2xs ${className}`}
-    >
+    <div className={`w-full max-w-xl mx-auto flex items-center gap-3 sm:gap-4 py-2 ${className}`}>
       <audio
         ref={audioRef}
         src={src}
@@ -101,63 +98,62 @@ export const CustomAudioPlayer: React.FC<CustomAudioPlayerProps> = ({
         }}
       />
 
-      <div className="flex items-center gap-4">
-        {/* Play/Pause Button */}
-        <button
-          type="button"
-          onClick={togglePlay}
-          className="w-12 h-12 rounded-full bg-primary hover:bg-primary/90 text-white flex items-center justify-center shrink-0 transition-transform active:scale-95 cursor-pointer shadow-sm"
-          aria-label={isPlaying ? "Mettre en pause" : "Écouter l'enregistrement"}
-        >
-          {isPlaying ? (
-            <Pause className="w-5 h-5 fill-current" />
-          ) : (
-            <Play className="w-5 h-5 fill-current ml-0.5" />
-          )}
-        </button>
+      {/* Perfectly Centered Circular Play/Pause Button */}
+      <button
+        type="button"
+        onClick={togglePlay}
+        className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-primary hover:bg-primary/90 text-white flex items-center justify-center shrink-0 transition-transform active:scale-95 cursor-pointer shadow-xs"
+        aria-label={isPlaying ? "Mettre en pause" : "Écouter l'enregistrement"}
+      >
+        {isPlaying ? (
+          <Pause className="w-5 h-5 fill-current" />
+        ) : (
+          <Play className="w-5 h-5 fill-current ml-0.5" />
+        )}
+      </button>
 
-        {/* Timeline & Progress Bar */}
-        <div className="flex-1 flex flex-col justify-center space-y-2 min-w-0">
+      {/* Current Time (Left of scrubber) */}
+      <span className="text-xs font-mono text-foreground font-semibold tabular-nums shrink-0 min-w-[28px]">
+        {formatTime(currentTime)}
+      </span>
+
+      {/* Continuous Scrubber Track (Perfect vertical center with play button) */}
+      <div
+        ref={progressBarRef}
+        onClick={handleSeek}
+        className="group relative flex-1 h-6 flex items-center cursor-pointer select-none"
+        title="Naviguer dans l'audio"
+      >
+        {/* Track Line */}
+        <div className="h-1.5 w-full bg-[#EADCC9] rounded-full overflow-hidden relative">
           <div
-            ref={progressBarRef}
-            onClick={handleSeek}
-            className="group relative h-4 w-full flex items-center cursor-pointer select-none"
-            title="Naviguer dans l'audio"
-          >
-            {/* Background Track */}
-            <div className="h-2 w-full bg-[#EADCC9]/60 rounded-full overflow-hidden relative">
-              {/* Active Fill */}
-              <div
-                className="h-full bg-primary rounded-full transition-all duration-75"
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
-
-            {/* Playhead Thumb */}
-            <div
-              className="absolute w-3.5 h-3.5 bg-foreground rounded-full shadow-sm pointer-events-none transition-all duration-75 -translate-x-1/2"
-              style={{ left: `${progressPercent}%` }}
-            />
-          </div>
-
-          {/* Time Display */}
-          <div className="flex justify-between items-center text-xs font-mono text-text-muted">
-            <span className="font-semibold text-foreground">{formatTime(currentTime)}</span>
-            <span>{formatTime(duration)}</span>
-          </div>
+            className="h-full bg-primary rounded-full transition-all duration-75"
+            style={{ width: `${progressPercent}%` }}
+          />
         </div>
 
-        {/* Replay Button */}
-        <button
-          type="button"
-          onClick={handleRestart}
-          className="p-2.5 text-text-muted hover:text-primary hover:bg-black/5 rounded-full transition-colors cursor-pointer shrink-0"
-          title="Réécouter depuis le début"
-          aria-label="Réécouter"
-        >
-          <RotateCcw className="w-4 h-4" />
-        </button>
+        {/* Scrubber Knob */}
+        <div
+          className="absolute w-3 h-3 bg-foreground rounded-full shadow-2xs pointer-events-none transition-all duration-75 -translate-x-1/2 group-hover:scale-125"
+          style={{ left: `${progressPercent}%` }}
+        />
       </div>
+
+      {/* Duration (Right of scrubber) */}
+      <span className="text-xs font-mono text-text-muted tabular-nums shrink-0 min-w-[28px]">
+        {formatTime(duration)}
+      </span>
+
+      {/* Replay Button */}
+      <button
+        type="button"
+        onClick={handleRestart}
+        className="p-2 text-text-muted hover:text-primary hover:bg-black/5 rounded-full transition-colors cursor-pointer shrink-0"
+        title="Réécouter depuis le début"
+        aria-label="Réécouter"
+      >
+        <RotateCcw className="w-4 h-4" />
+      </button>
     </div>
   );
 };
