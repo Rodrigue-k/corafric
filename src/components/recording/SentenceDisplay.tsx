@@ -9,10 +9,10 @@ export const SentenceDisplay: React.FC<SentenceDisplayProps> = ({ sentence }) =>
   const frenchTranslation = sentence.translation_fr || null;
 
   return (
-    <div className="w-full text-center space-y-5 py-8 px-6 sm:px-10 rounded-2xl bg-white border border-border shadow-xs">
+    <div className="w-full text-center space-y-5 py-12">
       <div className="flex items-center justify-center gap-2">
         <span className="text-xs font-semibold uppercase tracking-widest text-primary">
-          Langue Éwé · Studio de phrases
+          Langue Éwé
         </span>
         {sentence.source && (
           <>

@@ -5,12 +5,10 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@clerk/nextjs";
 import { Sentence } from "@/types";
 import { Button } from "../ui/Button";
-import { Card } from "../ui/Card";
 import { SentenceDisplay } from "./SentenceDisplay";
 import { CustomAudioPlayer } from "./CustomAudioPlayer";
 import { AudioVisualizer } from "./AudioVisualizer";
 import { AnonymousGateModal } from "./AnonymousGateModal";
-import { PioneerBadge } from "./PioneerBadge";
 import { Mic, Square, RotateCcw, Send, CheckCircle, AlertCircle, SkipForward, ArrowLeft } from "lucide-react";
 import { cleanAudioBlob } from "@/lib/audioProcessing";
 
@@ -237,29 +235,31 @@ export const SentenceRecordingStudio: React.FC<SentenceRecordingStudioProps> = (
 
   if (errorMessage && studioState === "idle") {
     return (
-      <Card className="max-w-md mx-auto p-6 border-red-200 bg-white text-center space-y-4 shadow-xs">
+      <div className="max-w-md mx-auto p-6 text-center space-y-4">
         <AlertCircle className="w-8 h-8 text-red-500 mx-auto" />
         <h3 className="text-base font-semibold text-foreground">Une erreur est survenue</h3>
         <p className="text-xs text-text-muted">{errorMessage}</p>
         <Button onClick={fetchNextSentence} variant="primary" size="sm">
           Réessayer
         </Button>
-      </Card>
+      </div>
     );
   }
 
   if (!sentence) {
     return (
-      <Card className="max-w-md mx-auto p-8 text-center space-y-4 bg-white border border-border shadow-xs">
-        <CheckCircle className="w-8 h-8 text-foreground mx-auto" />
-        <h3 className="text-xl font-bold font-display text-foreground">Corpus complété</h3>
-        <p className="text-xs text-text-muted">
+      <div className="max-w-md mx-auto p-12 text-center space-y-4 border-y border-border/50">
+        <CheckCircle className="w-10 h-10 text-primary mx-auto" />
+        <h3 className="text-3xl font-bold font-display text-foreground tracking-tight">Corpus complété</h3>
+        <p className="text-sm text-text-muted">
           Toutes les phrases disponibles ont été enregistrées pour cette session.
         </p>
-        <Button onClick={fetchNextSentence} variant="primary" size="sm">
-          Actualiser
-        </Button>
-      </Card>
+        <div className="pt-4">
+          <Button onClick={fetchNextSentence} variant="primary" size="lg">
+            Vérifier à nouveau
+          </Button>
+        </div>
+      </div>
     );
   }
 
@@ -276,15 +276,16 @@ export const SentenceRecordingStudio: React.FC<SentenceRecordingStudioProps> = (
             Changer de format
           </button>
         ) : <div />}
-
-        <PioneerBadge />
+        <span className="text-[10px] font-bold uppercase tracking-widest text-primary/60 font-display">
+          Corpus Textuel
+        </span>
       </div>
 
       {/* Sentence display */}
       <SentenceDisplay sentence={sentence} />
 
       {/* Recording Studio Status */}
-      <Card className="p-6 sm:p-8 flex flex-col items-center justify-center space-y-4 bg-white border border-border shadow-xs rounded-2xl">
+      <div className="pt-8 flex flex-col items-center justify-center space-y-4">
         {studioState === "idle" && (
           <div className="text-center space-y-6 w-full">
             <AudioVisualizer stream={null} isRecording={false} />
@@ -399,7 +400,7 @@ export const SentenceRecordingStudio: React.FC<SentenceRecordingStudioProps> = (
             <span>{errorMessage}</span>
           </div>
         )}
-      </Card>
+      </div>
 
       {/* Anonymous Gate Modal */}
       <AnonymousGateModal

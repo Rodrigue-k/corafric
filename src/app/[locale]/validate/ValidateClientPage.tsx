@@ -3,9 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { ValidationCard } from "@/components/validation/ValidationCard";
-import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { CheckCircle2, Headphones, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 interface ValidationRecording {
   id: string;
@@ -70,57 +69,53 @@ export default function ValidateClientPage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8">
+    <div className="mx-auto max-w-4xl space-y-16 py-12">
       {/* Header section with session counter */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 border-b border-border pb-6">
-        <div className="text-center md:text-left space-y-2">
-          <h1 className="text-h1 text-foreground font-display flex items-center justify-center md:justify-start gap-2">
-            <Headphones className="w-8 h-8 text-primary" />
+      <div className="flex flex-col md:flex-row items-end justify-between gap-6 border-b border-border/50 pb-8">
+        <div className="space-y-4">
+          <h1 className="text-4xl sm:text-5xl font-display font-bold text-foreground tracking-tight">
             {t("title")}
           </h1>
-          <p className="text-body text-text-muted">
+          <p className="text-sm text-text-muted">
             {t("instruction")}
           </p>
         </div>
 
-        {/* Session Stats badge */}
-        <div className="bg-primary-tint border border-primary/20 px-4 py-2 rounded-2xl flex items-center gap-2.5">
-          <div>
-            <p className="text-[10px] uppercase font-semibold text-text-muted">Session</p>
-            <p className="text-sm font-bold text-primary">
-              {t("sessionCount", { count: sessionCount })}
-            </p>
-          </div>
+        {/* Session Stats */}
+        <div className="text-right">
+          <p className="text-[10px] font-display uppercase tracking-widest text-text-muted/60">Session</p>
+          <p className="text-lg font-display tracking-widest text-foreground font-medium">
+            {t("sessionCount", { count: sessionCount })}
+          </p>
         </div>
       </div>
 
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center min-h-[300px] gap-4">
-          <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-          <p className="text-body text-text-muted">Chargement...</p>
+        <div className="flex flex-col items-center justify-center min-h-[300px] border-y border-border/50">
+          <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
         </div>
       ) : errorMessage ? (
-        <Card className="max-w-xl mx-auto p-8 border-red-200 bg-red-50/50 text-center space-y-4">
-          <AlertCircle className="w-12 h-12 text-red-500 mx-auto" />
-          <h3 className="text-h3 font-semibold text-red-800">Erreur</h3>
-          <p className="text-body text-red-700">{errorMessage}</p>
-          <Button onClick={fetchNextRecording} variant="primary">
+        <div className="max-w-xl mx-auto py-20 text-center space-y-4 border-y border-border/50">
+          <AlertCircle className="w-8 h-8 text-red-500 mx-auto" />
+          <p className="text-sm text-red-600">{errorMessage}</p>
+          <Button onClick={fetchNextRecording} variant="secondary" className="mt-4 border-border text-xs uppercase tracking-widest font-display">
             Réessayer
           </Button>
-        </Card>
+        </div>
       ) : recording ? (
         <ValidationCard recording={recording} onVoteSubmitted={handleVoteSubmitted} />
       ) : (
-        <Card className="max-w-xl mx-auto p-10 text-center space-y-6">
-          <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto animate-bounce" />
-          <h3 className="text-h1">Tout est propre !</h3>
-          <p className="text-body text-text-muted">
-            Aucun enregistrement en attente de validation.
+        <div className="max-w-xl mx-auto py-32 text-center space-y-6 border-y border-border/50">
+          <h3 className="text-3xl font-display font-bold tracking-tight">Corpus vérifié.</h3>
+          <p className="text-sm text-text-muted">
+            Aucun enregistrement en attente.
           </p>
-          <Button onClick={fetchNextRecording} variant="primary">
-            Actualiser
-          </Button>
-        </Card>
+          <div className="pt-4">
+            <Button onClick={fetchNextRecording} variant="primary" className="text-xs uppercase tracking-widest font-display">
+              Actualiser
+            </Button>
+          </div>
+        </div>
       )}
     </div>
   );

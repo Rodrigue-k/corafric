@@ -2,8 +2,6 @@
 
 import React, { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Card } from "../ui/Card";
-import { Badge } from "../ui/Badge";
 import { ValidationControls } from "./ValidationControls";
 import { CustomAudioPlayer } from "../recording/CustomAudioPlayer";
 import { Volume2, AlertCircle, CheckCircle } from "lucide-react";
@@ -62,55 +60,47 @@ export const ValidationCard: React.FC<ValidationCardProps> = ({ recording, onVot
   };
 
   return (
-    <Card className="p-8 max-w-xl mx-auto space-y-8 relative overflow-hidden">
-      {/* Visual background decor */}
-      <div className="absolute right-0 top-0 w-24 h-24 bg-primary/5 rounded-bl-full pointer-events-none" />
-
-      {/* Language badge */}
-      <div className="flex justify-between items-center">
-        <Badge variant="default" className="text-[10px]">
-          Langue : Ewe ({recording.sentence.language})
-        </Badge>
-        <div className="flex items-center gap-1.5 text-xs text-text-muted">
-          <Volume2 className="w-4 h-4 text-primary" />
-          <span>{t("play")}</span>
-        </div>
+    <div className="space-y-12 max-w-2xl mx-auto py-8">
+      {/* Header Info */}
+      <div className="flex justify-between items-center border-b border-border/50 pb-4">
+        <span className="text-[10px] font-bold font-display uppercase tracking-widest text-primary/60">
+          Enregistrement {recording.id.substring(0, 8)}
+        </span>
+        <span className="text-xs font-display tracking-widest uppercase text-text-muted">
+          {recording.sentence.language || "Éwé"}
+        </span>
       </div>
 
       {/* Text / Word Display */}
-      <div className="space-y-2 py-4">
-        <p className="text-caption text-text-muted uppercase tracking-wider font-semibold">
-          Mot à valider :
-        </p>
-        <p className="text-h2 text-3xl font-display font-bold text-foreground leading-relaxed">
+      <div className="space-y-4 py-8 text-center">
+        <p className="text-5xl sm:text-6xl font-display font-bold text-foreground leading-tight tracking-tight">
           {recording.sentence.text}
         </p>
-        {recording.sentence.language && recording.sentence.language !== "ewe" && (
-          <p className="text-body text-text-muted italic">
-            🇫🇷 {recording.sentence.language}
-          </p>
-        )}
       </div>
 
       {/* Audio playback row */}
-      <CustomAudioPlayer src={recording.audioUrl} />
+      <div className="w-full max-w-md mx-auto">
+        <CustomAudioPlayer src={recording.audioUrl} />
+      </div>
 
       {/* Interaction Controls */}
-      {!voteSuccess ? (
-        <ValidationControls onVote={handleVote} disabled={isSubmitting} />
-      ) : (
-        <div className="text-center py-2 text-green-600 font-medium flex items-center justify-center gap-2">
-          <CheckCircle className="w-5 h-5 animate-bounce" />
-          <span>Succès !</span>
-        </div>
-      )}
+      <div className="pt-8 border-t border-border/50">
+        {!voteSuccess ? (
+          <ValidationControls onVote={handleVote} disabled={isSubmitting} />
+        ) : (
+          <div className="flex flex-col items-center justify-center p-6 space-y-3 bg-[#FAF8F5] rounded-xl border border-primary/20">
+            <CheckCircle className="w-8 h-8 text-primary animate-bounce" />
+            <p className="text-sm font-semibold text-primary">Vote enregistré !</p>
+          </div>
+        )}
 
-      {errorMessage && (
-        <div className="p-3 bg-red-50 text-red-700 border border-red-200 rounded-lg text-xs flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
-          <span>{errorMessage}</span>
-        </div>
-      )}
-    </Card>
+        {errorMessage && (
+          <div className="flex items-center gap-2 p-3 mt-4 bg-red-50 text-red-600 rounded-lg border border-red-100 text-sm">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <p>{errorMessage}</p>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };

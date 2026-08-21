@@ -97,133 +97,116 @@ export default function DictionaryClient() {
   };
 
   return (
-    <div className="w-full space-y-5">
-      {/* Compact Header & Controls Bar */}
-      <div className="bg-white border border-border rounded-xl p-4 sm:p-5 shadow-xs space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold font-display text-foreground">
-              Dictionnaire Trilingue Éwé
-            </h1>
-            <p className="text-xs text-text-muted">
-              {totalWords !== null
-                ? `${totalWords.toLocaleString()} termes répertoriés · Éwé - Français - Anglais`
-                : "Base de données lexicale de référence"}
-            </p>
-          </div>
-
-          <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted pointer-events-none" />
-            <input
-              type="text"
-              value={query}
-              onChange={handleSearchChange}
-              placeholder="Rechercher un mot..."
-              className="w-full pl-9 pr-8 py-2 text-xs sm:text-sm border border-border rounded-lg bg-[#FAF8F5] focus:bg-white focus:outline-none focus:border-primary transition-colors"
-            />
-            {isLoading && (
-              <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-primary animate-spin" />
-            )}
-          </div>
+    <div className="w-full space-y-12 pb-12">
+      {/* Editorial Header */}
+      <div className="space-y-10">
+        <div className="text-center space-y-3">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-display text-foreground tracking-tight">
+            {t("title")}
+          </h1>
+          <p className="text-sm text-text-muted max-w-xl mx-auto">
+            {totalWords !== null
+              ? `${totalWords.toLocaleString()} mots validés. ${t("subtitle")}`
+              : t("subtitle")}
+          </p>
         </div>
 
-        {/* Compact Horizontal Alphabet Scroller */}
-        <div className="pt-2 border-t border-border/60">
-          <div className="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none text-xs">
-            {EWE_ALPHABET.map((letter) => {
-              const isSelected = selectedLetter === letter && !query;
-              return (
-                <button
-                  key={letter}
-                  onClick={() => handleLetterSelect(letter)}
-                  className={`px-2.5 py-1 rounded-md shrink-0 font-medium transition-colors ${
-                    isSelected
-                      ? "bg-primary text-white font-semibold"
-                      : "text-text-muted hover:text-foreground hover:bg-[#FAF8F5]"
-                  }`}
-                >
-                  {letter}
-                </button>
-              );
-            })}
-          </div>
+        {/* Minimalist Search Input */}
+        <div className="relative max-w-2xl mx-auto">
+          <input
+            type="text"
+            value={query}
+            onChange={handleSearchChange}
+            placeholder={t("searchPlaceholder")}
+            className="w-full py-4 text-xl sm:text-2xl font-display font-medium text-center border-b-2 border-border/60 bg-transparent focus:outline-none focus:border-primary transition-colors placeholder:text-border/80"
+          />
+          {isLoading && (
+            <Loader2 className="absolute right-2 top-1/2 -translate-y-1/2 h-5 w-5 text-primary animate-spin" />
+          )}
+        </div>
+
+        {/* Typography-Driven Alphabet Filter */}
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 max-w-4xl mx-auto">
+          {EWE_ALPHABET.map((letter) => {
+            const isSelected = selectedLetter === letter && !query;
+            return (
+              <button
+                key={letter}
+                onClick={() => handleLetterSelect(letter)}
+                className={`text-lg sm:text-xl font-display transition-all duration-300 ${
+                  isSelected
+                    ? "text-primary font-bold scale-110"
+                    : "text-text-muted/60 hover:text-foreground"
+                }`}
+              >
+                {letter}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Results Header Info */}
-      <div className="flex items-center justify-between text-xs text-text-muted px-1">
-        <span>
-          {selectedLetter !== "Tous" && !query
-            ? `Lettre "${selectedLetter}" · ${filteredCount ?? 0} résultat${(filteredCount ?? 0) > 1 ? "s" : ""}`
-            : query
-            ? `Recherche "${query}"`
-            : `Affichage général (Page ${page})`}
-        </span>
-      </div>
-
-      {/* Uniform, Sleek Word Cards Grid */}
+      {/* Editorial Lexical List - No Cards */}
       {results.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
+        <div className="flex flex-col border-t border-border/60">
           {results.map((word) => (
             <div
               key={word.id}
-              className="bg-white border border-border rounded-xl p-4 sm:p-5 flex flex-col justify-between hover:border-border/90 transition-colors min-h-[140px] shadow-xs"
+              className="group flex flex-col sm:flex-row sm:items-baseline justify-between py-6 sm:py-8 border-b border-border/60 hover:border-primary/40 transition-colors gap-4 sm:gap-8 relative"
             >
-              <div className="space-y-2">
-                {/* Header: Word & Audio */}
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <h2 className="text-xl font-bold font-display text-foreground truncate">
-                      {word.word_ewe}
-                    </h2>
-                    {word.part_of_speech && (
-                      <span className="text-[11px] italic text-text-muted block">
-                        {word.part_of_speech}
-                      </span>
-                    )}
-                  </div>
-
+              {/* Left: Term & Audio */}
+              <div className="flex flex-col sm:w-1/3 shrink-0">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-3xl sm:text-4xl font-bold font-display text-foreground tracking-tight group-hover:text-primary transition-colors">
+                    {word.word_ewe}
+                  </h2>
                   {word.audio_url && (
                     <button
                       onClick={() => handlePlayAudio(word.id, word.audio_url as string)}
                       disabled={playingId === word.id}
-                      className={`p-1.5 rounded-lg border transition-colors shrink-0 cursor-pointer ${
+                      className={`p-2 rounded-full transition-all cursor-pointer ${
                         playingId === word.id
-                          ? "bg-primary text-white border-primary"
-                          : "bg-[#FAF8F5] text-text-muted border-border hover:text-primary hover:border-primary/40"
+                          ? "text-primary bg-primary/10"
+                          : "text-text-muted/40 hover:text-primary hover:bg-primary/5"
                       }`}
                       title="Écouter la prononciation"
                       aria-label="Écouter"
                     >
-                      <Volume2 className="w-4 h-4" />
+                      <Volume2 className="w-5 h-5" />
                     </button>
                   )}
                 </div>
+                {word.part_of_speech && (
+                  <span className="text-xs italic text-text-muted mt-1 font-serif">
+                    {word.part_of_speech}
+                  </span>
+                )}
+              </div>
 
-                {/* Translation List */}
-                <div className="space-y-1 text-xs">
+              {/* Right: Translations & Examples */}
+              <div className="flex-grow flex flex-col justify-center space-y-2">
+                <div className="space-y-1">
                   {word.word_fr && (
-                    <p className="font-medium text-foreground">
-                      <span className="text-text-muted font-normal mr-1.5">FR:</span>
+                    <p className="text-base sm:text-lg font-medium text-foreground">
                       {word.word_fr}
                     </p>
                   )}
                   {word.word_en && (
-                    <p className="text-text-muted">
-                      <span className="text-text-muted/70 font-normal mr-1.5">EN:</span>
+                    <p className="text-sm text-text-muted">
+                      <span className="text-text-muted/60 text-xs uppercase tracking-widest mr-2">EN</span>
                       {word.word_en}
                     </p>
                   )}
                 </div>
 
-                {/* Optional definition or example */}
                 {word.definition && !word.word_fr && (
-                  <p className="text-xs text-text-muted italic line-clamp-2 pt-1">
+                  <p className="text-sm text-text-muted italic">
                     {word.definition}
                   </p>
                 )}
+
                 {word.example_sentence_ewe && (
-                  <p className="text-[11px] text-text-muted italic line-clamp-1 pt-1 border-t border-border/50">
+                  <p className="text-sm text-text-muted/80 pt-2 font-serif">
                     « {word.example_sentence_ewe} »
                   </p>
                 )}
@@ -232,38 +215,31 @@ export default function DictionaryClient() {
           ))}
         </div>
       ) : !isLoading ? (
-        <div className="bg-white border border-border rounded-xl p-10 text-center space-y-2">
-          <p className="text-sm font-semibold text-foreground">Aucun résultat trouvé</p>
-          <p className="text-xs text-text-muted">
-            {query
-              ? `Aucune correspondance pour "${query}".`
-              : `Aucun mot répertorié pour la lettre "${selectedLetter}".`}
-          </p>
+        <div className="py-32 text-center border-y border-border/50">
+          <p className="text-2xl font-display text-text-muted/60 tracking-tight">{t("noResults")}</p>
         </div>
       ) : null}
 
       {/* Pagination */}
-      <div className="flex items-center justify-between pt-2">
+      <div className="flex items-center justify-between pt-8">
         <button
           onClick={() => setPage((p) => Math.max(1, p - 1))}
           disabled={page === 1 || isLoading}
-          className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-white border border-border hover:bg-[#FAF8F5] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-full bg-transparent border border-border hover:bg-border/20 disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
         >
-          <ChevronLeft className="w-3.5 h-3.5" />
-          Précédent
+          <ChevronLeft className="w-4 h-4" />
         </button>
 
-        <span className="text-xs text-text-muted font-mono">
-          Page {page}
+        <span className="text-sm text-text-muted font-display tracking-widest">
+          {page}
         </span>
 
         <button
           onClick={() => setPage((p) => p + 1)}
           disabled={results.length < limit || isLoading}
-          className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-white border border-border hover:bg-[#FAF8F5] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-full bg-transparent border border-border hover:bg-border/20 disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
         >
-          Suivant
-          <ChevronRight className="w-3.5 h-3.5" />
+          <ChevronRight className="w-4 h-4" />
         </button>
       </div>
     </div>

@@ -89,7 +89,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
                 </Link>
                 <Link href="/dictionary">
                   <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                    Explorer le dictionnaire
+                    {t("ctaSecondary")}
                   </Button>
                 </Link>
               </div>
@@ -145,54 +145,54 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       {/* STATS SECTION */}
       <LiveStats />
 
-      {/* HOW IT WORKS SECTION */}
-      <section className="relative py-16 sm:py-20 bg-white border-b border-border/70">
+      {/* HOW IT WORKS / TWO PILLARS SECTION - Editorial Split, Zero Cards */}
+      <section className="relative py-20 bg-white border-b border-border/70">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <span className="text-xs font-semibold uppercase tracking-widest text-primary block mb-2">
-              Fonctionnement
+          <div className="text-center max-w-2xl mx-auto mb-16 space-y-2">
+            <span className="text-xs font-semibold uppercase tracking-widest text-primary block">
+              Méthodologie
             </span>
-            <h2 className="text-2xl sm:text-3xl font-bold font-display text-foreground">
+            <h2 className="text-3xl sm:text-4xl font-bold font-display text-foreground">
               {t("how.title")}
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Step 1 */}
-            <div className="p-6 rounded-xl bg-[#FAF8F5] border border-border space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border/60">
+            {/* Pillar 1 */}
+            <div className="py-8 md:py-0 md:px-8 first:pl-0 last:pr-0 space-y-4">
               <span className="text-xs font-mono font-bold text-primary block">
                 01
               </span>
-              <h3 className="text-lg font-bold font-display text-foreground">
+              <h3 className="text-xl font-bold font-display text-foreground">
                 {t("how.step1Title")}
               </h3>
-              <p className="text-xs sm:text-sm text-text-muted leading-relaxed">
+              <p className="text-sm text-text-muted leading-relaxed">
                 {t("how.step1Desc")}
               </p>
             </div>
 
-            {/* Step 2 */}
-            <div className="p-6 rounded-xl bg-[#FAF8F5] border border-border space-y-3">
+            {/* Pillar 2 */}
+            <div className="py-8 md:py-0 md:px-8 first:pl-0 last:pr-0 space-y-4">
               <span className="text-xs font-mono font-bold text-primary block">
                 02
               </span>
-              <h3 className="text-lg font-bold font-display text-foreground">
+              <h3 className="text-xl font-bold font-display text-foreground">
                 {t("how.step2Title")}
               </h3>
-              <p className="text-xs sm:text-sm text-text-muted leading-relaxed">
+              <p className="text-sm text-text-muted leading-relaxed">
                 {t("how.step2Desc")}
               </p>
             </div>
 
-            {/* Step 3 */}
-            <div className="p-6 rounded-xl bg-[#FAF8F5] border border-border space-y-3">
+            {/* Pillar 3 */}
+            <div className="py-8 md:py-0 md:px-8 first:pl-0 last:pr-0 space-y-4">
               <span className="text-xs font-mono font-bold text-primary block">
                 03
               </span>
-              <h3 className="text-lg font-bold font-display text-foreground">
+              <h3 className="text-xl font-bold font-display text-foreground">
                 {t("how.step3Title")}
               </h3>
-              <p className="text-xs sm:text-sm text-text-muted leading-relaxed">
+              <p className="text-sm text-text-muted leading-relaxed">
                 {t("how.step3Desc")}
               </p>
             </div>
