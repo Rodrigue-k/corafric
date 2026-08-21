@@ -32,6 +32,7 @@ export const Navbar: React.FC = () => {
   const links = [
     { name: t("home"), href: "/" as const },
     { name: t("contribute"), href: "/contribute" as const },
+    { name: t("validate"), href: "/validate" as const },
     { name: t("dictionary"), href: "/dictionary" as const },
     { name: t("leaderboard"), href: "/leaderboard" as const },
   ];
