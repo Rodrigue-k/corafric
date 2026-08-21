@@ -12,10 +12,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function ContributePage() {
   return (
-    <div className="min-h-[calc(100vh-130px)] flex flex-col justify-center py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-[calc(100vh-140px)] py-6 sm:py-8 px-4 sm:px-6 lg:px-8 flex flex-col justify-start">
       <ContributeClientPage />
     </div>
   );
 }
-
-

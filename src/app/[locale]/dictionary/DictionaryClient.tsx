@@ -28,8 +28,6 @@ export default function DictionaryClient() {
   const [selectedLetter, setSelectedLetter] = useState("Tous");
   const [results, setResults] = useState<DictionaryWord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [totalWords, setTotalWords] = useState<number | null>(null);
-  const [filteredCount, setFilteredCount] = useState<number | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const limit = 24;
@@ -52,10 +50,6 @@ export default function DictionaryClient() {
             setResults(data);
           } else {
             setResults(data.words || []);
-            if (typeof data.totalCount === "number") {
-              setTotalWords(data.totalCount);
-            }
-            setFilteredCount(data.filteredCount ?? null);
           }
         }
       } catch (err) {
@@ -73,12 +67,6 @@ export default function DictionaryClient() {
     setQuery("");
     setSelectedLetter(letter);
     setPage(1);
-
-    if (letter !== "Tous") {
-      const audioUrl = `/audios/${letter.toLowerCase()}.mp4`;
-      const audio = new Audio(audioUrl);
-      audio.play().catch(() => {});
-    }
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,9 +75,9 @@ export default function DictionaryClient() {
     setPage(1);
   };
 
-  const handlePlayAudio = (id: string, audioUrl: string) => {
-    if (playingId === id) return;
-    setPlayingId(id);
+  const handlePlayAudio = (wordId: string, audioUrl: string) => {
+    if (!audioUrl) return;
+    setPlayingId(wordId);
     const audio = new Audio(audioUrl);
     audio.onended = () => setPlayingId(null);
     audio.onerror = () => setPlayingId(null);
@@ -97,45 +85,47 @@ export default function DictionaryClient() {
   };
 
   return (
-    <div className="w-full space-y-12 pb-12">
-      {/* Editorial Header */}
-      <div className="space-y-10">
+    <div className="max-w-4xl mx-auto space-y-12 py-6">
+      {/* Editorial Header & Search */}
+      <div className="space-y-8">
         <div className="text-center space-y-3">
+          <span className="text-[10px] sm:text-xs font-bold font-display uppercase tracking-widest text-primary block">
+            Patrimoine Lexical
+          </span>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-display text-foreground tracking-tight">
             {t("title")}
           </h1>
           <p className="text-sm text-text-muted max-w-xl mx-auto">
-            {totalWords !== null
-              ? `${totalWords.toLocaleString()} mots validés. ${t("subtitle")}`
-              : t("subtitle")}
+            {t("subtitle")}
           </p>
         </div>
 
-        {/* Minimalist Search Input */}
+        {/* Big Search Input */}
         <div className="relative max-w-2xl mx-auto">
           <input
             type="text"
             value={query}
             onChange={handleSearchChange}
             placeholder={t("searchPlaceholder")}
-            className="w-full py-4 text-xl sm:text-2xl font-display font-medium text-center border-b-2 border-border/60 bg-transparent focus:outline-none focus:border-primary transition-colors placeholder:text-border/80"
+            className="w-full bg-transparent border-b-2 border-border/80 focus:border-primary text-xl sm:text-2xl font-display text-foreground py-3 pl-10 pr-10 outline-none transition-colors placeholder:text-text-muted/40"
           />
+          <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-5 text-text-muted/40" />
           {isLoading && (
-            <Loader2 className="absolute right-2 top-1/2 -translate-y-1/2 h-5 w-5 text-primary animate-spin" />
+            <Loader2 className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-5 text-primary animate-spin" />
           )}
         </div>
 
-        {/* Typography-Driven Alphabet Filter */}
-        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 max-w-4xl mx-auto">
+        {/* Clean Typography Alphabet Filter */}
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 max-w-3xl mx-auto pt-2">
           {EWE_ALPHABET.map((letter) => {
             const isSelected = selectedLetter === letter && !query;
             return (
               <button
                 key={letter}
                 onClick={() => handleLetterSelect(letter)}
-                className={`text-lg sm:text-xl font-display transition-all duration-300 ${
+                className={`text-sm sm:text-base font-display transition-colors px-1 py-0.5 cursor-pointer ${
                   isSelected
-                    ? "text-primary font-bold scale-110"
+                    ? "text-primary font-bold underline underline-offset-4"
                     : "text-text-muted/60 hover:text-foreground"
                 }`}
               >
@@ -146,7 +136,7 @@ export default function DictionaryClient() {
         </div>
       </div>
 
-      {/* Editorial Lexical List - No Cards */}
+      {/* Lexical List — Flat, Clean, Card-free */}
       {results.length > 0 ? (
         <div className="flex flex-col border-t border-border/60">
           {results.map((word) => (
@@ -215,30 +205,32 @@ export default function DictionaryClient() {
           ))}
         </div>
       ) : !isLoading ? (
-        <div className="py-32 text-center border-y border-border/50">
-          <p className="text-2xl font-display text-text-muted/60 tracking-tight">{t("noResults")}</p>
+        <div className="py-24 text-center border-y border-border/50">
+          <p className="text-xl font-display text-text-muted/70 tracking-tight">{t("noResults")}</p>
         </div>
       ) : null}
 
       {/* Pagination */}
-      <div className="flex items-center justify-between pt-8">
+      <div className="flex items-center justify-between pt-6">
         <button
           onClick={() => setPage((p) => Math.max(1, p - 1))}
           disabled={page === 1 || isLoading}
-          className="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-full bg-transparent border border-border hover:bg-border/20 disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+          className="inline-flex items-center gap-1 px-4 py-2 text-xs font-semibold rounded-full bg-transparent border border-border hover:bg-black/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4" />
+          <span>Précédent</span>
         </button>
 
-        <span className="text-sm text-text-muted font-display tracking-widest">
-          {page}
+        <span className="text-xs text-text-muted font-display tracking-widest uppercase">
+          Page {page}
         </span>
 
         <button
           onClick={() => setPage((p) => p + 1)}
           disabled={results.length < limit || isLoading}
-          className="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-full bg-transparent border border-border hover:bg-border/20 disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+          className="inline-flex items-center gap-1 px-4 py-2 text-xs font-semibold rounded-full bg-transparent border border-border hover:bg-black/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
         >
+          <span>Suivant</span>
           <ChevronRight className="w-4 h-4" />
         </button>
       </div>

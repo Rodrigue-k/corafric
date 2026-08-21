@@ -10,76 +10,79 @@ interface PillarSelectionProps {
 
 export const PillarSelection: React.FC<PillarSelectionProps> = ({ onSelectPillar }) => {
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-10">
-      {/* Header */}
-      <div className="text-center space-y-4">
-        <h1 className="text-3xl sm:text-4xl font-bold font-display text-foreground leading-tight">
+    <div className="w-full max-w-4xl mx-auto space-y-12">
+      {/* Editorial Header */}
+      <div className="text-center space-y-3">
+        <span className="text-[10px] sm:text-xs font-bold font-display uppercase tracking-widest text-primary block">
+          Enrichir le corpus
+        </span>
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-display text-foreground leading-tight tracking-tight">
           Mode de contribution
         </h1>
-        <p className="text-sm sm:text-base text-text-muted max-w-lg mx-auto leading-relaxed">
-          Sélectionnez un format d'enregistrement pour commencer à enrichir le corpus vocal en langue Éwé.
+        <p className="text-sm text-text-muted max-w-lg mx-auto leading-relaxed">
+          Sélectionnez un format d'enregistrement pour enrichir le corpus vocal en langue Éwé.
         </p>
       </div>
 
-      {/* Pillars Grid */}
-      <div className="flex flex-col md:flex-row gap-0 border-y border-border/50">
+      {/* Editorial Pillars Split — Flat, Cardless, Border-Structured */}
+      <div className="flex flex-col md:flex-row border-y border-border/60">
         {/* Pillar 1: Dictionnaire Vocal */}
         <div
           onClick={() => onSelectPillar("dictionary")}
-          className="group relative flex-1 p-8 sm:p-12 md:border-r border-border/50 hover:bg-[#EADCC9]/10 transition-colors cursor-pointer flex flex-col justify-between"
+          className="group flex-1 p-8 sm:p-12 md:border-r border-b md:border-b-0 border-border/60 hover:bg-[#EADCC9]/15 transition-colors cursor-pointer flex flex-col justify-between"
         >
-          <div className="space-y-8">
+          <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-primary/60">
+              <span className="text-[10px] font-bold font-mono uppercase tracking-widest text-primary/70">
                 01
               </span>
-              <span className="text-xs text-text-muted font-display tracking-widest uppercase">
-                Mots
+              <span className="text-xs font-display tracking-widest uppercase text-text-muted">
+                Mots isolés
               </span>
             </div>
 
-            <div className="space-y-4">
-              <h2 className="text-3xl font-display text-foreground group-hover:text-primary transition-colors tracking-tight">
-                Dictionnaire
+            <div className="space-y-3">
+              <h2 className="text-3xl sm:text-4xl font-display font-bold text-foreground group-hover:text-primary transition-colors tracking-tight">
+                Dictionnaire Vocal
               </h2>
               <p className="text-sm text-text-muted leading-relaxed">
-                Enregistrez des termes isolés pour construire le socle lexical de l'IA.
+                Enregistrez des termes individuels avec leur définition pour fixer la prononciation et les variations tonales.
               </p>
             </div>
           </div>
 
-          <div className="mt-12 text-sm font-medium text-foreground group-hover:text-primary transition-colors font-display uppercase tracking-widest">
-            Commencer
+          <div className="mt-12 pt-4 border-t border-border/40 text-xs font-semibold text-foreground group-hover:text-primary transition-colors font-display uppercase tracking-widest">
+            Commencer le dictionnaire
           </div>
         </div>
 
-        {/* Pillar 2: Entraînement IA (Phrases) */}
+        {/* Pillar 2: Corpus Textuel */}
         <div
           onClick={() => onSelectPillar("sentences")}
-          className="group relative flex-1 p-8 sm:p-12 border-t md:border-t-0 border-border/50 hover:bg-[#EADCC9]/10 transition-colors cursor-pointer flex flex-col justify-between"
+          className="group flex-1 p-8 sm:p-12 hover:bg-[#EADCC9]/15 transition-colors cursor-pointer flex flex-col justify-between"
         >
-          <div className="space-y-8">
+          <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-primary/60">
+              <span className="text-[10px] font-bold font-mono uppercase tracking-widest text-primary/70">
                 02
               </span>
-              <span className="text-xs text-text-muted font-display tracking-widest uppercase">
-                Phrases
+              <span className="text-xs font-display tracking-widest uppercase text-text-muted">
+                Phrases complètes
               </span>
             </div>
 
-            <div className="space-y-4">
-              <h2 className="text-3xl font-display text-foreground group-hover:text-primary transition-colors tracking-tight">
+            <div className="space-y-3">
+              <h2 className="text-3xl sm:text-4xl font-display font-bold text-foreground group-hover:text-primary transition-colors tracking-tight">
                 Corpus Textuel
               </h2>
               <p className="text-sm text-text-muted leading-relaxed">
-                Lisez des phrases complètes pour modéliser la syntaxe et l'intonation.
+                Lisez des phrases entières dans leur contexte pour modéliser la syntaxe, la prosodie et le rythme naturel.
               </p>
             </div>
           </div>
 
-          <div className="mt-12 text-sm font-medium text-foreground group-hover:text-primary transition-colors font-display uppercase tracking-widest">
-            Commencer
+          <div className="mt-12 pt-4 border-t border-border/40 text-xs font-semibold text-foreground group-hover:text-primary transition-colors font-display uppercase tracking-widest">
+            Commencer les phrases
           </div>
         </div>
       </div>

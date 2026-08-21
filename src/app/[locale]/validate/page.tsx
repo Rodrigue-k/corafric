@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function ValidatePage() {
   return (
-    <div className="py-12 px-4 sm:px-6 lg:px-8">
+    <div className="py-6 sm:py-8 px-4 sm:px-6 lg:px-8 min-h-[calc(100vh-140px)] flex flex-col justify-start">
       <ValidateClientPage />
     </div>
   );
