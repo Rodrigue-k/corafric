@@ -4,7 +4,15 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+function buildAudioUrl(rawUrl: string): string {
+  if (rawUrl && rawUrl.includes("r2.cloudflarestorage.com/")) {
+    const fileKey = rawUrl.split("r2.cloudflarestorage.com/")[1];
+    return `/api/audio/${fileKey}`;
+  }
+  return rawUrl;
+}
+
+export async function GET(request: Request) {
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -15,8 +23,63 @@ export async function GET() {
     const username = clerkUser?.username || clerkUser?.firstName || `contributeur_${userId.substring(0, 8)}`;
     await ensureDbUser(userId, username);
 
-    // Get next pending recording not yet validated by the current user
-    // Prioritizes recordings from other users, but allows self-testing if testing solo
+    const { searchParams } = new URL(request.url);
+    const mode = searchParams.get("mode"); // "comparative" | null
+
+    // ─── COMPARATIVE MODE: 3 audios for the same word ──────────────────────
+    if (mode === "comparative") {
+      // Find a word_id that has at least 2 pending recordings not yet voted by this user
+      const wordCandidates = (await sql`
+        SELECT r.word_id, COUNT(*) AS cnt
+        FROM recordings r
+        LEFT JOIN validations v ON v.recording_id = r.id AND v.user_id = ${userId}
+        WHERE r.status = 'pending'
+          AND r.word_id IS NOT NULL
+          AND v.id IS NULL
+          AND r.user_id != ${userId}
+        GROUP BY r.word_id
+        HAVING COUNT(*) >= 2
+        ORDER BY cnt DESC
+        LIMIT 1
+      `) as { word_id: string; cnt: number }[];
+
+      if (wordCandidates.length > 0) {
+        const wordId = wordCandidates[0].word_id;
+
+        const rows = (await sql`
+          SELECT 
+            r.id, 
+            r.audio_url,
+            COALESCE(w.word_ewe, s.text) AS text,
+            COALESCE(w.word_fr, s.language) AS translation,
+            w.definition
+          FROM recordings r
+          LEFT JOIN sentences s ON r.sentence_id = s.id
+          LEFT JOIN dictionary_words w ON r.word_id = w.id
+          LEFT JOIN validations v ON v.recording_id = r.id AND v.user_id = ${userId}
+          WHERE r.status = 'pending'
+            AND r.word_id = ${wordId}
+            AND v.id IS NULL
+          ORDER BY r.created_at ASC
+          LIMIT 3
+        `) as Record<string, unknown>[];
+
+        const recordings = rows.map((row, idx) => ({
+          id: row.id,
+          audioUrl: buildAudioUrl(row.audio_url as string),
+          label: String.fromCharCode(65 + idx), // A, B, C
+          sentence: { text: row.text as string, language: (row.translation as string) || "ewe" },
+          word: { text: row.text as string, translation: row.translation as string, definition: row.definition as string },
+        }));
+
+        return NextResponse.json({ mode: "comparative", recordings });
+      }
+
+      // Fallback: not enough audios for comparative → return single mode
+    }
+    // ────────────────────────────────────────────────────────────────────────
+
+    // ─── SINGLE MODE (default) ──────────────────────────────────────────────
     const result = (await sql`
       SELECT 
         r.id, 
@@ -41,16 +104,12 @@ export async function GET() {
     }
 
     const row = result[0];
-    let rawAudioUrl = row.audio_url as string;
-    if (rawAudioUrl && rawAudioUrl.includes("r2.cloudflarestorage.com/")) {
-      const fileKey = rawAudioUrl.split("r2.cloudflarestorage.com/")[1];
-      rawAudioUrl = `/api/audio/${fileKey}`;
-    }
 
     return NextResponse.json({
+      mode: "single",
       recording: {
         id: row.id,
-        audioUrl: rawAudioUrl,
+        audioUrl: buildAudioUrl(row.audio_url as string),
         sentence: {
           text: row.text,
           language: row.translation || "ewe",
@@ -67,3 +126,4 @@ export async function GET() {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+
