@@ -1,43 +1,78 @@
 "use client";
 
-import React from "react";
-import { useTranslations } from "next-intl";
-import { Check, X } from "lucide-react";
+import React, { useState } from "react";
+import { Star } from "lucide-react";
+import { Button } from "../ui/Button";
 
 interface ValidationControlsProps {
-  onVote: (isValid: boolean) => void;
+  onVote: (score: number) => void;
   disabled?: boolean;
 }
+
+const SCORE_LABELS: Record<number, string> = {
+  1: "Très mauvais",
+  2: "Mauvais",
+  3: "Correct",
+  4: "Bon",
+  5: "Excellent",
+};
 
 export const ValidationControls: React.FC<ValidationControlsProps> = ({
   onVote,
   disabled = false,
 }) => {
-  const t = useTranslations("validate");
+  const [hovered, setHovered] = useState<number>(0);
+  const [selected, setSelected] = useState<number>(0);
+
+  const displayScore = hovered || selected;
+
+  const handleSubmit = () => {
+    if (selected > 0 && !disabled) {
+      onVote(selected);
+    }
+  };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center w-full max-w-md mx-auto">
-      {/* Reject button */}
-      <button
-        type="button"
-        onClick={() => onVote(false)}
-        disabled={disabled}
-        className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-3 px-6 rounded-full border border-border hover:border-foreground/60 bg-transparent hover:bg-black/5 text-foreground transition-colors font-display font-medium text-xs uppercase tracking-widest disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-      >
-        <X className="w-4 h-4 text-text-muted" />
-        <span>{t("invalid")}</span>
-      </button>
+    <div className="flex flex-col items-center gap-4 w-full">
+      {/* Stars */}
+      <div className="flex items-center gap-1.5" role="group" aria-label="Note de 1 à 5 étoiles">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            type="button"
+            disabled={disabled}
+            onMouseEnter={() => setHovered(star)}
+            onMouseLeave={() => setHovered(0)}
+            onClick={() => setSelected(star)}
+            aria-label={`${star} étoile${star > 1 ? "s" : ""} — ${SCORE_LABELS[star]}`}
+            className="transition-transform hover:scale-110 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer p-1"
+          >
+            <Star
+              className={`w-8 h-8 transition-colors ${
+                star <= displayScore
+                  ? "fill-amber-400 text-amber-400"
+                  : "fill-transparent text-border"
+              }`}
+            />
+          </button>
+        ))}
+      </div>
 
-      {/* Approve button */}
-      <button
-        type="button"
-        onClick={() => onVote(true)}
-        disabled={disabled}
-        className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-3 px-6 rounded-full bg-primary hover:bg-primary/90 text-white transition-colors font-display font-semibold text-xs uppercase tracking-widest disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-xs"
+      {/* Label */}
+      <p className="text-xs font-display uppercase tracking-widest text-text-muted h-4">
+        {displayScore > 0 ? SCORE_LABELS[displayScore] : "Sélectionnez une note"}
+      </p>
+
+      {/* Submit */}
+      <Button
+        onClick={handleSubmit}
+        disabled={disabled || selected === 0}
+        variant="primary"
+        size="md"
+        className="w-full sm:w-auto px-8 rounded-full"
       >
-        <Check className="w-4 h-4" />
-        <span>{t("valid")}</span>
-      </button>
+        Valider la note
+      </Button>
     </div>
   );
 };

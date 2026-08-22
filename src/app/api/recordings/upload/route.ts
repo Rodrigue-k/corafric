@@ -31,6 +31,36 @@ export async function POST(request: Request) {
     const durationMs = durationMsStr ? parseInt(durationMsStr, 10) : 0;
     const fileSize = audioFile.size;
 
+    // ─── Analyse automatique de qualité (rejet préventif) ───────────────────
+    const isWordRecording = !!wordId;
+    const maxDurationMs = isWordRecording ? 30_000 : 120_000; // 30s mot, 2min phrase
+
+    if (fileSize < 2_000) {
+      return NextResponse.json(
+        { error: "QUALITY_REJECTED", reason: "L'audio est trop court ou le microphone n'a pas capté de son. Vérifiez votre micro et réessayez." },
+        { status: 422 }
+      );
+    }
+    if (fileSize > 15_000_000) {
+      return NextResponse.json(
+        { error: "QUALITY_REJECTED", reason: "L'audio est trop volumineux. Assurez-vous d'enregistrer dans les limites de durée autorisées." },
+        { status: 422 }
+      );
+    }
+    if (durationMs > 0 && durationMs < 300) {
+      return NextResponse.json(
+        { error: "QUALITY_REJECTED", reason: "L'enregistrement est trop court (moins de 0.3 secondes). Parlez plus lentement et lisez le mot en entier." },
+        { status: 422 }
+      );
+    }
+    if (durationMs > 0 && durationMs > maxDurationMs) {
+      return NextResponse.json(
+        { error: "QUALITY_REJECTED", reason: `L'enregistrement est trop long (maximum ${maxDurationMs / 1000}s). Enregistrez uniquement le mot demandé.` },
+        { status: 422 }
+      );
+    }
+    // ────────────────────────────────────────────────────────────────────────
+
     const language = "ewe";
     const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
     

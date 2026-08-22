@@ -83,3 +83,24 @@ CREATE TABLE IF NOT EXISTS dictionary_words (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- =====================================================
+-- MIGRATIONS : Système de qualité audio v2
+-- =====================================================
+
+-- Remplace le vote booléen par un score 1–5 sur validations
+ALTER TABLE validations ADD COLUMN IF NOT EXISTS score INTEGER CHECK (score BETWEEN 1 AND 5);
+
+-- Score moyen calculé sur l'ensemble des votes reçus
+ALTER TABLE recordings ADD COLUMN IF NOT EXISTS average_score FLOAT DEFAULT 0;
+
+-- Nombre de votes négatifs (score <= 2) reçus
+ALTER TABLE recordings ADD COLUMN IF NOT EXISTS rejected_count INTEGER DEFAULT 0;
+
+-- Marque si cet audio est le meilleur validé pour son mot
+ALTER TABLE recordings ADD COLUMN IF NOT EXISTS is_best_for_word BOOLEAN DEFAULT FALSE;
+
+-- Index pour accélérer la recherche du meilleur audio par mot
+CREATE INDEX IF NOT EXISTS idx_recordings_best_word ON recordings(word_id, is_best_for_word) WHERE word_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_recordings_avg_score ON recordings(average_score DESC) WHERE status = 'approved';
+
+

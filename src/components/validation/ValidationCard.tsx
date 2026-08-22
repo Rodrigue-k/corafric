@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { useTranslations } from "next-intl";
 import { ValidationControls } from "./ValidationControls";
 import { CustomAudioPlayer } from "../recording/CustomAudioPlayer";
-import { AlertCircle, CheckCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, Star } from "lucide-react";
 
 interface ValidationRecording {
   id: string;
@@ -12,6 +11,11 @@ interface ValidationRecording {
   sentence: {
     text: string;
     language: string;
+  };
+  word?: {
+    text: string;
+    translation?: string;
+    definition?: string;
   };
 }
 
@@ -24,12 +28,16 @@ export const ValidationCard: React.FC<ValidationCardProps> = ({
   recording,
   onVoteSubmitted,
 }) => {
-  const t = useTranslations("validate");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [voteSuccess, setVoteSuccess] = useState<boolean>(false);
+  const [submittedScore, setSubmittedScore] = useState<number>(0);
 
-  const handleVote = async (isValid: boolean) => {
+  const displayText = recording.word?.text || recording.sentence.text;
+  const displayTranslation = recording.word?.translation || null;
+  const displayDefinition = recording.word?.definition || null;
+
+  const handleVote = async (score: number) => {
     try {
       setIsSubmitting(true);
       setErrorMessage(null);
@@ -39,7 +47,7 @@ export const ValidationCard: React.FC<ValidationCardProps> = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           recordingId: recording.id,
-          isValid,
+          score,
         }),
       });
 
@@ -49,12 +57,13 @@ export const ValidationCard: React.FC<ValidationCardProps> = ({
         throw new Error(data.error);
       }
 
+      setSubmittedScore(score);
       setVoteSuccess(true);
 
       setTimeout(() => {
         setVoteSuccess(false);
         onVoteSubmitted(data.status);
-      }, 450);
+      }, 600);
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : "Erreur de soumission.");
     } finally {
@@ -64,7 +73,7 @@ export const ValidationCard: React.FC<ValidationCardProps> = ({
 
   return (
     <div className="w-full max-w-xl mx-auto space-y-8 py-2">
-      {/* Subtle Meta Bar */}
+      {/* Meta Bar */}
       <div className="flex justify-between items-center text-xs border-b border-border/40 pb-2.5">
         <span className="text-[10px] font-bold font-mono uppercase tracking-widest text-primary/70">
           Enregistrement #{recording.id.substring(0, 8)}
@@ -74,14 +83,24 @@ export const ValidationCard: React.FC<ValidationCardProps> = ({
         </span>
       </div>
 
-      {/* Big Focal Text */}
-      <div className="text-center py-4 sm:py-6">
+      {/* Focal Text */}
+      <div className="text-center py-4 sm:py-6 space-y-2">
         <p className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-foreground leading-tight tracking-tight">
-          « {recording.sentence.text} »
+          « {displayText} »
         </p>
+        {displayTranslation && (
+          <p className="text-sm text-text-muted font-display italic">
+            {displayTranslation}
+          </p>
+        )}
+        {displayDefinition && (
+          <p className="text-xs text-text-muted max-w-xs mx-auto leading-relaxed">
+            {displayDefinition}
+          </p>
+        )}
       </div>
 
-      {/* Seamless Custom Audio Player */}
+      {/* Audio Player */}
       <div className="w-full">
         <CustomAudioPlayer src={recording.audioUrl} />
       </div>
@@ -91,11 +110,26 @@ export const ValidationCard: React.FC<ValidationCardProps> = ({
         {!voteSuccess ? (
           <ValidationControls onVote={handleVote} disabled={isSubmitting} />
         ) : (
-          <div className="flex items-center justify-center gap-2 py-3 px-4 bg-[#FAF8F5] rounded-full border border-primary/20 max-w-xs mx-auto">
-            <CheckCircle className="w-4 h-4 text-primary" />
-            <p className="text-xs font-semibold text-foreground font-display uppercase tracking-wider">
-              Vote validé
-            </p>
+          <div className="flex flex-col items-center gap-2 py-4">
+            <div className="flex items-center gap-2 py-3 px-4 bg-[#FAF8F5] rounded-full border border-primary/20 max-w-xs mx-auto">
+              <CheckCircle className="w-4 h-4 text-primary" />
+              <p className="text-xs font-semibold text-foreground font-display uppercase tracking-wider">
+                Note soumise
+              </p>
+            </div>
+            {/* Show submitted score */}
+            <div className="flex gap-0.5">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <Star
+                  key={s}
+                  className={`w-4 h-4 ${
+                    s <= submittedScore
+                      ? "fill-amber-400 text-amber-400"
+                      : "fill-transparent text-border"
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         )}
 
