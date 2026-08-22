@@ -36,12 +36,13 @@ export async function GET(request: Request) {
         WHERE r.status = 'pending'
           AND r.word_id IS NOT NULL
           AND v.id IS NULL
-          AND r.user_id != ${userId}
+          AND (r.user_id IS NULL OR r.user_id != ${userId})
         GROUP BY r.word_id
         HAVING COUNT(*) >= 2
         ORDER BY cnt DESC
         LIMIT 1
       `) as { word_id: string; cnt: number }[];
+
 
       if (wordCandidates.length > 0) {
         const wordId = wordCandidates[0].word_id;
@@ -94,9 +95,10 @@ export async function GET(request: Request) {
       WHERE r.status = 'pending'
         AND v.id IS NULL
       ORDER BY 
-        CASE WHEN r.user_id != ${userId} THEN 0 ELSE 1 END,
+        CASE WHEN (r.user_id IS NULL OR r.user_id != ${userId}) THEN 0 ELSE 1 END,
         r.created_at ASC
       LIMIT 1
+
     `) as Record<string, unknown>[];
 
     if (result.length === 0) {

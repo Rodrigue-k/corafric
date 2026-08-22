@@ -41,6 +41,21 @@ export default function ValidateClientPage() {
         : "/api/recordings/next";
 
       const res = await fetch(url);
+      if (!res.ok) {
+        if (res.status === 401) {
+          throw new Error("Veuillez vous connecter pour valider des audios.");
+        }
+        const text = await res.text();
+        let errMsg = "Erreur lors de la récupération des enregistrements.";
+        try {
+          const parsed = JSON.parse(text);
+          if (parsed.error) errMsg = parsed.error;
+        } catch {
+          // Response is HTML (error page)
+        }
+        throw new Error(errMsg);
+      }
+
       const data = await res.json() as {
         error?: string;
         mode?: string;
@@ -49,6 +64,7 @@ export default function ValidateClientPage() {
       };
 
       if (data.error) throw new Error(data.error);
+
 
       if (data.mode === "comparative" && data.recordings && data.recordings.length > 0) {
         setComparativeRecordings(data.recordings);
