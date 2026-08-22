@@ -5,17 +5,17 @@
     "dictionary": "Dictionnaire",
     "leaderboard": "Classement",
     "validate": "Valider",
-    "explore": "Corpus",
+    "explore": "Corpus & IA",
     "signIn": "Connexion",
     "join": "S'inscrire",
     "support": "Soutenir"
   },
   "landing": {
-    "badge": "Académie Numérique",
-    "title": "Préserver la voix\nde l'Afrique.",
-    "subtitle": "L'académie numérique pour standardiser, documenter et numériser notre patrimoine linguistique.",
-    "ctaPrimary": "Contribuer",
-    "ctaSecondary": "Dictionnaire",
+    "badge": "Académie Numérique & IA",
+    "title": "La voix de l'Afrique,\npour entraîner l'IA de demain.",
+    "subtitle": "La première académie numérique et plateforme participative pour préserver nos langues locales et construire les technologies vocales africaines.",
+    "ctaPrimary": "Donner ma voix",
+    "ctaSecondary": "Dictionnaire Vocal",
     "voicePreview": {
       "lang": "Éwé",
       "phrase": "« Eŋlɔ wò gbe ɖe mɔ̃ me »",
@@ -23,111 +23,111 @@
     },
     "stats": {
       "recordings": "Audios",
-      "speakers": "Voix",
+      "speakers": "Locuteurs",
       "hours": "Heures"
     },
     "how": {
-      "title": "Deux Piliers Complémentaires",
-      "step1Title": "Dictionnaire Vocal",
-      "step1Desc": "Enregistrement de termes isolés avec définitions et tons.",
-      "step2Title": "Corpus de Phrases",
-      "step2Desc": "Lecture en contexte naturel pour la syntaxe et la prosodie.",
-      "step3Title": "Validation Communautaire",
-      "step3Desc": "Contrôle qualité par des locuteurs natifs pour garantir la conformité."
+      "title": "Deux Piliers Stratégiques",
+      "step1Title": "1. Dictionnaire Vocal",
+      "step1Desc": "Le répertoire officiel pour préserver les mots, leurs définitions et leurs tons exacts.",
+      "step2Title": "2. Studio IA & Phrases",
+      "step2Desc": "Des milliers de phrases enregistrées pour entraîner les modèles de synthèse et reconnaissance vocale.",
+      "step3Title": "3. Contrôle Qualité",
+      "step3Desc": "Validation collaborative par des locuteurs natifs pour garantir un dataset d'excellence."
     },
     "markets": {
       "label": "DÉPLOIEMENT",
-      "title": "Initiation au Togo.",
-      "subtitle": "Phase 1 : l'Éwé. L'académie a vocation à s'étendre aux autres langues africaines.",
+      "title": "Lancement officiel en Éwé (Togo & Ghana).",
+      "subtitle": "Phase 1 : l'Éwé. L'infrastructure est conçue pour s'étendre à toutes les langues du continent.",
       "badge": "Statut : Actif"
     }
   },
   "contribute": {
     "title": "Studio Vocal",
-    "phraseLabel": "Lecture",
+    "phraseLabel": "Lecture à haute voix",
     "startRecording": "Enregistrer",
     "stopRecording": "Terminer",
-    "submit": "Valider",
+    "submit": "Valider l'audio",
     "retry": "Recommencer",
-    "skip": "Ignorer",
+    "skip": "Passer cette phrase",
     "submitting": "Traitement...",
-    "success": "Sauvegardé.",
-    "nextPhrase": "Suivant"
+    "success": "Audio sauvegardé !",
+    "nextPhrase": "Phrase suivante"
   },
   "validate": {
-    "title": "Contrôle Qualité",
-    "instruction": "L'audio correspond-il précisément au texte ?",
+    "title": "Contrôle Qualité Communautaire",
+    "instruction": "L'audio correspond-il fidèlement au texte et au bon accent ?",
     "play": "Écouter",
-    "valid": "Conforme",
+    "valid": "Parfait",
     "invalid": "Rejeter",
     "sessionCount": "{count} validations"
   },
   "leaderboard": {
-    "title": "Classement",
-    "subtitle": "Les contributeurs les plus actifs du corpus vocal.",
+    "title": "Les Pionniers de la Langue",
+    "subtitle": "Le classement des contributeurs qui bâtissent le patrimoine numérique de l'Afrique.",
     "rank": "Rang",
-    "user": "Contributeur",
+    "user": "Pionnier",
     "score": "Audios"
   },
   "dictionary": {
-    "title": "Dictionnaire Vocal",
-    "subtitle": "Notre patrimoine lexical numérisé.",
-    "searchPlaceholder": "Rechercher un mot...",
-    "noResults": "Aucun résultat.",
-    "listen": "Écouter",
+    "title": "Dictionnaire Vocal Interactif",
+    "subtitle": "Explorez, apprenez et écoutez le patrimoine lexical Éwé.",
+    "searchPlaceholder": "Rechercher un mot en éwé ou en français...",
+    "noResults": "Aucun mot trouvé dans notre lexique.",
+    "listen": "Écouter la prononciation",
     "wordFr": "Français",
     "wordEn": "Anglais"
   },
   "explore": {
-    "title": "Le Corpus",
-    "leaderboardTitle": "Top Contributeurs",
-    "downloadTitle": "Accès aux données",
-    "downloadDesc": "L'intégralité du corpus audio est libre d'accès pour la recherche et les technologies vocales.",
+    "title": "L'Open Data Africain",
+    "leaderboardTitle": "Top Bâtisseurs",
+    "downloadTitle": "Accès au Dataset Vocal",
+    "downloadDesc": "Le plus grand jeu de données vocal open-source en Éwé, libre et accessible pour la recherche, les universités et les développeurs d'Intelligence Artificielle.",
     "downloadBtn": "Télécharger le Dataset"
   },
   "brandShowcase": {
-    "tagline": "L'Académie Numérique.",
-    "description": "Corafric : plateforme libre pour la numérisation et la préservation des langues africaines.",
+    "tagline": "L'Infrastructure Vocale de l'Afrique.",
+    "description": "Corafric : plateforme technologique libre pour la numérisation, la préservation et l'intégration des langues africaines dans l'IA.",
     "email": "contact@corafric.com",
     "github": "GitHub",
     "support": "Soutenir le projet",
     "privacy": "Confidentialité",
     "cookies": "Cookies",
-    "copyright": "Corafric. Patrimoine linguistique ouvert."
+    "copyright": "Corafric. Patrimoine linguistique et IA ouverte."
   },
   "privacy": {
     "title": "Confidentialité",
-    "content": "Plateforme communautaire transparente. Données sous licence libre CC-BY. Aucune collecte de données personnelles sensibles. Enregistrements anonymisés.",
+    "content": "Plateforme communautaire transparente. Données vocales sous licence libre CC-BY. Aucune collecte de données personnelles sensibles. Enregistrements anonymisés pour la recherche.",
     "back": "Retour"
   },
   "cookies": {
-    "title": "Cookies",
-    "content": "Uniquement des cookies techniques pour votre session. Aucun traceur publicitaire. Aucun profilage.",
+    "title": "Politique de Cookies",
+    "content": "Uniquement des cookies techniques indispensables à votre session. Aucun traceur publicitaire. Aucun profilage commercial.",
     "back": "Retour"
   },
   "contribuer": {
     "hero": {
-      "tag": "TRANSMISSION",
-      "title": "Transmettre et pérenniser\nnos langues.",
-      "subtitle": "Corafric est un bien commun construit par ses locuteurs."
+      "tag": "IMPACT & TRANSMISSION",
+      "title": "Faites entrer nos langues\ndans l'ère de l'IA.",
+      "subtitle": "Corafric est un bien commun technologique construit par et pour ses locuteurs."
     },
     "ways": {
       "way1": {
-        "text": "Vous parlez Éwé",
-        "action": "Contribuer"
+        "text": "Vous parlez la langue",
+        "action": "Enregistrer ma voix"
       },
       "way2": {
         "text": "Vous développez",
-        "action": "GitHub"
+        "action": "Code source GitHub"
       },
       "way3": {
-        "text": "Vous soutenez",
-        "action": "Partager"
+        "text": "Vous soutenez la culture",
+        "action": "Partager le projet"
       }
     },
     "partnership": {
-      "text": "Institution, ONG ou Université ?",
-      "cta": "Contactez-nous"
+      "text": "Institution, Entreprise ou Université ? Devenez partenaire de l'infrastructure linguistique africaine.",
+      "cta": "Devenir Partenaire"
     }
   }
 }

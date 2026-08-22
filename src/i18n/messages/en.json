@@ -5,17 +5,17 @@
     "dictionary": "Dictionary",
     "leaderboard": "Leaderboard",
     "validate": "Validate",
-    "explore": "Corpus",
+    "explore": "Corpus & AI",
     "signIn": "Sign In",
     "join": "Join",
     "support": "Support"
   },
   "landing": {
-    "badge": "Digital Academy",
-    "title": "Preserving Africa's\nvoice.",
-    "subtitle": "The digital academy to standardize, document, and digitize our linguistic heritage.",
-    "ctaPrimary": "Contribute",
-    "ctaSecondary": "Dictionary",
+    "badge": "Digital Academy & AI",
+    "title": "Africa's voice,\ntraining tomorrow's AI.",
+    "subtitle": "The first digital academy and crowdsourced platform to preserve African languages and build indigenous speech technologies.",
+    "ctaPrimary": "Lend Your Voice",
+    "ctaSecondary": "Audio Dictionary",
     "voicePreview": {
       "lang": "Ewe",
       "phrase": "« Eŋlɔ wò gbe ɖe mɔ̃ me »",
@@ -23,111 +23,111 @@
     },
     "stats": {
       "recordings": "Audios",
-      "speakers": "Voices",
+      "speakers": "Speakers",
       "hours": "Hours"
     },
     "how": {
-      "title": "Two Complementary Pillars",
-      "step1Title": "Audio Dictionary",
-      "step1Desc": "Recording isolated terms with definitions, tones, and parts of speech.",
-      "step2Title": "Sentence Corpus",
-      "step2Desc": "Reading in natural context to model syntax and prosody.",
-      "step3Title": "Community Validation",
-      "step3Desc": "Quality control by native speakers to ensure accuracy."
+      "title": "Two Strategic Pillars",
+      "step1Title": "1. Audio Dictionary",
+      "step1Desc": "The official directory to preserve words, definitions, and exact tonal pronunciations.",
+      "step2Title": "2. AI Studio & Sentences",
+      "step2Desc": "Thousands of community-read sentences to train Speech-to-Text and TTS models.",
+      "step3Title": "3. Quality Assurance",
+      "step3Desc": "Collaborative validation by native speakers to ensure a high-grade dataset."
     },
     "markets": {
       "label": "DEPLOYMENT",
-      "title": "Starting in Togo.",
-      "subtitle": "Phase 1: Ewe. The academy is built to expand across other African languages.",
+      "title": "Official Launch in Ewe (Togo & Ghana).",
+      "subtitle": "Phase 1: Ewe. The infrastructure is engineered to scale across all African languages.",
       "badge": "Status: Active"
     }
   },
   "contribute": {
     "title": "Voice Studio",
-    "phraseLabel": "Reading",
+    "phraseLabel": "Read aloud",
     "startRecording": "Record",
     "stopRecording": "Finish",
-    "submit": "Submit",
+    "submit": "Submit Audio",
     "retry": "Retry",
-    "skip": "Skip",
+    "skip": "Skip Phrase",
     "submitting": "Processing...",
-    "success": "Saved.",
-    "nextPhrase": "Next"
+    "success": "Audio Saved!",
+    "nextPhrase": "Next Phrase"
   },
   "validate": {
-    "title": "Quality Control",
-    "instruction": "Does the audio accurately match the text?",
+    "title": "Community Quality Control",
+    "instruction": "Does the audio accurately match the text and correct accent?",
     "play": "Listen",
     "valid": "Accurate",
     "invalid": "Reject",
     "sessionCount": "{count} validations"
   },
   "leaderboard": {
-    "title": "Leaderboard",
-    "subtitle": "The most active contributors to the voice corpus.",
+    "title": "Language Pioneers",
+    "subtitle": "Leaderboard of the top contributors building Africa's digital linguistic heritage.",
     "rank": "Rank",
-    "user": "Contributor",
+    "user": "Pioneer",
     "score": "Audios"
   },
   "dictionary": {
-    "title": "Audio Dictionary",
-    "subtitle": "Our digitized lexical heritage.",
-    "searchPlaceholder": "Search a term...",
-    "noResults": "No results.",
-    "listen": "Listen",
+    "title": "Interactive Audio Dictionary",
+    "subtitle": "Explore, learn, and listen to the Ewe lexical heritage.",
+    "searchPlaceholder": "Search a term in Ewe or English...",
+    "noResults": "No results found in our lexicon.",
+    "listen": "Listen to pronunciation",
     "wordFr": "French",
     "wordEn": "English"
   },
   "explore": {
-    "title": "The Corpus",
-    "leaderboardTitle": "Top Contributors",
-    "downloadTitle": "Data Access",
-    "downloadDesc": "The full audio corpus is openly accessible for research and speech technologies.",
+    "title": "African Open Data",
+    "leaderboardTitle": "Top Builders",
+    "downloadTitle": "Access the Speech Dataset",
+    "downloadDesc": "The largest open-source Ewe speech dataset, freely accessible for research, universities, and Artificial Intelligence developers.",
     "downloadBtn": "Download Dataset"
   },
   "brandShowcase": {
-    "tagline": "The Digital Academy.",
-    "description": "Corafric: open-source platform for the digitization and preservation of African languages.",
+    "tagline": "Africa's Speech Infrastructure.",
+    "description": "Corafric: open-source technology platform for the digitization, preservation, and integration of African languages into AI.",
     "email": "contact@corafric.com",
     "github": "GitHub",
     "support": "Support the project",
     "privacy": "Privacy",
     "cookies": "Cookies",
-    "copyright": "Corafric. Open linguistic heritage."
+    "copyright": "Corafric. Open linguistic heritage & AI."
   },
   "privacy": {
-    "title": "Privacy",
-    "content": "Transparent community platform. Data under CC-BY open license. No collection of sensitive personal data. Recordings are anonymized.",
+    "title": "Privacy Policy",
+    "content": "Transparent community platform. Speech data released under open CC-BY license. No collection of sensitive personal data. Anonymized recordings for research.",
     "back": "Back"
   },
   "cookies": {
     "title": "Cookies Policy",
-    "content": "Corafric uses only essential technical cookies for your session. No advertising trackers. No profiling.",
+    "content": "Only essential technical cookies for your session. No advertising trackers. No commercial profiling.",
     "back": "Back"
   },
   "contribuer": {
     "hero": {
-      "tag": "TRANSMISSION",
-      "title": "Preserve and sustain\nour languages.",
-      "subtitle": "Corafric is a digital commons built by its native speakers."
+      "tag": "IMPACT & TRANSMISSION",
+      "title": "Bring our languages\ninto the AI era.",
+      "subtitle": "Corafric is a technological digital commons built by and for native speakers."
     },
     "ways": {
       "way1": {
-        "text": "You speak Ewe",
-        "action": "Contribute"
+        "text": "You speak the language",
+        "action": "Record my voice"
       },
       "way2": {
-        "text": "You code",
-        "action": "GitHub"
+        "text": "You develop software",
+        "action": "GitHub Source Code"
       },
       "way3": {
-        "text": "You support",
-        "action": "Share"
+        "text": "You champion culture",
+        "action": "Share the Project"
       }
     },
     "partnership": {
-      "text": "Institution, NGO or University?",
-      "cta": "Contact us"
+      "text": "Institution, Company or University? Partner with Africa's linguistic AI infrastructure.",
+      "cta": "Become a Partner"
     }
   }
 }
