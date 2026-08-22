@@ -20,10 +20,11 @@ export const AfricaMap: React.FC<{ className?: string }> = ({ className }) => {
         .land:hover {
           fill: #DFD4C6;
         }
-        .tg {
+        .tg, .gh {
           fill: #B84A2A !important;
           animation: mapPulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
+
         .circle {
           display: none; /* Hide small country circles for a cleaner map */
         }

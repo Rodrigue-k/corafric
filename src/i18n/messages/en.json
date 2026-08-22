@@ -39,8 +39,11 @@
       "label": "DEPLOYMENT",
       "title": "Official Launch in Ewe (Togo and Ghana).",
       "subtitle": "Phase 1: Ewe. The infrastructure is engineered to scale across all African languages.",
-      "badge": "Status: Active"
+      "badge": "Status: Active",
+      "legendActive": "Phase 1: Ewe (Togo and Ghana)",
+      "legendNext": "Upcoming phases (Continent)"
     }
+
 
   },
   "contribute": {

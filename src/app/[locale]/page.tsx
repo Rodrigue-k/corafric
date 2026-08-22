@@ -218,9 +218,20 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             </div>
 
             {/* Right Column Map */}
-            <div className="lg:col-span-7 flex justify-center items-center w-full max-w-[650px] mx-auto">
+            <div className="lg:col-span-7 flex flex-col justify-center items-center w-full max-w-[650px] mx-auto space-y-4">
               <AfricaMap className="w-full h-auto max-h-[480px] text-[#C4B8A8]" />
+              <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs font-display tracking-wider uppercase text-text-muted pt-1">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#B84A2A] inline-block animate-pulse" />
+                  <span className="text-foreground font-semibold">{t("markets.legendActive")}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#E8E0D8] border border-[#C4B8A8] inline-block" />
+                  <span>{t("markets.legendNext")}</span>
+                </div>
+              </div>
             </div>
+
           </div>
         </div>
       </section>

@@ -39,8 +39,11 @@
       "label": "DÉPLOIEMENT",
       "title": "Lancement officiel en Éwé (Togo et Ghana).",
       "subtitle": "Phase 1 : l'Éwé. L'infrastructure est conçue pour s'étendre à toutes les langues du continent.",
-      "badge": "Statut : Actif"
+      "badge": "Statut : Actif",
+      "legendActive": "Phase 1 : Éwé (Togo et Ghana)",
+      "legendNext": "Phases suivantes (Continent)"
     }
+
 
   },
   "contribute": {
