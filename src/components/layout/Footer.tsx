@@ -28,9 +28,14 @@ export const Footer: React.FC = () => {
             Classement
           </Link>
           <span className="text-text-muted/40">·</span>
+          <Link href="/profile" className="hover:text-primary transition-colors duration-200">
+            Profil
+          </Link>
+          <span className="text-text-muted/40">·</span>
           <Link href="/explore" className="hover:text-primary transition-colors duration-200">
             Dataset
           </Link>
+
           <span className="text-text-muted/40">·</span>
           <Link href="/privacy" className="hover:text-primary transition-colors duration-200">
             {t("privacy")}

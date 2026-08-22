@@ -18,19 +18,24 @@ export async function GET(request: Request) {
     if (query) {
       const searchTerm = `%${query.toLowerCase()}%`;
       const results = await sql`
-        SELECT * FROM dictionary_words
-        WHERE LOWER(word_ewe) LIKE ${searchTerm}
-           OR LOWER(word_fr) LIKE ${searchTerm}
-           OR LOWER(word_en) LIKE ${searchTerm}
+        SELECT 
+          w.*,
+          u.username AS official_voice_username
+        FROM dictionary_words w
+        LEFT JOIN recordings r ON r.word_id = w.id AND r.is_best_for_word = TRUE AND r.status = 'approved'
+        LEFT JOIN users u ON u.id = r.user_id
+        WHERE LOWER(w.word_ewe) LIKE ${searchTerm}
+           OR LOWER(w.word_fr) LIKE ${searchTerm}
+           OR LOWER(w.word_en) LIKE ${searchTerm}
         ORDER BY 
           CASE 
-            WHEN LOWER(word_ewe) = ${query.toLowerCase()} THEN 1
-            WHEN LOWER(word_fr) = ${query.toLowerCase()} THEN 2
-            WHEN LOWER(word_en) = ${query.toLowerCase()} THEN 3
+            WHEN LOWER(w.word_ewe) = ${query.toLowerCase()} THEN 1
+            WHEN LOWER(w.word_fr) = ${query.toLowerCase()} THEN 2
+            WHEN LOWER(w.word_en) = ${query.toLowerCase()} THEN 3
             ELSE 4
           END,
-          word_fr IS NOT NULL DESC,
-          LOWER(word_ewe) ASC
+          w.word_fr IS NOT NULL DESC,
+          LOWER(w.word_ewe) ASC
         LIMIT ${limit} OFFSET ${offset}
       `;
       return NextResponse.json({ words: results, totalCount, page, limit });
@@ -40,11 +45,16 @@ export async function GET(request: Request) {
     if (letter && letter !== "all") {
       const letterPattern = `${letter}%`;
       const results = await sql`
-        SELECT * FROM dictionary_words
-        WHERE LOWER(word_ewe) LIKE ${letterPattern}
+        SELECT 
+          w.*,
+          u.username AS official_voice_username
+        FROM dictionary_words w
+        LEFT JOIN recordings r ON r.word_id = w.id AND r.is_best_for_word = TRUE AND r.status = 'approved'
+        LEFT JOIN users u ON u.id = r.user_id
+        WHERE LOWER(w.word_ewe) LIKE ${letterPattern}
         ORDER BY 
-          word_fr IS NOT NULL DESC,
-          LOWER(word_ewe) ASC
+          w.word_fr IS NOT NULL DESC,
+          LOWER(w.word_ewe) ASC
         LIMIT ${limit} OFFSET ${offset}
       `;
 
@@ -63,12 +73,18 @@ export async function GET(request: Request) {
 
     // Default Alphabetical Mode: Prioritize words with translations first, then alphabetical A-Z
     const words = await sql`
-      SELECT * FROM dictionary_words
+      SELECT 
+        w.*,
+        u.username AS official_voice_username
+      FROM dictionary_words w
+      LEFT JOIN recordings r ON r.word_id = w.id AND r.is_best_for_word = TRUE AND r.status = 'approved'
+      LEFT JOIN users u ON u.id = r.user_id
       ORDER BY 
-        word_fr IS NOT NULL DESC,
-        LOWER(word_ewe) ASC
+        w.word_fr IS NOT NULL DESC,
+        LOWER(w.word_ewe) ASC
       LIMIT ${limit} OFFSET ${offset}
     `;
+
 
     return NextResponse.json({ words, totalCount, page, limit });
   } catch (error) {

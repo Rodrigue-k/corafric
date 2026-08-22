@@ -21,13 +21,20 @@ export async function GET() {
       const username = clerkUser?.username || clerkUser?.firstName || `contributeur_${userId.substring(0, 8)}`;
       await ensureDbUser(userId, username);
 
-      // Query words from dictionary_words that have NOT been recorded by this user
+      // Query words prioritizing those that already have 1-2 recordings from other contributors
+      // to quickly complete groups of 3 for comparative validation
       const result = (await sql`
-        SELECT w.id, w.word_ewe, w.word_fr, w.word_en, w.definition
+        SELECT w.id, w.word_ewe, w.word_fr, w.word_en, w.definition,
+               COUNT(all_r.id) AS existing_count
         FROM dictionary_words w
-        LEFT JOIN recordings r ON r.word_id = w.id AND r.user_id = ${userId}
-        WHERE r.id IS NULL
-        ORDER BY RANDOM()
+        LEFT JOIN recordings user_r ON user_r.word_id = w.id AND user_r.user_id = ${userId}
+        LEFT JOIN recordings all_r ON all_r.word_id = w.id AND all_r.status = 'pending'
+        WHERE user_r.id IS NULL
+        GROUP BY w.id, w.word_ewe, w.word_fr, w.word_en, w.definition
+        ORDER BY 
+          CASE WHEN COUNT(all_r.id) BETWEEN 1 AND 2 THEN 0 ELSE 1 END,
+          w.word_fr IS NOT NULL DESC,
+          RANDOM()
         LIMIT 1
       `) as Record<string, unknown>[];
 
@@ -36,13 +43,14 @@ export async function GET() {
         const fallback = (await sql`
           SELECT id, word_ewe, word_fr, word_en, definition
           FROM dictionary_words
-          ORDER BY RANDOM()
+          ORDER BY word_fr IS NOT NULL DESC, RANDOM()
           LIMIT 1
         `) as Record<string, unknown>[];
         return NextResponse.json({ word: fallback[0] || null });
       }
 
       return NextResponse.json({ word: result[0] });
+
     } else {
       // Anonymous / Guest mode: return random word
       const result = (await sql`

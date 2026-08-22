@@ -25,7 +25,11 @@ export interface DictionaryWord {
   word_fr: string | null;
   word_en: string | null;
   definition: string | null;
+  part_of_speech?: string | null;
+  audio_url?: string | null;
+  official_voice_username?: string | null;
 }
+
 
 export interface Recording {
   id: string;

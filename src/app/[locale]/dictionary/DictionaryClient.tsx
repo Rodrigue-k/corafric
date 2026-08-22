@@ -14,9 +14,11 @@ interface DictionaryWord {
   example_sentence_ewe: string | null;
   example_sentence_fr: string | null;
   audio_url: string | null;
+  official_voice_username?: string | null;
   confidence_score: number;
   sources: string[];
 }
+
 
 const EWE_ALPHABET = [
   "Tous", "A", "B", "D", "Ɖ", "E", "Ɛ", "F", "Ƒ", "G", "Ɣ", "H", "I", "K", "L", "M", "N", "Ŋ", "O", "Ɔ", "P", "R", "S", "T", "U", "V", "Ʋ", "W", "Y", "Z"
@@ -151,26 +153,39 @@ export default function DictionaryClient() {
                     {word.word_ewe}
                   </h2>
                   {word.audio_url && (
-                    <button
-                      onClick={() => handlePlayAudio(word.id, word.audio_url as string)}
-                      disabled={playingId === word.id}
-                      className={`p-2 rounded-full transition-all cursor-pointer ${
-                        playingId === word.id
-                          ? "text-primary bg-primary/10"
-                          : "text-text-muted/40 hover:text-primary hover:bg-primary/5"
-                      }`}
-                      title="Écouter la prononciation"
-                      aria-label="Écouter"
-                    >
-                      <Volume2 className="w-5 h-5" />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handlePlayAudio(word.id, word.audio_url as string)}
+                        disabled={playingId === word.id}
+                        className={`p-2 rounded-full transition-all cursor-pointer ${
+                          playingId === word.id
+                            ? "text-primary bg-primary/10"
+                            : "text-text-muted/40 hover:text-primary hover:bg-primary/5"
+                        }`}
+                        title="Écouter la prononciation"
+                        aria-label="Écouter"
+                      >
+                        <Volume2 className="w-5 h-5" />
+                      </button>
+                      {word.official_voice_username && (
+                        <span className="hidden sm:inline-flex items-center text-[10px] font-display uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 border border-amber-500/20 font-medium">
+                          Voix : @{word.official_voice_username}
+                        </span>
+                      )}
+                    </div>
                   )}
                 </div>
+                {word.official_voice_username && word.audio_url && (
+                  <span className="sm:hidden inline-flex items-center text-[10px] font-display uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 border border-amber-500/20 font-medium w-fit mt-1">
+                    Voix : @{word.official_voice_username}
+                  </span>
+                )}
                 {word.part_of_speech && (
                   <span className="text-xs italic text-text-muted mt-1 font-serif">
                     {word.part_of_speech}
                   </span>
                 )}
+
               </div>
 
               {/* Right: Translations & Examples */}

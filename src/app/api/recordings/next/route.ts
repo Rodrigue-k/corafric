@@ -29,8 +29,9 @@ export async function GET(request: Request) {
     // ─── COMPARATIVE MODE: 3 audios for the same word ──────────────────────
     if (mode === "comparative") {
       // Find a word_id that has at least 2 pending recordings not yet voted by this user
+      // Wave priority: prioritize words that already have active votes to close them faster
       const wordCandidates = (await sql`
-        SELECT r.word_id, COUNT(*) AS cnt
+        SELECT r.word_id, COUNT(*) AS cnt, MAX(r.validation_count) AS max_votes
         FROM recordings r
         LEFT JOIN validations v ON v.recording_id = r.id AND v.user_id = ${userId}
         WHERE r.status = 'pending'
@@ -39,10 +40,9 @@ export async function GET(request: Request) {
           AND (r.user_id IS NULL OR r.user_id != ${userId})
         GROUP BY r.word_id
         HAVING COUNT(*) >= 2
-        ORDER BY cnt DESC
+        ORDER BY max_votes DESC, cnt DESC
         LIMIT 1
       `) as { word_id: string; cnt: number }[];
-
 
       if (wordCandidates.length > 0) {
         const wordId = wordCandidates[0].word_id;
@@ -61,7 +61,7 @@ export async function GET(request: Request) {
           WHERE r.status = 'pending'
             AND r.word_id = ${wordId}
             AND v.id IS NULL
-          ORDER BY r.created_at ASC
+          ORDER BY r.validation_count DESC, r.created_at ASC
           LIMIT 3
         `) as Record<string, unknown>[];
 
@@ -80,7 +80,7 @@ export async function GET(request: Request) {
     }
     // ────────────────────────────────────────────────────────────────────────
 
-    // ─── SINGLE MODE (default) ──────────────────────────────────────────────
+    // ─── SINGLE MODE (default): Prioritize words nearing completion ──────────
     const result = (await sql`
       SELECT 
         r.id, 
@@ -96,10 +96,11 @@ export async function GET(request: Request) {
         AND v.id IS NULL
       ORDER BY 
         CASE WHEN (r.user_id IS NULL OR r.user_id != ${userId}) THEN 0 ELSE 1 END,
+        r.validation_count DESC,
         r.created_at ASC
       LIMIT 1
-
     `) as Record<string, unknown>[];
+
 
     if (result.length === 0) {
       return NextResponse.json({ recording: null, message: "Aucun enregistrement en attente de validation !" });

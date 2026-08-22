@@ -6,10 +6,12 @@
     "leaderboard": "Leaderboard",
     "validate": "Validate",
     "explore": "Corpus and AI",
+    "profile": "My Profile",
     "signIn": "Sign In",
     "join": "Join",
     "support": "Support"
   },
+
   "landing": {
     "badge": "Digital Academy and AI",
     "title": "Africa's voice,\ntraining tomorrow's AI.",

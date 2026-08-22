@@ -6,10 +6,12 @@
     "leaderboard": "Classement",
     "validate": "Valider",
     "explore": "Corpus et IA",
+    "profile": "Mon Profil",
     "signIn": "Connexion",
     "join": "S'inscrire",
     "support": "Soutenir"
   },
+
   "landing": {
     "badge": "Académie Numérique et IA",
     "title": "La voix de l'Afrique,\npour entraîner l'IA de demain.",
