@@ -5,13 +5,13 @@
     "dictionary": "Dictionary",
     "leaderboard": "Leaderboard",
     "validate": "Validate",
-    "explore": "Corpus & AI",
+    "explore": "Corpus and AI",
     "signIn": "Sign In",
     "join": "Join",
     "support": "Support"
   },
   "landing": {
-    "badge": "Digital Academy & AI",
+    "badge": "Digital Academy and AI",
     "title": "Africa's voice,\ntraining tomorrow's AI.",
     "subtitle": "The first digital academy and crowdsourced platform to preserve African languages and build indigenous speech technologies.",
     "ctaPrimary": "Lend Your Voice",
@@ -30,17 +30,18 @@
       "title": "Two Strategic Pillars",
       "step1Title": "1. Audio Dictionary",
       "step1Desc": "The official directory to preserve words, definitions, and exact tonal pronunciations.",
-      "step2Title": "2. AI Studio & Sentences",
+      "step2Title": "2. AI Studio and Sentences",
       "step2Desc": "Thousands of community-read sentences to train Speech-to-Text and TTS models.",
       "step3Title": "3. Quality Assurance",
       "step3Desc": "Collaborative validation by native speakers to ensure a high-grade dataset."
     },
     "markets": {
       "label": "DEPLOYMENT",
-      "title": "Official Launch in Ewe (Togo & Ghana).",
+      "title": "Official Launch in Ewe (Togo and Ghana).",
       "subtitle": "Phase 1: Ewe. The infrastructure is engineered to scale across all African languages.",
       "badge": "Status: Active"
     }
+
   },
   "contribute": {
     "title": "Voice Studio",
@@ -93,7 +94,7 @@
     "support": "Support the project",
     "privacy": "Privacy",
     "cookies": "Cookies",
-    "copyright": "Corafric. Open linguistic heritage & AI."
+    "copyright": "Corafric. Open linguistic heritage and AI."
   },
   "privacy": {
     "title": "Privacy Policy",
@@ -107,7 +108,7 @@
   },
   "contribuer": {
     "hero": {
-      "tag": "IMPACT & TRANSMISSION",
+      "tag": "IMPACT AND TRANSMISSION",
       "title": "Bring our languages\ninto the AI era.",
       "subtitle": "Corafric is a technological digital commons built by and for native speakers."
     },

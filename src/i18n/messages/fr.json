@@ -5,13 +5,13 @@
     "dictionary": "Dictionnaire",
     "leaderboard": "Classement",
     "validate": "Valider",
-    "explore": "Corpus & IA",
+    "explore": "Corpus et IA",
     "signIn": "Connexion",
     "join": "S'inscrire",
     "support": "Soutenir"
   },
   "landing": {
-    "badge": "Académie Numérique & IA",
+    "badge": "Académie Numérique et IA",
     "title": "La voix de l'Afrique,\npour entraîner l'IA de demain.",
     "subtitle": "La première académie numérique et plateforme participative pour préserver nos langues locales et construire les technologies vocales africaines.",
     "ctaPrimary": "Donner ma voix",
@@ -30,17 +30,18 @@
       "title": "Deux Piliers Stratégiques",
       "step1Title": "1. Dictionnaire Vocal",
       "step1Desc": "Le répertoire officiel pour préserver les mots, leurs définitions et leurs tons exacts.",
-      "step2Title": "2. Studio IA & Phrases",
+      "step2Title": "2. Studio IA et Phrases",
       "step2Desc": "Des milliers de phrases enregistrées pour entraîner les modèles de synthèse et reconnaissance vocale.",
       "step3Title": "3. Contrôle Qualité",
-      "step3Desc": "Validation collaborative par des locuteurs natifs pour garantir un dataset d'excellence."
+      "step3Desc": "Validation collaborative par des locuteurs natifs pour garantir un dataset d'excellence.",
     },
     "markets": {
       "label": "DÉPLOIEMENT",
-      "title": "Lancement officiel en Éwé (Togo & Ghana).",
+      "title": "Lancement officiel en Éwé (Togo et Ghana).",
       "subtitle": "Phase 1 : l'Éwé. L'infrastructure est conçue pour s'étendre à toutes les langues du continent.",
       "badge": "Statut : Actif"
     }
+
   },
   "contribute": {
     "title": "Studio Vocal",
@@ -107,7 +108,7 @@
   },
   "contribuer": {
     "hero": {
-      "tag": "IMPACT & TRANSMISSION",
+      "tag": "IMPACT ET TRANSMISSION",
       "title": "Faites entrer nos langues\ndans l'ère de l'IA.",
       "subtitle": "Corafric est un bien commun technologique construit par et pour ses locuteurs."
     },
