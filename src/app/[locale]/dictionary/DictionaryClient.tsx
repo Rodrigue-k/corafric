@@ -91,14 +91,11 @@ export default function DictionaryClient() {
     <div className="max-w-4xl mx-auto space-y-12 py-6">
       {/* Editorial Header & Search */}
       <div className="space-y-8">
-        <div className="text-center space-y-3">
-          <span className="text-[10px] sm:text-xs font-bold font-display uppercase tracking-widest text-primary block">
-            Patrimoine Lexical
-          </span>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-display text-foreground tracking-tight">
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-display text-foreground tracking-tight">
             {t("title")}
           </h1>
-          <p className="text-sm text-text-muted max-w-xl mx-auto">
+          <p className="text-xs sm:text-sm text-text-muted max-w-lg mx-auto">
             {t("subtitle")}
           </p>
         </div>

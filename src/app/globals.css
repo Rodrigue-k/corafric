@@ -2,13 +2,13 @@
 
 :root {
   --primary: #B84A2A;
-  --primary-hover: #D4622F;
-  --primary-tint: #FDF0EB;
-  --accent: #D4A017;
-  --background: #F7F3EE;
-  --foreground: #1A1A2E;
-  --text-muted: #5C3D2E;
-  --border: #E8E0D8;
+  --primary-hover: #A03E22;
+  --primary-tint: #F9EBE6;
+  --accent: #C89211;
+  --background: #FAF9F6;
+  --foreground: #141416;
+  --text-muted: #68645E;
+  --border: #E8E5DF;
   --card: #FFFFFF;
 }
 

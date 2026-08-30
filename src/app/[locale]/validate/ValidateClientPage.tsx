@@ -28,6 +28,25 @@ export default function ValidateClientPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [sessionCount, setSessionCount] = useState<number>(0);
+  const [totalValidations, setTotalValidations] = useState<number | null>(null);
+
+  // Fetch user cumulative validations
+  useEffect(() => {
+    async function fetchUserStats() {
+      try {
+        const res = await fetch("/api/me/stats");
+        if (res.ok) {
+          const data = await res.json();
+          if (typeof data.totalValidations === "number") {
+            setTotalValidations(data.totalValidations);
+          }
+        }
+      } catch {
+        // Guest user or network error
+      }
+    }
+    void fetchUserStats();
+  }, []);
 
   const fetchNext = useCallback(async (currentMode: ValidationMode) => {
     try {
@@ -87,31 +106,38 @@ export default function ValidateClientPage() {
 
   const handleVoteSubmitted = () => {
     setSessionCount((prev) => prev + 1);
+    setTotalValidations((prev) => (prev !== null ? prev + 1 : null));
     void fetchNext(mode);
   };
 
   const handleModeChange = (newMode: ValidationMode) => {
     setMode(newMode);
-    // fetchNext will be triggered by the useEffect watching `mode`
   };
 
   return (
     <div className="w-full max-w-3xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border/50 pb-3">
+      <div className="flex items-center justify-between border-b border-border/60 pb-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold font-display text-foreground tracking-tight">
             {t("title")}
           </h1>
-          <p className="text-xs text-text-muted">{t("instruction")}</p>
+          <p className="text-xs text-text-muted mt-0.5">{t("instruction")}</p>
         </div>
         <div className="text-right">
-          <span className="text-[10px] font-display uppercase tracking-widest text-text-muted/70 block">
-            Session
+          <span className="text-[10px] font-bold font-display uppercase tracking-widest text-text-muted block">
+            {totalValidations !== null ? "Total validés" : "Session"}
           </span>
-          <span className="text-xs font-mono font-semibold text-foreground">
-            {sessionCount} vérifié{sessionCount > 1 ? "s" : ""}
+          <span className="text-sm font-mono font-bold text-foreground">
+            {totalValidations !== null
+              ? totalValidations
+              : sessionCount}
           </span>
+          {totalValidations !== null && sessionCount > 0 && (
+            <span className="text-[10px] text-primary font-mono block">
+              +{sessionCount} cette session
+            </span>
+          )}
         </div>
       </div>
 
