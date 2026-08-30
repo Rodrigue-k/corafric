@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { Trophy, Mic, CheckCircle, Star, Award, TrendingUp } from "lucide-react";
+import { Trophy, Mic, CheckCircle, Star, Award, TrendingUp, UserCheck, Shield, Check } from "lucide-react";
 
 interface ProfileStats {
+  dbUsername?: string | null;
   totalContributions: number;
   totalValidations: number;
   avgScoreReceived: number;
@@ -73,6 +74,12 @@ export default function ProfileClientPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Username customization state
+  const [publicUsername, setPublicUsername] = useState("");
+  const [isSavingUsername, setIsSavingUsername] = useState(false);
+  const [usernameSavedSuccess, setUsernameSavedSuccess] = useState(false);
+  const [usernameError, setUsernameError] = useState<string | null>(null);
+
   useEffect(() => {
     if (!isLoaded) return;
     if (!user) {
@@ -84,10 +91,12 @@ export default function ProfileClientPage() {
     async function fetchStats() {
       try {
         const res = await fetch("/api/me/stats");
-        const data = await res.json() as ProfileStats & { error?: string };
+        const data = (await res.json()) as ProfileStats & { error?: string };
         if (!ignore) {
           if (data.error) throw new Error(data.error);
           setStats(data);
+          const initialName = data.dbUsername || user?.username || user?.firstName || "";
+          setPublicUsername(initialName);
         }
       } catch (err: unknown) {
         if (!ignore) setError(err instanceof Error ? err.message : "Erreur de chargement.");
@@ -96,8 +105,42 @@ export default function ProfileClientPage() {
       }
     }
     void fetchStats();
-    return () => { ignore = true; };
+    return () => {
+      ignore = true;
+    };
   }, [isLoaded, user]);
+
+  const handleSaveUsername = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!publicUsername.trim()) return;
+
+    setIsSavingUsername(true);
+    setUsernameError(null);
+    setUsernameSavedSuccess(false);
+
+    try {
+      const res = await fetch("/api/me/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: publicUsername }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Erreur lors de la mise à jour du pseudo.");
+      }
+
+      setUsernameSavedSuccess(true);
+      if (stats) {
+        setStats({ ...stats, dbUsername: data.username });
+      }
+      setTimeout(() => setUsernameSavedSuccess(false), 4000);
+    } catch (err) {
+      setUsernameError(err instanceof Error ? err.message : "Une erreur est survenue.");
+    } finally {
+      setIsSavingUsername(false);
+    }
+  };
 
   if (!isLoaded || loading) {
     return (
@@ -131,23 +174,27 @@ export default function ProfileClientPage() {
     ? new Date(stats.memberSince).toLocaleDateString("fr-FR", { month: "long", year: "numeric" })
     : null;
 
-  return (
-    <div className="max-w-4xl mx-auto space-y-10 py-2">
+  const currentDisplayName = stats?.dbUsername || user.username || user.firstName || "Contributeur";
 
+  return (
+    <div className="max-w-4xl mx-auto space-y-8 py-2">
       {/* Profile Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 border-b border-border/50 pb-6">
         <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0">
           <span className="text-2xl font-display font-bold text-primary">
-            {(user.username || user.firstName || "?")[0]?.toUpperCase()}
+            {(currentDisplayName || "?")[0]?.toUpperCase()}
           </span>
         </div>
         <div className="flex-1">
-          <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground tracking-tight">
-            {user.username || user.firstName || "Contributeur"}
-          </h1>
-          {memberYear && (
-            <p className="text-xs text-text-muted mt-0.5">Membre depuis {memberYear}</p>
-          )}
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground tracking-tight">
+              {currentDisplayName}
+            </h1>
+            <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+              @{publicUsername || "pseudo"}
+            </span>
+          </div>
+          {memberYear && <p className="text-xs text-text-muted mt-0.5">Membre depuis {memberYear}</p>}
         </div>
         {stats && (
           <div className="flex items-center gap-2 px-4 py-2 border border-border rounded-full">
@@ -156,6 +203,69 @@ export default function ProfileClientPage() {
               Rang #{stats.rank}
             </span>
           </div>
+        )}
+      </div>
+
+      {/* Public Username & Privacy Customization Box */}
+      <div className="border border-border/80 rounded-2xl p-6 bg-white/60 backdrop-blur-sm space-y-4 shadow-xs">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 border border-amber-500/20">
+              <Shield className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold font-display text-foreground">
+                Nom d&apos;affichage public & Confidentialité
+              </h2>
+              <p className="text-xs text-text-muted mt-0.5">
+                Choisissez le pseudonyme qui s&apos;affichera sur le dictionnaire (« Voix : @votre_pseudo ») et le classement.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <form onSubmit={handleSaveUsername} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+          <div className="relative flex-1">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-sm font-mono">@</span>
+            <input
+              type="text"
+              value={publicUsername}
+              onChange={(e) => setPublicUsername(e.target.value)}
+              placeholder="votre_pseudo"
+              maxLength={30}
+              className="w-full pl-8 pr-4 py-2.5 bg-background border border-border rounded-xl text-sm font-mono text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isSavingUsername || !publicUsername.trim()}
+            className="px-5 py-2.5 rounded-xl bg-primary text-white text-xs font-bold font-display uppercase tracking-wider hover:bg-primary/90 transition-colors disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 shrink-0"
+          >
+            {isSavingUsername ? (
+              "Enregistrement..."
+            ) : usernameSavedSuccess ? (
+              <>
+                <Check className="w-3.5 h-3.5" /> Enregistré !
+              </>
+            ) : (
+              <>
+                <UserCheck className="w-3.5 h-3.5" /> Enregistrer le pseudo
+              </>
+            )}
+          </button>
+        </form>
+
+        {/* Live badge preview */}
+        <div className="flex flex-wrap items-center gap-3 text-xs text-text-muted pt-1">
+          <span>Aperçu sur le dictionnaire :</span>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200/80 text-amber-900 font-medium text-[11px]">
+            <Award className="w-3 h-3 text-amber-600" />
+            Voix : @{publicUsername.trim() || "votre_pseudo"}
+          </span>
+        </div>
+
+        {usernameError && (
+          <p className="text-xs text-red-600 font-medium">{usernameError}</p>
         )}
       </div>
 

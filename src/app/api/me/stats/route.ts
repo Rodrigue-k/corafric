@@ -14,12 +14,13 @@ export async function GET() {
     // User base stats
     const userStats = (await sql`
       SELECT 
+        username,
         total_contributions,
         total_validations,
         created_at
       FROM users
       WHERE id = ${userId}
-    `) as { total_contributions: number; total_validations: number; created_at: string }[];
+    `) as { username: string | null; total_contributions: number; total_validations: number; created_at: string }[];
 
     if (userStats.length === 0) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -55,6 +56,7 @@ export async function GET() {
     `) as { rank: number }[];
 
     return NextResponse.json({
+      dbUsername: userStats[0].username,
       totalContributions: userStats[0].total_contributions,
       totalValidations: userStats[0].total_validations,
       avgScoreReceived: Math.round((qualityStats[0]?.avg_score_received ?? 0) * 10) / 10,
