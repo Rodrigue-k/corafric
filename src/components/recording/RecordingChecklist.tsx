@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { Mic, Volume2, MapPin, CheckCircle2 } from "lucide-react";
+import { Mic, Volume2, MapPin, CheckCircle2, ArrowLeft } from "lucide-react";
 import { Button } from "../ui/Button";
 
 interface RecordingChecklistProps {
   onReady: () => void;
+  onBack?: () => void;
+  formatLabel?: string;
 }
 
 const CHECKLIST_ITEMS = [
@@ -13,23 +15,23 @@ const CHECKLIST_ITEMS = [
     id: "quiet",
     icon: MapPin,
     label: "Je suis dans un endroit calme",
-    description: "Pas de musique, pas de rue bruyante, pas de ventilateur à côté.",
+    description: "Pas de musique, pas de rue bruyante, pas de ventilateur ou climatiseur direct.",
   },
   {
     id: "distance",
     icon: Mic,
     label: "Mon micro est bien positionné",
-    description: "À 10–15 cm de ma bouche, pas dans ma poche ou à l'autre bout de la pièce.",
+    description: "À 10–15 cm de ma bouche, pour capter une voix nette sans saturation.",
   },
   {
     id: "volume",
     icon: Volume2,
-    label: "Mon volume est correct",
-    description: "Je vais parler d'une voix claire et normale, ni trop fort ni trop bas.",
+    label: "Mon volume et articulation sont corrects",
+    description: "Je vais parler d'une voix naturelle et claire, en respectant les tons.",
   },
 ];
 
-export const RecordingChecklist: React.FC<RecordingChecklistProps> = ({ onReady }) => {
+export const RecordingChecklist: React.FC<RecordingChecklistProps> = ({ onReady, onBack, formatLabel }) => {
   const [checked, setChecked] = useState<Record<string, boolean>>({
     quiet: false,
     distance: false,
@@ -43,23 +45,40 @@ export const RecordingChecklist: React.FC<RecordingChecklistProps> = ({ onReady 
   };
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-6 py-4">
-      {/* Header */}
-      <div className="text-center space-y-1">
-        <span className="text-[10px] font-bold font-display uppercase tracking-widest text-primary/70 block">
-          Avant de commencer
+    <div className="w-full max-w-lg mx-auto space-y-6 py-4">
+      {/* Top Header & Back Switch */}
+      <div className="flex items-center justify-between gap-4">
+        {onBack ? (
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-foreground transition-colors py-1 px-2 rounded-md hover:bg-black/5"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Changer de format
+          </button>
+        ) : <div />}
+        {formatLabel && (
+          <span className="text-[10px] font-bold uppercase tracking-widest text-primary/60 font-display">
+            {formatLabel}
+          </span>
+        )}
+      </div>
+
+      {/* Header Info */}
+      <div className="text-center space-y-2 pt-2">
+        <span className="text-[10px] font-bold font-display uppercase tracking-widest text-primary block">
+          Étape préalable de qualité
         </span>
-        <h2 className="text-xl font-display font-bold text-foreground tracking-tight">
+        <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground tracking-tight">
           Vérification de l&apos;environnement
         </h2>
-        <p className="text-xs text-text-muted">
-          Cochez les 3 points pour garantir un audio de qualité.
-          Un mauvais audio sera rejeté automatiquement.
+        <p className="text-xs sm:text-sm text-text-muted max-w-md mx-auto leading-relaxed">
+          Pour garantir un dataset de référence et éviter le rejet automatique de vos audios, confirmez ces 3 points avant d&apos;accéder au studio.
         </p>
       </div>
 
       {/* Checklist */}
-      <div className="space-y-3">
+      <div className="space-y-3 pt-2">
         {CHECKLIST_ITEMS.map(({ id, icon: Icon, label, description }) => {
           const isChecked = checked[id];
           return (
@@ -69,8 +88,8 @@ export const RecordingChecklist: React.FC<RecordingChecklistProps> = ({ onReady 
               onClick={() => toggle(id)}
               className={`w-full flex items-start gap-4 p-4 rounded-2xl border text-left transition-all cursor-pointer ${
                 isChecked
-                  ? "border-primary/40 bg-primary/5"
-                  : "border-border hover:border-foreground/30 bg-transparent"
+                  ? "border-primary/40 bg-primary/5 shadow-xs"
+                  : "border-border hover:border-foreground/30 bg-white/50"
               }`}
             >
               {/* Checkbox visual */}
@@ -110,22 +129,20 @@ export const RecordingChecklist: React.FC<RecordingChecklistProps> = ({ onReady 
       </div>
 
       {/* CTA */}
-      <div className="pt-2">
+      <div className="pt-4">
         <Button
           onClick={onReady}
           disabled={!allChecked}
           variant="primary"
           size="lg"
-          className="w-full"
+          className="w-full shadow-md shadow-primary/10"
         >
           <Mic className="w-4 h-4 mr-2" />
-          {allChecked ? "Je suis prêt(e) — Commencer" : `Cochez les ${Object.values(checked).filter(Boolean).length}/3 points`}
+          {allChecked ? "Je suis prêt(e) — Entrer dans le studio" : `Cochez les 3 points (${Object.values(checked).filter(Boolean).length}/3)`}
         </Button>
-        {!allChecked && (
-          <p className="text-center text-[10px] text-text-muted mt-2">
-            Ces conditions garantissent la qualité de votre contribution.
-          </p>
-        )}
+        <p className="text-center text-[10px] text-text-muted mt-2">
+          Cette vérification est requise une seule fois au début de votre session d&apos;enregistrement.
+        </p>
       </div>
     </div>
   );

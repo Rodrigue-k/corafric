@@ -11,9 +11,8 @@ import { AudioVisualizer } from "./AudioVisualizer";
 import { AnonymousGateModal } from "./AnonymousGateModal";
 import { Mic, Square, RotateCcw, Send, CheckCircle, AlertCircle, SkipForward, ArrowLeft } from "lucide-react";
 import { cleanAudioBlob } from "@/lib/audioProcessing";
-import { RecordingChecklist } from "./RecordingChecklist";
 
-type StudioState = "checklist" | "idle" | "recording" | "recorded" | "cleaning" | "submitting" | "submitted";
+type StudioState = "idle" | "recording" | "recorded" | "cleaning" | "submitting" | "submitted";
 
 
 interface SentenceRecordingStudioProps {
@@ -23,7 +22,7 @@ interface SentenceRecordingStudioProps {
 export const SentenceRecordingStudio: React.FC<SentenceRecordingStudioProps> = ({ onBack }) => {
   const t = useTranslations("contribute");
   const { isSignedIn } = useAuth();
-  const [studioState, setStudioState] = useState<StudioState>("checklist");
+  const [studioState, setStudioState] = useState<StudioState>("idle");
   const [sentence, setSentence] = useState<Sentence | null>(null);
   const [isLoadingSentence, setIsLoadingSentence] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -59,7 +58,7 @@ export const SentenceRecordingStudio: React.FC<SentenceRecordingStudioProps> = (
       setAudioBlob(null);
       setAudioUrl(null);
       setRecordingSeconds(0);
-      setStudioState("checklist");
+      setStudioState("idle");
 
       const res = await fetch("/api/sentences/next");
       const data = await res.json();
@@ -289,10 +288,6 @@ export const SentenceRecordingStudio: React.FC<SentenceRecordingStudioProps> = (
 
       {/* Recording Studio Status */}
       <div className="pt-8 flex flex-col items-center justify-center space-y-4">
-        {studioState === "checklist" && (
-          <RecordingChecklist onReady={() => setStudioState("idle")} />
-        )}
-
         {studioState === "idle" && (
           <div className="text-center space-y-6 w-full">
             <AudioVisualizer stream={null} isRecording={false} />

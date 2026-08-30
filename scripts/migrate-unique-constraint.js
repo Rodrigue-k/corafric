@@ -13,16 +13,15 @@ if (fs.existsSync(envPath)) {
 
 async function runMigration() {
   const sql = neon(process.env.DATABASE_URL);
-  console.log("Adding UNIQUE index on (word_ewe, word_fr) to allow homonyms with different translations...");
+  console.log("Creating database performance indexes...");
 
   try {
-    // We already dropped the unique constraint on word_ewe alone in the previous step.
-    // Now we create a unique index so the same word can exist if word_fr is different.
-    await sql`
-      CREATE UNIQUE INDEX IF NOT EXISTS dictionary_words_ewe_fr_idx 
-      ON dictionary_words (word_ewe, COALESCE(word_fr, ''))
-    `;
-    console.log("Migration successful: Added unique index.");
+    await sql`CREATE INDEX IF NOT EXISTS idx_recordings_user_word ON recordings(user_id, word_id)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_recordings_status_word ON recordings(status, word_id)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_recordings_user_sentence ON recordings(user_id, sentence_id)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_sentences_active_status_lang ON sentences(is_active, recording_status, language)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_dictionary_words_fr ON dictionary_words(word_fr)`;
+    console.log("✅ Performance indexes created successfully!");
   } catch (err) {
     console.error("Migration error:", err);
   }

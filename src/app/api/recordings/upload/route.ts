@@ -125,12 +125,14 @@ export async function POST(request: Request) {
       RETURNING id
     `) as Record<string, unknown>[];
 
-    // If user is authenticated, increment user contribution counts
+    // If user is authenticated, ensure user exists and increment contribution counts atomically
     if (userId) {
+      const defaultUsername = `contributeur_${userId.substring(0, 8)}`;
       await sql`
-        UPDATE users
-        SET total_contributions = total_contributions + 1
-        WHERE id = ${userId}
+        INSERT INTO users (id, username, country, native_language, total_contributions)
+        VALUES (${userId}, ${defaultUsername}, 'Togo', 'ewe', 1)
+        ON CONFLICT (id) DO UPDATE 
+        SET total_contributions = users.total_contributions + 1
       `;
     }
 

@@ -1,34 +1,43 @@
-const https = require('https');
+const fs = require('fs');
+const path = require('path');
+const { neon } = require('@neondatabase/serverless');
 
-function fetchGlosbe(word) {
-  const url = `https://glosbe.com/ee/fr/${encodeURIComponent(word)}`;
-  console.log(`Fetching ${url}...`);
-  
-  https.get(url, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-    }
-  }, (res) => {
-    let data = '';
-    res.on('data', chunk => data += chunk);
-    res.on('end', () => {
-      console.log(`Status: ${res.statusCode}`);
-      if (res.statusCode === 200) {
-        console.log(`Received ${data.length} bytes`);
-        // Simple regex to see if we can find translations
-        const translations = data.match(/class="translation__item__text"[^>]*>([^<]+)<\/span>/g);
-        if (translations) {
-          console.log("Found translations:");
-          translations.slice(0, 5).forEach(t => {
-            const clean = t.replace(/<[^>]+>/g, '').trim();
-            console.log(" -", clean);
-          });
-        } else {
-          console.log("No translations found with regex.");
-        }
-      }
-    });
-  }).on('error', err => console.error(err));
+const envPath = path.join(__dirname, '../.env');
+if (!fs.existsSync(envPath)) {
+  console.error('.env file not found');
+  process.exit(1);
 }
 
-fetchGlosbe('to');
+const envContent = fs.readFileSync(envPath, 'utf8');
+const dbUrlMatch = envContent.match(/DATABASE_URL=(.*)/);
+const databaseUrl = dbUrlMatch ? dbUrlMatch[1].trim() : null;
+
+if (!databaseUrl) {
+  console.error('DATABASE_URL is not set in .env');
+  process.exit(1);
+}
+
+const sql = neon(databaseUrl);
+
+async function cleanDatabase() {
+  console.log('--- Cleaning database recordings and resetting contributions ---');
+  try {
+    console.log('1. Deleting all validations...');
+    await sql`DELETE FROM validations`;
+    
+    console.log('2. Deleting all recordings...');
+    await sql`DELETE FROM recordings`;
+    
+    console.log('3. Resetting sentence recording status...');
+    await sql`UPDATE sentences SET recording_status = 'pending'`;
+    
+    console.log('4. Resetting user contribution counters...');
+    await sql`UPDATE users SET total_contributions = 0, total_validations = 0`;
+    
+    console.log('✅ Database successfully cleaned! All bad recordings removed, ready for clean launch.');
+  } catch (err) {
+    console.error('Error cleaning database:', err);
+  }
+}
+
+cleanDatabase();
