@@ -19,6 +19,11 @@ export const Navbar: React.FC = () => {
 
   const isHomePage = pathname === "/" || pathname === "" || pathname === "/fr" || pathname === "/en";
 
+  // Auto-close mobile drawer when pathname changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
+
   useEffect(() => {
     if (!isHomePage) return;
     const handleScroll = () => {

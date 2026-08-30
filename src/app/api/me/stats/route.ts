@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
-import { sql } from "@/lib/db";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { sql, ensureDbUser } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -10,6 +10,10 @@ export async function GET() {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const clerkUser = await currentUser();
+    const fallbackName = clerkUser?.username || clerkUser?.firstName || `contributeur_${userId.substring(0, 8)}`;
+    await ensureDbUser(userId, fallbackName);
 
     // User base stats
     const userStats = (await sql`
@@ -22,9 +26,12 @@ export async function GET() {
       WHERE id = ${userId}
     `) as { username: string | null; total_contributions: number; total_validations: number; created_at: string }[];
 
-    if (userStats.length === 0) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
+    const baseUser = userStats[0] || {
+      username: fallbackName,
+      total_contributions: 0,
+      total_validations: 0,
+      created_at: new Date().toISOString(),
+    };
 
     // Quality stats: average score received on own recordings, rejected count
     const qualityStats = (await sql`
@@ -56,14 +63,14 @@ export async function GET() {
     `) as { rank: number }[];
 
     return NextResponse.json({
-      dbUsername: userStats[0].username,
-      totalContributions: userStats[0].total_contributions,
-      totalValidations: userStats[0].total_validations,
+      dbUsername: baseUser.username,
+      totalContributions: baseUser.total_contributions,
+      totalValidations: baseUser.total_validations,
       avgScoreReceived: Math.round((qualityStats[0]?.avg_score_received ?? 0) * 10) / 10,
       totalRejected: qualityStats[0]?.total_rejected ?? 0,
       wordsWon: wordsWon.map((w) => ({ word: w.word_ewe, translation: w.word_fr })),
       rank: rankResult[0]?.rank ?? 1,
-      memberSince: userStats[0].created_at,
+      memberSince: baseUser.created_at,
     });
   } catch (error) {
     console.error("Error in GET /api/me/stats:", error);
