@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Search, Volume2, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useState, useEffect, useCallback } from "react";
+import { Search, Volume2, Loader2, ChevronLeft, ChevronRight, Edit3 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { SuggestTranslationModal } from "@/components/dictionary/SuggestTranslationModal";
 
 interface DictionaryWord {
   id: string;
@@ -19,7 +20,6 @@ interface DictionaryWord {
   sources: string[];
 }
 
-
 const EWE_ALPHABET = [
   "Tous", "A", "B", "D", "Ɖ", "E", "Ɛ", "F", "Ƒ", "G", "Ɣ", "H", "I", "K", "L", "M", "N", "Ŋ", "O", "Ɔ", "P", "R", "S", "T", "U", "V", "Ʋ", "W", "Y", "Z"
 ];
@@ -32,6 +32,7 @@ export default function DictionaryClient() {
   const [isLoading, setIsLoading] = useState(true);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [suggestingWord, setSuggestingWord] = useState<DictionaryWord | null>(null);
   const limit = 24;
 
   useEffect(() => {
@@ -215,6 +216,18 @@ export default function DictionaryClient() {
                     « {word.example_sentence_ewe} »
                   </p>
                 )}
+
+                {/* Suggest / Correct translation button */}
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setSuggestingWord(word)}
+                    className="inline-flex items-center gap-1.5 text-[11px] font-display text-text-muted/70 hover:text-primary transition-colors cursor-pointer"
+                  >
+                    <Edit3 className="w-3 h-3" />
+                    <span>Corriger / Proposer une traduction</span>
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -224,6 +237,21 @@ export default function DictionaryClient() {
           <p className="text-xl font-display text-text-muted/70 tracking-tight">{t("noResults")}</p>
         </div>
       ) : null}
+
+      {/* Suggest / Correction Modal */}
+      {suggestingWord && (
+        <SuggestTranslationModal
+          wordId={suggestingWord.id}
+          wordEwe={suggestingWord.word_ewe}
+          currentFr={suggestingWord.word_fr}
+          currentEn={suggestingWord.word_en}
+          onClose={() => setSuggestingWord(null)}
+          onSuccess={() => {
+            // Refetch current page
+            setPage((p) => p);
+          }}
+        />
+      )}
 
       {/* Pagination */}
       <div className="flex items-center justify-between pt-6">
