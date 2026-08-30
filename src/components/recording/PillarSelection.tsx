@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { OfficialVoiceGuide } from "./OfficialVoiceGuide";
 
 export type ContributionPillar = "dictionary" | "sentences";
 
@@ -86,6 +87,9 @@ export const PillarSelection: React.FC<PillarSelectionProps> = ({ onSelectPillar
           </div>
         </div>
       </div>
+
+      {/* Educational Guide for Contributors: Official Voice Program */}
+      <OfficialVoiceGuide />
     </div>
   );
 };
