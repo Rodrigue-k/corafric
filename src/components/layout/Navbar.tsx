@@ -170,25 +170,13 @@ export const Navbar: React.FC = () => {
             {/* Desktop Auth */}
             <div className="hidden md:flex items-center gap-3">
               {isSignedIn ? (
-                <div className="flex items-center gap-3">
-                  <Link
-                    href="/profile"
-                    className={`text-xs font-display font-semibold uppercase tracking-wider px-3.5 py-1.5 rounded-full border transition-all ${
-                      pathname === "/profile"
-                        ? "bg-primary text-white border-primary shadow-xs"
-                        : "border-border text-foreground hover:border-primary/40 hover:bg-[#FAF8F5]"
-                    }`}
-                  >
-                    {t("profile")}
-                  </Link>
-                  <UserButton
-                    appearance={{
-                      elements: {
-                        avatarBox: "h-8 w-8 rounded-full border border-primary/20",
-                      },
-                    }}
-                  />
-                </div>
+                <UserButton
+                  appearance={{
+                    elements: {
+                      avatarBox: "h-8 w-8 rounded-full border border-primary/20",
+                    },
+                  }}
+                />
               ) : (
                 <>
                   <Link href="/sign-in">
