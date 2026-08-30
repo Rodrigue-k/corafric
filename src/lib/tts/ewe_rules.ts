@@ -49,7 +49,7 @@ export async function getPhonemeRules(): Promise<Record<string, string>> {
 
   try {
     const data = await sql`SELECT id, character, ipa_notation, tone_type, notes FROM phonemes`;
-    cachedPhonemes = data as Phoneme[];
+    cachedPhonemes = data as unknown as Phoneme[];
   } catch (error) {
     console.error("Failed to load phonemes from DB for TTS rules, using fallback.", error);
     cachedPhonemes = FALLBACK_PHONEMES;

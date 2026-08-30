@@ -1,14 +1,24 @@
-import { neon } from "@neondatabase/serverless";
+import postgres from "postgres";
 
 const databaseUrl = process.env.DATABASE_URL;
 
-// Safely instantiate neon client to prevent build errors when DATABASE_URL is missing
+declare global {
+  // eslint-disable-next-line no-var
+  var _postgresSql: ReturnType<typeof postgres> | undefined;
+}
+
+// Universal High-Performance PostgreSQL connection pool
 export const sql = databaseUrl
-  ? neon(databaseUrl)
+  ? (global._postgresSql ??= postgres(databaseUrl, {
+      max: 20,
+      idle_timeout: 30,
+      connect_timeout: 10,
+      prepare: false, // Compatibility with multi-project connection pooling
+    }))
   : (() => {
       console.warn("Warning: DATABASE_URL is not set. Database queries will return empty arrays.");
       const mockSql = async () => [];
-      return mockSql as unknown as ReturnType<typeof neon>;
+      return mockSql as unknown as ReturnType<typeof postgres>;
     })();
 
 export async function ensureDbUser(userId: string, username: string) {
