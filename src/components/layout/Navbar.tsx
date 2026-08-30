@@ -6,7 +6,7 @@ import { Link, usePathname, useRouter } from "@/i18n/routing";
 import { useLocale, useTranslations } from "next-intl";
 import { UserButton, useAuth } from "@clerk/nextjs";
 import { Button } from "../ui/Button";
-import { Languages, X } from "lucide-react";
+import { Languages, X, User } from "lucide-react";
 
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
@@ -176,7 +176,15 @@ export const Navbar: React.FC = () => {
                       avatarBox: "h-8 w-8 rounded-full border border-primary/20",
                     },
                   }}
-                />
+                >
+                  <UserButton.MenuItems>
+                    <UserButton.Link
+                      label="Mon profil et statistiques"
+                      href={`/${currentLocale}/profile`}
+                      labelIcon={<User className="w-4 h-4" />}
+                    />
+                  </UserButton.MenuItems>
+                </UserButton>
               ) : (
                 <>
                   <Link href="/sign-in">
@@ -311,8 +319,22 @@ export const Navbar: React.FC = () => {
                 </div>
               ) : (
                 <div className="flex items-center justify-between pt-2">
-                  <span className="text-xs text-text-muted">Mon Profil</span>
-                  <UserButton />
+                  <span className="text-xs text-text-muted">Compte</span>
+                  <UserButton
+                    appearance={{
+                      elements: {
+                        avatarBox: "h-8 w-8 rounded-full border border-primary/20",
+                      },
+                    }}
+                  >
+                    <UserButton.MenuItems>
+                      <UserButton.Link
+                        label="Mon profil et statistiques"
+                        href={`/${currentLocale}/profile`}
+                        labelIcon={<User className="w-4 h-4" />}
+                      />
+                    </UserButton.MenuItems>
+                  </UserButton>
                 </div>
               )}
             </div>
