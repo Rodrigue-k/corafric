@@ -331,15 +331,7 @@ export const Navbar: React.FC = () => {
                         avatarBox: "h-8 w-8 rounded-full border border-primary/20",
                       },
                     }}
-                  >
-                    <UserButton.MenuItems>
-                      <UserButton.Link
-                        label="Mon profil et statistiques"
-                        href={`/${currentLocale}/profile`}
-                        labelIcon={<User className="w-4 h-4" />}
-                      />
-                    </UserButton.MenuItems>
-                  </UserButton>
+                  />
                 </div>
               )}
             </div>
