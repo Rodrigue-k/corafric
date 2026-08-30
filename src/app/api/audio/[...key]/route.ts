@@ -32,6 +32,7 @@ export async function GET(
     const headers = new Headers();
     headers.set("Content-Type", response.ContentType || "audio/webm");
     headers.set("Cache-Control", "public, max-age=31536000, immutable");
+    headers.set("Accept-Ranges", "bytes");
     if (response.ContentLength) {
       headers.set("Content-Length", response.ContentLength.toString());
     }

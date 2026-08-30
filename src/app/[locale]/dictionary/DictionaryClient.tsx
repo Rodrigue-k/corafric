@@ -66,6 +66,27 @@ export default function DictionaryClient() {
     return () => clearTimeout(debounceTimer);
   }, [query, selectedLetter, page]);
 
+  // Audio Cache & Preloader for instant 0ms playback latency
+  const audioCacheRef = React.useRef<Map<string, HTMLAudioElement>>(new Map());
+  const currentAudioRef = React.useRef<HTMLAudioElement | null>(null);
+
+  // Background preload visible audios
+  useEffect(() => {
+    results.forEach((word) => {
+      if (word.audio_url && !audioCacheRef.current.has(word.audio_url)) {
+        try {
+          const cleanUrl = encodeURI(word.audio_url);
+          const a = new Audio();
+          a.preload = "auto";
+          a.src = cleanUrl;
+          audioCacheRef.current.set(word.audio_url, a);
+        } catch {
+          // Continue
+        }
+      }
+    });
+  }, [results]);
+
   const handleLetterSelect = (letter: string) => {
     setQuery("");
     setSelectedLetter(letter);
@@ -80,11 +101,48 @@ export default function DictionaryClient() {
 
   const handlePlayAudio = (wordId: string, audioUrl: string) => {
     if (!audioUrl) return;
+
+    // Stop currently playing audio if any
+    if (currentAudioRef.current) {
+      currentAudioRef.current.pause();
+      currentAudioRef.current.currentTime = 0;
+    }
+
     setPlayingId(wordId);
-    const audio = new Audio(audioUrl);
-    audio.onended = () => setPlayingId(null);
-    audio.onerror = () => setPlayingId(null);
-    audio.play().catch(() => setPlayingId(null));
+
+    try {
+      const cleanUrl = encodeURI(audioUrl);
+      let audio = audioCacheRef.current.get(audioUrl);
+      if (!audio) {
+        audio = new Audio(cleanUrl);
+        audio.preload = "auto";
+        audioCacheRef.current.set(audioUrl, audio);
+      }
+
+      currentAudioRef.current = audio;
+      audio.currentTime = 0;
+
+      audio.onended = () => {
+        setPlayingId(null);
+        currentAudioRef.current = null;
+      };
+      audio.onerror = () => {
+        setPlayingId(null);
+        currentAudioRef.current = null;
+      };
+
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.warn("Audio playback issue:", err);
+          setPlayingId(null);
+          currentAudioRef.current = null;
+        });
+      }
+    } catch {
+      setPlayingId(null);
+      currentAudioRef.current = null;
+    }
   };
 
   return (
