@@ -111,7 +111,8 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
               height={800}
               priority
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 620px"
-              className="w-full h-auto object-bottom select-none"
+              className="object-bottom select-none"
+              style={{ width: "100%", height: "auto" }}
             />
 
             {/* Unified bubbles rendered inside the exact same scaling context as the image */}
