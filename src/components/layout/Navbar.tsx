@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Link, usePathname, useRouter } from "@/i18n/routing";
+import { Link, usePathname } from "@/i18n/routing";
 import { useLocale, useTranslations } from "next-intl";
 import { UserButton, useAuth } from "@clerk/nextjs";
 import { Button } from "../ui/Button";
@@ -10,7 +10,6 @@ import { Languages, X, User } from "lucide-react";
 
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
-  const router = useRouter();
   const currentLocale = useLocale();
   const t = useTranslations("nav");
   const { isSignedIn } = useAuth();
@@ -43,7 +42,11 @@ export const Navbar: React.FC = () => {
   ];
 
   const handleLanguageChange = (nextLocale: "en" | "fr") => {
-    router.replace(pathname, { locale: nextLocale });
+    if (nextLocale === currentLocale) return;
+    // Instant locale switch: swap the locale prefix in the URL without a full server round-trip
+    const currentPath = window.location.pathname;
+    const newPath = currentPath.replace(/^\/(fr|en)(\/|$)/, `/${nextLocale}$2`);
+    window.location.href = newPath + window.location.search;
   };
 
   return (
