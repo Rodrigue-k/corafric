@@ -46,3 +46,7 @@ next-env.d.ts
 # original large images
 *original.webp
 
+# internal strategy & specs
+corafric-b2b-pitch.md
+corafric-cdc.md
+
