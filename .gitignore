@@ -46,7 +46,15 @@ next-env.d.ts
 # original large images
 *original.webp
 
-# internal strategy & specs
+# internal strategy, marketing & specs
 corafric-b2b-pitch.md
 corafric-cdc.md
+/marketing/
+
+# scratch test files & raw audio
+test-*.js
+*.wav
+ewe_dataset_raw.json
+/public/audios/unused/
+/public/audios/raw_backup/
 
