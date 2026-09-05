@@ -6,6 +6,7 @@ import { routing } from "@/i18n/routing";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { Analytics } from "@vercel/analytics/react";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "../globals.css";
 
 const inter = Inter({
@@ -64,6 +65,9 @@ export default async function LocaleLayout({
             <Footer />
           </NextIntlClientProvider>
           <Analytics />
+          {process.env.NEXT_PUBLIC_GA_ID && (
+            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+          )}
         </body>
       </html>
     </ClerkProvider>
