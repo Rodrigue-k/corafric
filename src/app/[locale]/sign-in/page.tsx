@@ -13,6 +13,7 @@ export default function SignInPage() {
             alt="Waveform silhouette background"
             width={600}
             height={600}
+            priority
             className="object-contain"
             style={{ width: "auto", height: "auto" }}
           />
@@ -26,6 +27,7 @@ export default function SignInPage() {
                 alt="Corafric Logo"
                 width={24}
                 height={24}
+                priority
                 className="object-contain"
                 style={{ width: "auto", height: "auto" }}
               />
@@ -53,6 +55,7 @@ export default function SignInPage() {
       {/* Right Column */}
       <div className="flex-1 flex items-center justify-center p-8">
         <SignIn
+          routing="hash"
           appearance={{
             elements: {
               formButtonPrimary:
