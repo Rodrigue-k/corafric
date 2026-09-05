@@ -240,7 +240,7 @@ export const Navbar: React.FC = () => {
               <div className="flex items-center justify-between pb-4 border-b border-border">
                 <Link href="/" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2">
                   <div className="w-7 h-7 flex items-center justify-center bg-primary/10 rounded-md">
-                    <Image src="/images/logo.svg" alt="Logo" width={18} height={18} />
+                    <Image src="/images/logo.svg" alt="Logo" width={18} height={18} style={{ width: "18px", height: "18px" }} />
                   </div>
                   <span className="font-bold font-display text-lg text-foreground">Corafric</span>
                 </Link>
