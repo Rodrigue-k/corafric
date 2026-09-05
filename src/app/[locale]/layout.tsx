@@ -20,10 +20,39 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://corafric.com"),
   title: "Corafric — Collecte de données vocales en langues africaines",
-  description: "Plateforme communautaire open source de collecte de données vocales pour le développement d'IA en langues africaines.",
+  description:
+    "L'Infrastructure Vocale de l'Afrique. Corafric : plateforme technologique libre pour la numérisation, la préservation et l'intégration des langues africaines dans l'IA.",
   icons: {
-    icon: "/images/logo.svg",
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/favicon-48x48.png", sizes: "48x48", type: "image/png" },
+      { url: "/images/logo.svg", type: "image/svg+xml" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+  },
+  manifest: "/manifest.json",
+  openGraph: {
+    title: "Corafric — Collecte de données vocales en langues africaines",
+    description:
+      "Plateforme communautaire open source de collecte de données vocales pour le développement d'IA en langues africaines.",
+    url: "https://corafric.com",
+    siteName: "Corafric",
+    images: [
+      {
+        url: "/images/logo.svg",
+        width: 800,
+        height: 600,
+        alt: "Corafric Logo",
+      },
+    ],
+    locale: "fr_FR",
+    type: "website",
   },
   other: {
     "msedge-visual-search": "no",
