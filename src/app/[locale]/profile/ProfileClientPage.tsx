@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 
 interface ProfileStats {
@@ -19,6 +20,7 @@ interface ProfileStats {
 }
 
 export default function ProfileClientPage() {
+  const t = useTranslations("profile");
   const { user, isLoaded } = useUser();
   const [stats, setStats] = useState<ProfileStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -96,7 +98,7 @@ export default function ProfileClientPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[300px] gap-3">
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-        <p className="text-xs text-text-muted font-display uppercase tracking-wider">Chargement du profil...</p>
+        <p className="text-xs text-text-muted font-display uppercase tracking-wider">{t("loading")}</p>
       </div>
     );
   }
@@ -104,9 +106,9 @@ export default function ProfileClientPage() {
   if (!user) {
     return (
       <div className="max-w-md mx-auto py-16 text-center space-y-4">
-        <h2 className="text-2xl font-display font-bold text-foreground">Connexion requise</h2>
+        <h2 className="text-2xl font-display font-bold text-foreground">{t("requireAuthTitle")}</h2>
         <p className="text-sm text-text-muted">
-          Connectez-vous pour voir votre profil et vos statistiques de contribution.
+          {t("requireAuthDesc")}
         </p>
       </div>
     );
@@ -145,21 +147,21 @@ export default function ProfileClientPage() {
                 @{publicUsername || "pseudo"}
               </span>
             </div>
-            {memberYear && <p className="text-xs text-text-muted mt-1">Membre depuis {memberYear}</p>}
+            {memberYear && <p className="text-xs text-text-muted mt-1">{t("memberSince")} {memberYear}</p>}
           </div>
         </div>
 
         {stats && (
           <div className="text-left sm:text-right space-y-0.5">
             <span className="text-[10px] font-bold font-display uppercase tracking-widest text-text-muted block">
-              Classement & Score
+              {t("leaderboardAndScore")}
             </span>
             <div className="flex items-baseline sm:justify-end gap-2">
               <span className="text-xl font-display font-bold text-foreground">
-                Rang #{stats.rank}
+                {t("rankNumber", { rank: stats.rank })}
               </span>
               <span className="text-sm font-mono font-bold text-primary">
-                ({(stats.score || 0).toLocaleString()} pts)
+                ({(stats.score || 0).toLocaleString()} {t("points")})
               </span>
             </div>
           </div>
@@ -170,10 +172,10 @@ export default function ProfileClientPage() {
       <div className="border-b border-border/60 pb-8 space-y-4">
         <div>
           <span className="text-[10px] font-bold font-display uppercase tracking-widest text-primary block">
-            Identite publique et Confidentialite
+            {t("publicIdentityTitle")}
           </span>
           <p className="text-xs text-text-muted mt-1">
-            Ce pseudonyme s'affichera publiquement sur le dictionnaire (« Voix : @votre_pseudo ») et le classement.
+            {t("publicIdentityDesc")}
           </p>
         </div>
 
@@ -184,7 +186,7 @@ export default function ProfileClientPage() {
               type="text"
               value={publicUsername}
               onChange={(e) => setPublicUsername(e.target.value)}
-              placeholder="votre_pseudo"
+              placeholder={t("pseudoPlaceholder")}
               maxLength={30}
               className="w-full pl-8 pr-4 py-2 bg-transparent border border-border/80 rounded-lg text-sm font-mono text-foreground focus:outline-none focus:border-primary transition-colors"
             />
@@ -195,13 +197,13 @@ export default function ProfileClientPage() {
             className="px-5 py-2 rounded-lg bg-primary text-white text-xs font-bold font-display uppercase tracking-wider hover:bg-primary/90 transition-colors disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 shrink-0"
           >
             {isSavingUsername ? (
-              "Enregistrement..."
+              t("saving")
             ) : usernameSavedSuccess ? (
               <>
-                <Check className="w-3.5 h-3.5" /> Enregistre
+                <Check className="w-3.5 h-3.5" /> {t("saved")}
               </>
             ) : (
-              "Enregistrer le pseudo"
+              t("savePseudo")
             )}
           </button>
         </form>
@@ -217,42 +219,42 @@ export default function ProfileClientPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 border-b border-border/60 pb-8">
             <div className="space-y-1">
               <span className="text-[10px] font-bold font-display uppercase tracking-widest text-text-muted block">
-                Contributions
+                {t("contributions")}
               </span>
               <p className="text-3xl font-display font-bold text-foreground">
                 {stats.totalContributions}
               </p>
-              <p className="text-xs text-text-muted">Audios enregistres</p>
+              <p className="text-xs text-text-muted">{t("contributionsDesc")}</p>
             </div>
 
             <div className="space-y-1">
               <span className="text-[10px] font-bold font-display uppercase tracking-widest text-text-muted block">
-                Validations
+                {t("validations")}
               </span>
               <p className="text-3xl font-display font-bold text-foreground">
                 {stats.totalValidations}
               </p>
-              <p className="text-xs text-text-muted">Audios notes</p>
+              <p className="text-xs text-text-muted">{t("validationsDesc")}</p>
             </div>
 
             <div className="space-y-1">
               <span className="text-[10px] font-bold font-display uppercase tracking-widest text-text-muted block">
-                Mots remportes
+                {t("wordsWon")}
               </span>
               <p className="text-3xl font-display font-bold text-primary">
                 {stats.wordsWon.length}
               </p>
-              <p className="text-xs text-text-muted">Voix officielle</p>
+              <p className="text-xs text-text-muted">{t("wordsWonDesc")}</p>
             </div>
 
             <div className="space-y-1">
               <span className="text-[10px] font-bold font-display uppercase tracking-widest text-text-muted block">
-                Note moyenne
+                {t("avgScore")}
               </span>
               <p className="text-3xl font-display font-bold text-foreground font-mono">
                 {stats.avgScoreReceived > 0 ? `${stats.avgScoreReceived.toFixed(1)}/5` : "—"}
               </p>
-              <p className="text-xs text-text-muted">Score communautaire</p>
+              <p className="text-xs text-text-muted">{t("avgScoreDesc")}</p>
             </div>
           </div>
 
@@ -260,7 +262,7 @@ export default function ProfileClientPage() {
           {stats.wordsWon.length > 0 && (
             <div className="space-y-4">
               <h2 className="text-sm font-bold font-display uppercase tracking-wider text-foreground">
-                Mots dont vous etes la Voix Officielle
+                {t("wordsWonTitle")}
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                 {stats.wordsWon.map(({ word, translation }) => (
@@ -282,17 +284,17 @@ export default function ProfileClientPage() {
           {stats.totalContributions === 0 && (
             <div className="text-center py-12 space-y-2">
               <h3 className="text-lg font-display font-bold text-foreground">
-                Commencez a contribuer
+                {t("emptyTitle")}
               </h3>
               <p className="text-xs text-text-muted max-w-sm mx-auto leading-relaxed">
-                Enregistrez votre premier mot pour apparaitre dans le classement et contribuer a la preservation linguistique.
+                {t("emptyDesc")}
               </p>
             </div>
           )}
         </>
       ) : (
         <div className="text-center py-16 text-text-muted text-sm">
-          Aucune donnee disponible.
+          {t("noData")}
         </div>
       )}
     </div>

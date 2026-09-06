@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { ConcatenativePlayer } from "@/lib/tts/concatenativePlayer";
 import { Volume2, Square, Sparkles, AudioWaveform } from "lucide-react";
 
 export const WordSpellerCard: React.FC = () => {
+  const t = useTranslations("alphabet");
   const [inputText, setInputText] = useState("Corafric");
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeCharIndex, setActiveCharIndex] = useState<number | null>(null);
@@ -64,17 +66,17 @@ export const WordSpellerCard: React.FC = () => {
           </div>
           <div>
             <h3 className="text-h3 font-display text-foreground">
-              Moteur de Synthèse par Concaténation
+              {t("spellerTitle")}
             </h3>
             <p className="text-caption text-text-muted">
-              Assemblage et fusion audio des phonèmes pour lire ou épeler n&apos;importe quel mot
+              {t("spellerDesc")}
             </p>
           </div>
         </div>
 
         <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-semibold">
           <AudioWaveform className="w-4 h-4 animate-pulse" />
-          <span>Fusion Web Audio API</span>
+          <span>{t("spellerBadge")}</span>
         </div>
       </div>
 
@@ -84,7 +86,7 @@ export const WordSpellerCard: React.FC = () => {
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          placeholder="Tapez un mot (ex: Corafric, Ewe, Togo, ɖɛ...)"
+          placeholder={t("spellerPlaceholder")}
           disabled={isPlaying}
           className="w-full px-4 py-3 bg-white border border-border rounded-xl font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-60 text-lg"
         />
@@ -102,12 +104,12 @@ export const WordSpellerCard: React.FC = () => {
             {isPlaying && playbackMode === "read" ? (
               <>
                 <Square className="w-4 h-4 fill-current" />
-                <span>Arrêter</span>
+                <span>{t("spellerStop")}</span>
               </>
             ) : (
               <>
                 <Volume2 className="w-4 h-4" />
-                <span>Prononcer le mot</span>
+                <span>{t("spellerSpeak")}</span>
               </>
             )}
           </button>
@@ -124,10 +126,10 @@ export const WordSpellerCard: React.FC = () => {
             {isPlaying && playbackMode === "spell" ? (
               <>
                 <Square className="w-4 h-4 fill-current" />
-                <span>Arrêter</span>
+                <span>{t("spellerStop")}</span>
               </>
             ) : (
-              <span>Épeler</span>
+              <span>{t("spellerSpell")}</span>
             )}
           </button>
         </div>
@@ -136,7 +138,7 @@ export const WordSpellerCard: React.FC = () => {
       {/* Visual character breakdown pill row */}
       {characters.length > 0 && (
         <div className="flex flex-wrap gap-2 pt-2 items-center">
-          <span className="text-xs font-semibold text-text-muted uppercase mr-2">Séquence :</span>
+          <span className="text-xs font-semibold text-text-muted uppercase mr-2">{t("spellerSequence")}</span>
           {characters.map((char, idx) => (
             <span
               key={idx}
@@ -154,3 +156,4 @@ export const WordSpellerCard: React.FC = () => {
     </div>
   );
 };
+

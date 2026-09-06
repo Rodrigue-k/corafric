@@ -5,19 +5,32 @@
     "dictionary": "Dictionary",
     "leaderboard": "Leaderboard",
     "validate": "Validate",
-    "explore": "Corpus and AI",
-    "profile": "Profile and Stats",
+    "explore": "Corpus & AI",
+    "profile": "Profile & Stats",
     "signIn": "Sign In",
     "join": "Join",
-    "support": "Support"
+    "support": "Support",
+    "menu": "Menu",
+    "close": "Close",
+    "language": "Language",
+    "account": "Account",
+    "myProfile": "My Profile & Stats"
   },
 
   "landing": {
-    "badge": "Digital Academy and AI",
+    "badge": "Digital Academy & AI",
     "title": "Africa's voice,\ntraining tomorrow's AI.",
     "subtitle": "The first digital academy and crowdsourced platform to preserve African languages and build indigenous speech technologies.",
     "ctaPrimary": "Lend Your Voice",
     "ctaSecondary": "Audio Dictionary",
+    "methodology": "Methodology",
+    "collectiveGoal": "Collective Goal",
+    "collectiveGoalTitle": "10,000 voices for Africa.",
+    "audiosUnit": "audios",
+    "validatedStat": "Validated",
+    "hoursStat": "Hours",
+    "sentencesStat": "Sentences",
+    "contributorsStat": "Contributors",
     "voicePreview": {
       "lang": "Ewe",
       "phrase": "« Eŋlɔ wò gbe ɖe mɔ̃ me »",
@@ -32,22 +45,21 @@
       "title": "Two Strategic Pillars",
       "step1Title": "1. Audio Dictionary",
       "step1Desc": "The official directory to preserve words, definitions, and exact tonal pronunciations.",
-      "step2Title": "2. AI Studio and Sentences",
+      "step2Title": "2. AI Studio & Sentences",
       "step2Desc": "Thousands of community-read sentences to train Speech-to-Text and TTS models.",
       "step3Title": "3. Quality Assurance",
       "step3Desc": "Collaborative validation by native speakers to ensure a high-grade dataset."
     },
     "markets": {
       "label": "DEPLOYMENT",
-      "title": "Official Launch in Ewe (Togo and Ghana).",
+      "title": "Official Launch in Ewe (Togo & Ghana).",
       "subtitle": "Phase 1: Ewe. The infrastructure is engineered to scale across all African languages.",
       "badge": "Status: Active",
-      "legendActive": "Phase 1: Ewe (Togo and Ghana)",
+      "legendActive": "Phase 1: Ewe (Togo & Ghana)",
       "legendNext": "Upcoming phases (Continent)"
     }
-
-
   },
+
   "contribute": {
     "title": "Voice Studio",
     "phraseLabel": "Read aloud",
@@ -58,8 +70,43 @@
     "skip": "Skip Phrase",
     "submitting": "Processing...",
     "success": "Audio Saved!",
-    "nextPhrase": "Next Phrase"
+    "nextPhrase": "Next Phrase",
+    "changeFormat": "Change format",
+    "preQualityStep": "Quality Pre-check",
+    "envCheckTitle": "Environment Verification",
+    "envCheckDesc": "To guarantee reference-grade dataset quality and prevent audio rejection, please verify these 3 points before entering the studio.",
+    "readyToRecord": "I'm ready — Enter Studio",
+    "checkAllPoints": "Check all 3 points ({checked}/3)",
+    "oncePerSession": "This verification is required once at the start of your recording session.",
+    "quietLabel": "I am in a quiet room",
+    "quietDesc": "No background music, loud street noise, or direct fans/AC units.",
+    "distanceLabel": "My microphone is positioned properly",
+    "distanceDesc": "About 10–15 cm from my mouth, to capture a clear voice without clipping.",
+    "volumeLabel": "My volume and articulation are clear",
+    "volumeDesc": "I will speak in a natural and clear tone, respecting tonal pitches.",
+    "modeTitle": "Contribution Mode",
+    "modeSubtitle": "Select a recording format to enrich the Ewe voice corpus.",
+    "enrichCorpus": "Enrich the corpus",
+    "dictionaryPillarTitle": "Audio Dictionary",
+    "dictionaryPillarSubtitle": "Isolated words",
+    "dictionaryPillarDesc": "Record individual terms with their definitions to preserve accurate pronunciations and tonal nuances.",
+    "dictionaryPillarCta": "Start Dictionary",
+    "sentencesPillarTitle": "Text Corpus",
+    "sentencesPillarSubtitle": "Complete sentences",
+    "sentencesPillarDesc": "Read full sentences in context to model syntax, natural prosody, and conversational rhythm.",
+    "sentencesPillarCta": "Start Sentences",
+    "languageEwe": "Ewe Language",
+    "source": "Source",
+    "translation": "Translation",
+    "english": "English",
+    "anonymousGateSaved": "Progress Saved",
+    "anonymousGateTitle": "Create your profile to continue contributing",
+    "anonymousGateDesc": "You have recorded your first 3 audios. Create an account to link your future contributions to your profile, track validations, and climb the public leaderboard.",
+    "createAccount": "Create an Account",
+    "signIn": "Sign In",
+    "closeAndBrowse": "Close and keep browsing"
   },
+
   "validate": {
     "title": "Community Quality Control",
     "instruction": "Does the audio accurately match the text and correct accent?",
@@ -67,13 +114,39 @@
     "valid": "Accurate",
     "invalid": "Reject",
     "sessionCount": "{count} validations",
+    "totalValidated": "Total Validated",
+    "session": "Session",
+    "thisSession": "+{count} this session",
     "emptyTitle": "Validation queue completed",
     "emptyDesc": "All submitted recordings have been reviewed or the corpus is awaiting new voices. Record phrases to fuel the community validation queue.",
-    "emptyCta": "Record audios"
+    "emptyCta": "Record audios",
+    "refreshQueue": "Refresh queue",
+    "singleMode": "Single",
+    "comparativeMode": "Comparative",
+    "loadingAudio": "Loading audio...",
+    "retry": "Retry",
+    "recordingNumber": "Recording",
+    "languageEwe": "Ewe",
+    "scoreSubmitted": "Rating submitted",
+    "score1": "Very Poor",
+    "score2": "Poor",
+    "score3": "Fair",
+    "score4": "Good",
+    "score5": "Excellent",
+    "selectRating": "Select a rating",
+    "submitRating": "Submit Rating",
+    "comparativeSubmittedTitle": "Ratings submitted successfully!",
+    "comparativeSubmittedDesc": "Loading the next batch...",
+    "scoredAudios": "{scored} / {total} audios rated",
+    "submitComparativeRatings": "Submit my {count} ratings",
+    "submittingVotes": "Submitting...",
+    "audioLabel": "Audio"
   },
+
   "leaderboard": {
     "title": "Language Pioneers",
     "subtitle": "Official leaderboard of the top contributors building Africa's digital linguistic heritage.",
+    "badge": "Community Recognition",
     "rank": "Rank",
     "user": "Pioneer",
     "score": "Score",
@@ -84,6 +157,36 @@
     "emptyCta": "Take the lead",
     "scoringRule": "Points: +10 pts / audio · +15 pts if approved · +50 pts Official Voice · +3 pts / validation"
   },
+
+  "profile": {
+    "title": "Profile & Statistics",
+    "loading": "Loading profile...",
+    "requireAuthTitle": "Sign In Required",
+    "requireAuthDesc": "Sign in to view your profile and contribution metrics.",
+    "publicIdentityTitle": "Public Identity & Privacy",
+    "publicIdentityDesc": "This username is displayed publicly on the dictionary (\"Voice: @your_handle\") and leaderboard.",
+    "pseudoPlaceholder": "your_username",
+    "saving": "Saving...",
+    "saved": "Saved",
+    "savePseudo": "Save username",
+    "memberSince": "Member since",
+    "leaderboardAndScore": "Rank & Score",
+    "rankNumber": "Rank #{rank}",
+    "points": "pts",
+    "contributions": "Contributions",
+    "contributionsDesc": "Recorded audios",
+    "validations": "Validations",
+    "validationsDesc": "Reviewed audios",
+    "wordsWon": "Words Won",
+    "wordsWonDesc": "Official voice",
+    "avgScore": "Average Score",
+    "avgScoreDesc": "Community score",
+    "wordsWonTitle": "Words where you are the Official Voice",
+    "emptyTitle": "Start contributing",
+    "emptyDesc": "Record your first word to appear on the leaderboard and contribute to African language AI.",
+    "noData": "No data available."
+  },
+
   "dictionary": {
     "title": "Interactive Audio Dictionary",
     "subtitle": "Explore, learn, and listen to the Ewe lexical heritage.",
@@ -91,38 +194,98 @@
     "noResults": "No results found in our lexicon.",
     "listen": "Listen to pronunciation",
     "wordFr": "French",
-    "wordEn": "English"
+    "wordEn": "English",
+    "voiceBy": "Voice: @{username}",
+    "suggestCorrection": "Suggest / Correct Translation",
+    "prev": "Previous",
+    "next": "Next",
+    "page": "Page"
   },
+
+  "dictionaryModal": {
+    "badge": "Lexical Contribution",
+    "title": "Correct or enhance « {word} »",
+    "subtitle": "Suggest an accurate translation to improve dictionary completeness.",
+    "thanksTitle": "Thank you for your suggestion",
+    "thanksDesc": "The translation was successfully recorded.",
+    "frLabel": "French Translation *",
+    "frPlaceholder": "e.g. homme, manger, bonne nuit...",
+    "enLabel": "English Translation (Optional)",
+    "enPlaceholder": "e.g. man, eat, good night...",
+    "defLabel": "Definition or Usage Nuance (Optional)",
+    "defPlaceholder": "Exact meaning or conversational context...",
+    "cancel": "Cancel",
+    "submit": "Submit Translation",
+    "submitting": "Submitting...",
+    "errorRequired": "Please provide at least one translation or definition."
+  },
+
+  "officialVoiceGuide": {
+    "badge": "Recognition & Quality",
+    "title": "How to become the Official Voice of a dictionary word?",
+    "intro": "On Corafric, every dictionary word is recorded by a real speaker. Reference voices are elected by community peer-review through a blind listening protocol.",
+    "step1Title": "Clean Recording",
+    "step1Desc": "Speak in a quiet room respecting the exact tones of the Ewe language.",
+    "step2Title": "Blind Peer Review",
+    "step2Desc": "Three native speakers evaluate clarity, accent, and tonal precision.",
+    "step3Title": "Top Score Election",
+    "step3Desc": "The highest-rated approved recording for that word is selected.",
+    "step4Title": "Badge Attribution",
+    "step4Desc": "Your username is featured publicly on the word card across the global dictionary."
+  },
+
   "explore": {
     "title": "African Open Data",
+    "subtitle": "Explore and download community-collected speech datasets for research and speech AI development.",
+    "badge": "Open Data",
     "leaderboardTitle": "Top Builders",
     "downloadTitle": "Access the Speech Dataset",
     "downloadDesc": "The largest open-source Ewe speech dataset, freely accessible for research, universities, and Artificial Intelligence developers.",
-    "downloadBtn": "Download Dataset"
+    "downloadBtn": "Download Dataset",
+    "audios": "Audios",
+    "validated": "Validated",
+    "hours": "Audio Hours",
+    "contributors": "Contributors",
+    "validationsCount": "{count} validations",
+    "audiosCount": "audios",
+    "noContributors": "No contributors listed yet.",
+    "license": "License",
+    "licenseFree": "CC-BY (Open)",
+    "audioFormat": "Audio Format",
+    "audioFormatOpus": "WebM (OPUS)",
+    "languages": "Languages",
+    "recordingsCount": "{count} recordings",
+    "active": "Active",
+    "soon": "Soon",
+    "error": "Error loading dataset statistics."
   },
+
   "brandShowcase": {
     "tagline": "Africa's Speech Infrastructure.",
     "description": "Corafric: open-source technology platform for the digitization, preservation, and integration of African languages into AI.",
     "email": "contact@corafric.com",
     "github": "GitHub",
     "support": "Support the project",
-    "privacy": "Privacy",
+    "privacy": "Privacy Policy",
     "cookies": "Cookies",
     "copyright": "Corafric. Open linguistic heritage and AI."
   },
+
   "privacy": {
     "title": "Privacy Policy",
     "content": "Transparent community platform. Speech data released under open CC-BY license. No collection of sensitive personal data. Anonymized recordings for research.",
     "back": "Back"
   },
+
   "cookies": {
     "title": "Cookies Policy",
     "content": "Only essential technical cookies for your session. No advertising trackers. No commercial profiling.",
     "back": "Back"
   },
+
   "contribuer": {
     "hero": {
-      "tag": "IMPACT AND TRANSMISSION",
+      "tag": "IMPACT & TRANSMISSION",
       "title": "Bring our languages\ninto the AI era.",
       "subtitle": "Corafric is a technological digital commons built by and for native speakers."
     },
@@ -143,6 +306,28 @@
     "partnership": {
       "text": "Institution, Company or University? Partner with Africa's linguistic AI infrastructure.",
       "cta": "Become a Partner"
-    }
+    },
+    "linkCopied": "Link copied!"
+  },
+
+  "auth": {
+    "welcomeTitle": "Welcome to Corafric",
+    "welcomeSubtitle": "Sign in to start recording Ewe words and sentences or validate community audio contributions.",
+    "signUpTitle": "Create your Corafric Account",
+    "signUpSubtitle": "Join us today and help build Africa's premier open speech dataset for the Ewe language.",
+    "allRightsReserved": "Corafric. All rights reserved."
+  },
+
+  "alphabet": {
+    "listen": "Listen to pronunciation",
+    "tone": "Tone",
+    "spellerTitle": "Concatenative Synthesis Engine",
+    "spellerDesc": "Phoneme assembly and audio blending to speak or spell any word",
+    "spellerBadge": "Web Audio API Fusion",
+    "spellerPlaceholder": "Type a word (e.g. Corafric, Ewe, Togo, ɖɛ...)",
+    "spellerStop": "Stop",
+    "spellerSpeak": "Speak word",
+    "spellerSpell": "Spell",
+    "spellerSequence": "Sequence:"
   }
 }

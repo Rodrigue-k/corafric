@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Mic, Volume2, MapPin, CheckCircle2, ArrowLeft } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "../ui/Button";
 
 interface RecordingChecklistProps {
@@ -10,33 +11,34 @@ interface RecordingChecklistProps {
   formatLabel?: string;
 }
 
-const CHECKLIST_ITEMS = [
-  {
-    id: "quiet",
-    icon: MapPin,
-    label: "Je suis dans un endroit calme",
-    description: "Pas de musique, pas de rue bruyante, pas de ventilateur ou climatiseur direct.",
-  },
-  {
-    id: "distance",
-    icon: Mic,
-    label: "Mon micro est bien positionné",
-    description: "À 10–15 cm de ma bouche, pour capter une voix nette sans saturation.",
-  },
-  {
-    id: "volume",
-    icon: Volume2,
-    label: "Mon volume et articulation sont corrects",
-    description: "Je vais parler d'une voix naturelle et claire, en respectant les tons.",
-  },
-];
-
 export const RecordingChecklist: React.FC<RecordingChecklistProps> = ({ onReady, onBack, formatLabel }) => {
+  const t = useTranslations("contribute");
   const [checked, setChecked] = useState<Record<string, boolean>>({
     quiet: false,
     distance: false,
     volume: false,
   });
+
+  const checklistItems = [
+    {
+      id: "quiet",
+      icon: MapPin,
+      label: t("quietLabel"),
+      description: t("quietDesc"),
+    },
+    {
+      id: "distance",
+      icon: Mic,
+      label: t("distanceLabel"),
+      description: t("distanceDesc"),
+    },
+    {
+      id: "volume",
+      icon: Volume2,
+      label: t("volumeLabel"),
+      description: t("volumeDesc"),
+    },
+  ];
 
   const allChecked = Object.values(checked).every(Boolean);
 
@@ -54,7 +56,7 @@ export const RecordingChecklist: React.FC<RecordingChecklistProps> = ({ onReady,
             className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-foreground transition-colors py-1 px-2 rounded-md hover:bg-black/5"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            Changer de format
+            {t("changeFormat")}
           </button>
         ) : <div />}
         {formatLabel && (
@@ -67,19 +69,19 @@ export const RecordingChecklist: React.FC<RecordingChecklistProps> = ({ onReady,
       {/* Header Info */}
       <div className="text-center space-y-2 pt-2">
         <span className="text-[10px] font-bold font-display uppercase tracking-widest text-primary block">
-          Étape préalable de qualité
+          {t("qualityStep")}
         </span>
         <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground tracking-tight">
-          Vérification de l&apos;environnement
+          {t("checklist")}
         </h2>
         <p className="text-xs sm:text-sm text-text-muted max-w-md mx-auto leading-relaxed">
-          Pour garantir un dataset de référence et éviter le rejet automatique de vos audios, confirmez ces 3 points avant d&apos;accéder au studio.
+          {t("checklistSubtitle")}
         </p>
       </div>
 
       {/* Checklist */}
       <div className="space-y-3 pt-2">
-        {CHECKLIST_ITEMS.map(({ id, icon: Icon, label, description }) => {
+        {checklistItems.map(({ id, icon: Icon, label, description }) => {
           const isChecked = checked[id];
           return (
             <button
@@ -138,12 +140,13 @@ export const RecordingChecklist: React.FC<RecordingChecklistProps> = ({ onReady,
           className="w-full shadow-md shadow-primary/10"
         >
           <Mic className="w-4 h-4 mr-2" />
-          {allChecked ? "Je suis prêt(e) — Entrer dans le studio" : `Cochez les 3 points (${Object.values(checked).filter(Boolean).length}/3)`}
+          {allChecked ? t("readyToRecord") : t("checkAllPoints", { count: Object.values(checked).filter(Boolean).length })}
         </Button>
         <p className="text-center text-[10px] text-text-muted mt-2">
-          Cette vérification est requise une seule fois au début de votre session d&apos;enregistrement.
+          {t("checklistNote")}
         </p>
       </div>
     </div>
   );
 };
+

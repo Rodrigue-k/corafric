@@ -151,7 +151,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-2">
             <span className="text-xs font-semibold uppercase tracking-widest text-primary block">
-              Méthodologie
+              {t("methodology")}
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold font-display text-foreground">
               {t("how.title")}

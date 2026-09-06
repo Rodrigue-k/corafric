@@ -122,7 +122,7 @@ export default function ContribuerPage() {
                   {/* Toast/Tooltip for Clipboard copy feedback */}
                   {copied && (
                     <div className="absolute right-0 -top-8 bg-foreground text-background text-xs font-semibold px-2 py-1 rounded shadow-md animate-fade-in-down">
-                      Lien copié !
+                      {t("linkCopied")}
                     </div>
                   )}
                 </div>

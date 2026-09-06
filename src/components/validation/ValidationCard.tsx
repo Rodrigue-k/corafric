@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslations } from "next-intl";
 import { ValidationControls } from "./ValidationControls";
 import { CustomAudioPlayer } from "../recording/CustomAudioPlayer";
 import { AlertCircle, CheckCircle, Star } from "lucide-react";
@@ -28,6 +29,7 @@ export const ValidationCard: React.FC<ValidationCardProps> = ({
   recording,
   onVoteSubmitted,
 }) => {
+  const t = useTranslations("validate");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [voteSuccess, setVoteSuccess] = useState<boolean>(false);
@@ -76,10 +78,10 @@ export const ValidationCard: React.FC<ValidationCardProps> = ({
       {/* Meta Bar */}
       <div className="flex justify-between items-center text-xs border-b border-border/40 pb-2.5">
         <span className="text-[10px] font-bold font-mono uppercase tracking-widest text-primary/70">
-          Enregistrement #{recording.id.substring(0, 8)}
+          {t("recordingNumber")} #{recording.id.substring(0, 8)}
         </span>
         <span className="text-[10px] font-display tracking-widest uppercase text-text-muted font-medium">
-          {recording.sentence.language || "Éwé"}
+          {recording.sentence.language || t("languageEwe")}
         </span>
       </div>
 
@@ -114,7 +116,7 @@ export const ValidationCard: React.FC<ValidationCardProps> = ({
             <div className="flex items-center gap-2 py-3 px-4 bg-[#FAF8F5] rounded-full border border-primary/20 max-w-xs mx-auto">
               <CheckCircle className="w-4 h-4 text-primary" />
               <p className="text-xs font-semibold text-foreground font-display uppercase tracking-wider">
-                Note soumise
+                {t("scoreSubmitted")}
               </p>
             </div>
             {/* Show submitted score */}
@@ -143,3 +145,4 @@ export const ValidationCard: React.FC<ValidationCardProps> = ({
     </div>
   );
 };
+

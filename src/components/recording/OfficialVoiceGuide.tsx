@@ -2,8 +2,10 @@
 
 import React, { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export const OfficialVoiceGuide: React.FC = () => {
+  const t = useTranslations("officialVoiceGuide");
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -16,10 +18,10 @@ export const OfficialVoiceGuide: React.FC = () => {
       >
         <div>
           <span className="text-[10px] font-bold font-display uppercase tracking-widest text-primary block">
-            Reconnaissance et Qualite
+            {t("badge")}
           </span>
           <h3 className="text-sm sm:text-base font-bold font-display text-foreground tracking-tight">
-            Comment devenir la Voix Officielle d'un mot dans le Dictionnaire ?
+            {t("title")}
           </h3>
         </div>
 
@@ -32,7 +34,7 @@ export const OfficialVoiceGuide: React.FC = () => {
       {isOpen && (
         <div className="pt-6 pb-2 space-y-6 animate-in fade-in duration-200">
           <p className="text-xs sm:text-sm text-text-muted leading-relaxed max-w-3xl">
-            Sur Corafric, chaque mot du dictionnaire est porte par un locuteur reel. Les voix de reference sont validees par la communaute grace a un protocole d'ecoute a l'aveugle.
+            {t("intro")}
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-2 border-t border-border/40">
@@ -40,10 +42,10 @@ export const OfficialVoiceGuide: React.FC = () => {
             <div className="space-y-1.5">
               <span className="text-[10px] font-mono font-bold text-primary block">01</span>
               <h4 className="text-xs font-bold font-display uppercase tracking-wider text-foreground">
-                Enregistrement net
+                {t("step1Title")}
               </h4>
               <p className="text-xs text-text-muted leading-relaxed">
-                Parlez dans une piece silencieuse en respectant les tons de la langue Ewe.
+                {t("step1Desc")}
               </p>
             </div>
 
@@ -51,10 +53,10 @@ export const OfficialVoiceGuide: React.FC = () => {
             <div className="space-y-1.5">
               <span className="text-[10px] font-mono font-bold text-primary block">02</span>
               <h4 className="text-xs font-bold font-display uppercase tracking-wider text-foreground">
-                Ecoute a l'aveugle
+                {t("step2Title")}
               </h4>
               <p className="text-xs text-text-muted leading-relaxed">
-                Trois locuteurs natifs evaluent la clarte et la prononciation du mot.
+                {t("step2Desc")}
               </p>
             </div>
 
@@ -62,10 +64,10 @@ export const OfficialVoiceGuide: React.FC = () => {
             <div className="space-y-1.5">
               <span className="text-[10px] font-mono font-bold text-primary block">03</span>
               <h4 className="text-xs font-bold font-display uppercase tracking-wider text-foreground">
-                Moyenne d'excellence
+                {t("step3Title")}
               </h4>
               <p className="text-xs text-text-muted leading-relaxed">
-                L'enregistrement ayant la note la plus haute pour ce mot est selectionne.
+                {t("step3Desc")}
               </p>
             </div>
 
@@ -73,10 +75,10 @@ export const OfficialVoiceGuide: React.FC = () => {
             <div className="space-y-1.5">
               <span className="text-[10px] font-mono font-bold text-primary block">04</span>
               <h4 className="text-xs font-bold font-display uppercase tracking-wider text-foreground">
-                Attribution du badge
+                {t("step4Title")}
               </h4>
               <p className="text-xs text-text-muted leading-relaxed">
-                Votre nom apparait publiquement sur la fiche du mot dans le dictionnaire mondial.
+                {t("step4Desc")}
               </p>
             </div>
           </div>
@@ -85,3 +87,4 @@ export const OfficialVoiceGuide: React.FC = () => {
     </div>
   );
 };
+

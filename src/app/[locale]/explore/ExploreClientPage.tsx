@@ -48,13 +48,13 @@ export default function ExploreClientPage() {
       {/* Editorial Header */}
       <div className="text-center space-y-3">
         <span className="text-[10px] sm:text-xs font-bold font-display uppercase tracking-widest text-primary block">
-          Données ouvertes
+          {t("badge")}
         </span>
         <h1 className="text-4xl sm:text-5xl lg:text-6xl text-foreground font-display font-bold tracking-tight">
           {t("title")}
         </h1>
         <p className="text-sm text-text-muted max-w-xl mx-auto">
-          Explorez et téléchargez les jeux de données vocales collectés pour la recherche et les modèles de traitement vocal.
+          {t("subtitle")}
         </p>
       </div>
 
@@ -67,19 +67,19 @@ export default function ExploreClientPage() {
           {/* Stats Counters Grid — Editorial, flat */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-10 border-y border-border/50">
             <div className="border-l-2 border-primary/40 pl-4 sm:pl-5">
-              <p className="text-xs text-text-muted uppercase tracking-widest font-medium mb-1">Audios</p>
+              <p className="text-xs text-text-muted uppercase tracking-widest font-medium mb-1">{t("audios")}</p>
               <p className="text-2xl sm:text-4xl font-display font-bold text-foreground">{stats.totalRecordings.toLocaleString()}</p>
             </div>
             <div className="border-l-2 border-border/60 pl-4 sm:pl-5">
-              <p className="text-xs text-text-muted uppercase tracking-widest font-medium mb-1">Validés</p>
+              <p className="text-xs text-text-muted uppercase tracking-widest font-medium mb-1">{t("validated")}</p>
               <p className="text-2xl sm:text-4xl font-display font-bold text-foreground">{stats.approvedRecordings.toLocaleString()}</p>
             </div>
             <div className="border-l-2 border-border/60 pl-4 sm:pl-5">
-              <p className="text-xs text-text-muted uppercase tracking-widest font-medium mb-1">Heures audio</p>
+              <p className="text-xs text-text-muted uppercase tracking-widest font-medium mb-1">{t("hours")}</p>
               <p className="text-2xl sm:text-4xl font-display font-bold text-foreground">{stats.totalHours.toFixed(1)}h</p>
             </div>
             <div className="border-l-2 border-border/60 pl-4 sm:pl-5">
-              <p className="text-xs text-text-muted uppercase tracking-widest font-medium mb-1">Contributeurs</p>
+              <p className="text-xs text-text-muted uppercase tracking-widest font-medium mb-1">{t("contributors")}</p>
               <p className="text-2xl sm:text-4xl font-display font-bold text-foreground">{stats.totalUsers.toLocaleString()}</p>
             </div>
           </div>
@@ -111,7 +111,7 @@ export default function ExploreClientPage() {
                             {index === 0 && <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />}
                           </p>
                           <p className="text-[11px] text-text-muted font-medium">
-                            {user.total_validations} validations
+                            {t("validationsCount", { count: user.total_validations })}
                           </p>
                         </div>
                       </div>
@@ -120,7 +120,7 @@ export default function ExploreClientPage() {
                         <span className="text-xl font-bold font-display text-primary">
                           {user.total_contributions}
                         </span>
-                        <span className="text-[10px] text-text-muted ml-1.5 uppercase tracking-wider font-medium">audios</span>
+                        <span className="text-[10px] text-text-muted ml-1.5 uppercase tracking-wider font-medium">{t("audiosCount")}</span>
                       </div>
                     </div>
                   );
@@ -128,7 +128,7 @@ export default function ExploreClientPage() {
 
                 {(!stats.leaderboard || stats.leaderboard.length === 0) && (
                   <div className="py-8 text-center text-xs text-text-muted">
-                    Aucun contributeur répertorié.
+                    {t("noContributors")}
                   </div>
                 )}
               </div>
@@ -149,12 +149,12 @@ export default function ExploreClientPage() {
 
                 <div className="space-y-2 text-xs text-text-muted">
                   <div className="flex justify-between items-center py-1.5 border-b border-border/40">
-                    <span>Licence</span>
-                    <span className="font-semibold text-foreground">CC-BY (Libre)</span>
+                    <span>{t("license")}</span>
+                    <span className="font-semibold text-foreground">{t("licenseFree")}</span>
                   </div>
                   <div className="flex justify-between items-center py-1.5 border-b border-border/40">
-                    <span>Format Audio</span>
-                    <span className="font-semibold text-foreground">WebM (OPUS)</span>
+                    <span>{t("audioFormat")}</span>
+                    <span className="font-semibold text-foreground">{t("audioFormatOpus")}</span>
                   </div>
                 </div>
 
@@ -167,7 +167,7 @@ export default function ExploreClientPage() {
               <div className="space-y-4">
                 <h2 className="text-lg sm:text-xl font-display font-bold text-foreground flex items-center gap-2.5 border-b border-border/50 pb-3">
                   <Globe className="w-4 h-4 text-primary" />
-                  Langues
+                  {t("languages")}
                 </h2>
 
                 <div className="space-y-2">
@@ -180,13 +180,13 @@ export default function ExploreClientPage() {
                         <p className="font-semibold text-foreground">{lang.name}</p>
                         {lang.status === "active" && (
                           <p className="text-[11px] text-text-muted">
-                            {lang.count.toLocaleString()} enregistrements
+                            {t("recordingsCount", { count: lang.count.toLocaleString() })}
                           </p>
                         )}
                       </div>
 
                       <Badge variant={lang.status === "active" ? "success" : "outline"} className="px-2.5 py-0.5 text-[10px]">
-                        {lang.status === "active" ? "Actif" : "Bientôt"}
+                        {lang.status === "active" ? t("active") : t("soon")}
                       </Badge>
                     </div>
                   ))}
@@ -197,9 +197,10 @@ export default function ExploreClientPage() {
         </>
       ) : (
         <div className="text-center py-12">
-          <p className="text-text-muted">Erreur de chargement.</p>
+          <p className="text-text-muted">{t("error")}</p>
         </div>
       )}
     </div>
   );
 }
+

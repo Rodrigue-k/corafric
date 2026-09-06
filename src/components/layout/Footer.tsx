@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 
 export const Footer: React.FC = () => {
   const t = useTranslations("brandShowcase");
+  const tNav = useTranslations("nav");
 
   return (
     <footer className="w-full bg-[#FAF8F5] border-t border-[#EADCC9]/60 mt-auto">
@@ -13,27 +14,27 @@ export const Footer: React.FC = () => {
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
           <Link href="/contribute" className="hover:text-primary transition-colors duration-200">
-            Contribuer
+            {tNav("contribute")}
           </Link>
           <span className="text-text-muted/40">·</span>
           <Link href="/validate" className="hover:text-primary transition-colors duration-200">
-            Valider
+            {tNav("validate")}
           </Link>
           <span className="text-text-muted/40">·</span>
           <Link href="/dictionary" className="hover:text-primary transition-colors duration-200">
-            Dictionnaire
+            {tNav("dictionary")}
           </Link>
           <span className="text-text-muted/40">·</span>
           <Link href="/leaderboard" className="hover:text-primary transition-colors duration-200">
-            Classement
+            {tNav("leaderboard")}
           </Link>
           <span className="text-text-muted/40">·</span>
           <Link href="/profile" className="hover:text-primary transition-colors duration-200">
-            Profil
+            {tNav("profile")}
           </Link>
           <span className="text-text-muted/40">·</span>
           <Link href="/explore" className="hover:text-primary transition-colors duration-200">
-            Dataset
+            {tNav("explore")}
           </Link>
 
           <span className="text-text-muted/40">·</span>

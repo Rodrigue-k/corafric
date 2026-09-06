@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
 import { X } from "lucide-react";
@@ -12,6 +13,9 @@ interface AnonymousGateModalProps {
 }
 
 export const AnonymousGateModal: React.FC<AnonymousGateModalProps> = ({ isOpen, onClose }) => {
+  const t = useTranslations("contribute");
+  const tNav = useTranslations("nav");
+
   if (!isOpen) return null;
 
   return (
@@ -19,36 +23,36 @@ export const AnonymousGateModal: React.FC<AnonymousGateModalProps> = ({ isOpen, 
       <Card className="max-w-md w-full p-8 space-y-6 relative bg-white border border-border shadow-xl rounded-2xl animate-in zoom-in-95 duration-150">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-1.5 text-text-muted hover:text-foreground rounded-md hover:bg-black/5 transition-colors"
-          aria-label="Fermer"
+          className="absolute top-5 right-5 p-1.5 text-text-muted hover:text-foreground rounded-md hover:bg-black/5 transition-colors cursor-pointer"
+          aria-label={tNav("close")}
         >
           <X className="w-4 h-4" />
         </button>
 
         <div className="space-y-3 pt-2">
           <span className="text-xs font-semibold uppercase tracking-widest text-primary block">
-            Progression sauvegardée
+            {t("anonymousGateSaved")}
           </span>
 
           <h3 className="text-2xl font-bold font-display text-foreground leading-snug">
-            Créez votre profil pour poursuivre vos contributions
+            {t("anonymousGateTitle")}
           </h3>
 
           <p className="text-sm text-text-muted leading-relaxed">
-            Vous avez réalisé vos 3 premiers enregistrements. Créez un compte pour associer vos futures contributions à votre profil, suivre vos validations et figurer dans le classement public.
+            {t("anonymousGateDesc")}
           </p>
         </div>
 
         <div className="space-y-3 pt-2">
           <Link href="/sign-up" className="block w-full">
             <Button variant="primary" size="md" className="w-full justify-center">
-              Créer un compte
+              {t("createAccount")}
             </Button>
           </Link>
 
           <Link href="/sign-in" className="block w-full">
             <Button variant="outline" size="md" className="w-full justify-center">
-              Se connecter
+              {t("signIn")}
             </Button>
           </Link>
         </div>
@@ -56,12 +60,13 @@ export const AnonymousGateModal: React.FC<AnonymousGateModalProps> = ({ isOpen, 
         <div className="text-center pt-1">
           <button
             onClick={onClose}
-            className="text-xs text-text-muted hover:text-foreground transition-colors"
+            className="text-xs text-text-muted hover:text-foreground transition-colors cursor-pointer"
           >
-            Fermer et continuer la navigation
+            {t("closeAndBrowse")}
           </button>
         </div>
       </Card>
     </div>
   );
 };
+

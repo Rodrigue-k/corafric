@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslations } from "next-intl";
 import { DictionaryWord } from "@/types";
 
 interface WordDisplayProps {
@@ -6,11 +7,13 @@ interface WordDisplayProps {
 }
 
 export const WordDisplay: React.FC<WordDisplayProps> = ({ word }) => {
+  const t = useTranslations("contribute");
+
   return (
     <div className="w-full text-center space-y-4 py-12">
       <div className="flex items-center justify-center gap-2">
         <span className="text-xs font-semibold uppercase tracking-widest text-primary">
-          Langue Éwé
+          {t("languageEwe")}
         </span>
       </div>
 
@@ -28,7 +31,7 @@ export const WordDisplay: React.FC<WordDisplayProps> = ({ word }) => {
         )}
         {word.word_fr && word.word_en && (
           <p className="text-xs text-text-muted">
-            Anglais : {word.word_en}
+            {t("english")} : {word.word_en}
           </p>
         )}
         {word.definition && (
@@ -40,3 +43,4 @@ export const WordDisplay: React.FC<WordDisplayProps> = ({ word }) => {
     </div>
   );
 };
+

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Star, CheckCircle, AlertCircle } from "lucide-react";
 import { CustomAudioPlayer } from "../recording/CustomAudioPlayer";
 import { Button } from "../ui/Button";
@@ -18,22 +19,16 @@ interface ComparativeValidationCardProps {
   onAllVotesSubmitted: () => void;
 }
 
-const SCORE_LABELS: Record<number, string> = {
-  1: "Très mauvais",
-  2: "Mauvais",
-  3: "Correct",
-  4: "Bon",
-  5: "Excellent",
-};
-
 function StarRating({
   score,
   onChange,
   disabled,
+  scoreLabels,
 }: {
   score: number;
   onChange: (s: number) => void;
   disabled: boolean;
+  scoreLabels: Record<number, string>;
 }) {
   const [hovered, setHovered] = useState(0);
   const display = hovered || score;
@@ -48,7 +43,7 @@ function StarRating({
             onMouseEnter={() => setHovered(s)}
             onMouseLeave={() => setHovered(0)}
             onClick={() => onChange(s)}
-            aria-label={`${s} étoile${s > 1 ? "s" : ""}`}
+            aria-label={`${s} / 5`}
             className="transition-transform hover:scale-110 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer p-0.5"
           >
             <Star
@@ -62,7 +57,7 @@ function StarRating({
         ))}
       </div>
       <span className="text-[10px] text-text-muted font-display uppercase tracking-wider h-3">
-        {display > 0 ? SCORE_LABELS[display] : ""}
+        {display > 0 ? scoreLabels[display] : ""}
       </span>
     </div>
   );
@@ -72,10 +67,19 @@ export const ComparativeValidationCard: React.FC<ComparativeValidationCardProps>
   recordings,
   onAllVotesSubmitted,
 }) => {
+  const t = useTranslations("validate");
   const [scores, setScores] = useState<Record<string, number>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const scoreLabels: Record<number, string> = {
+    1: t("score1"),
+    2: t("score2"),
+    3: t("score3"),
+    4: t("score4"),
+    5: t("score5"),
+  };
 
   const displayWord = recordings[0]?.word?.text || recordings[0]?.sentence?.text || "";
   const displayTranslation = recordings[0]?.word?.translation || null;
@@ -117,9 +121,9 @@ export const ComparativeValidationCard: React.FC<ComparativeValidationCardProps>
           <CheckCircle className="w-5 h-5 text-primary" />
         </div>
         <p className="text-sm font-semibold font-display text-foreground">
-          Notes soumises avec succès !
+          {t("comparativeSubmittedTitle")}
         </p>
-        <p className="text-xs text-text-muted">Chargement du prochain groupe...</p>
+        <p className="text-xs text-text-muted">{t("comparativeSubmittedDesc")}</p>
       </div>
     );
   }
@@ -129,10 +133,10 @@ export const ComparativeValidationCard: React.FC<ComparativeValidationCardProps>
       {/* Header */}
       <div className="flex justify-between items-center border-b border-border/40 pb-2.5">
         <span className="text-[10px] font-bold font-mono uppercase tracking-widest text-primary/70">
-          Mode Comparatif
+          {t("comparativeMode")}
         </span>
         <span className="text-[10px] font-display tracking-widest uppercase text-text-muted font-medium">
-          {recordings[0]?.sentence?.language || "Éwé"} · {recordings.length} audios
+          {recordings[0]?.sentence?.language || t("languageEwe")} · {recordings.length} audios
         </span>
       </div>
 
@@ -163,7 +167,7 @@ export const ComparativeValidationCard: React.FC<ComparativeValidationCardProps>
             {/* Label + audio */}
             <div className="flex items-center justify-between gap-3">
               <span className="text-xs font-bold font-display uppercase tracking-widest text-text-muted shrink-0">
-                Audio {rec.label}
+                {t("audioLabel")} {rec.label}
               </span>
               <div className="flex-1 min-w-0">
                 <CustomAudioPlayer src={rec.audioUrl} />
@@ -176,6 +180,7 @@ export const ComparativeValidationCard: React.FC<ComparativeValidationCardProps>
                 score={scores[rec.id] ?? 0}
                 onChange={(s) => setScores((prev) => ({ ...prev, [rec.id]: s }))}
                 disabled={isSubmitting}
+                scoreLabels={scoreLabels}
               />
             </div>
           </div>
@@ -184,8 +189,10 @@ export const ComparativeValidationCard: React.FC<ComparativeValidationCardProps>
 
       {/* Progress indicator */}
       <p className="text-center text-xs text-text-muted">
-        {Object.values(scores).filter((s) => s > 0).length} / {recordings.length} audio
-        {recordings.length > 1 ? "s" : ""} noté{recordings.length > 1 ? "s" : ""}
+        {t("scoredAudios", {
+          scored: Object.values(scores).filter((s) => s > 0).length,
+          total: recordings.length,
+        })}
       </p>
 
       {/* Submit */}
@@ -196,7 +203,7 @@ export const ComparativeValidationCard: React.FC<ComparativeValidationCardProps>
         size="lg"
         className="w-full rounded-full"
       >
-        {isSubmitting ? "Envoi en cours..." : `Soumettre mes ${recordings.length} notes`}
+        {isSubmitting ? t("submittingVotes") : t("submitComparativeRatings", { count: recordings.length })}
       </Button>
 
       {errorMessage && (
@@ -208,3 +215,4 @@ export const ComparativeValidationCard: React.FC<ComparativeValidationCardProps>
     </div>
   );
 };
+

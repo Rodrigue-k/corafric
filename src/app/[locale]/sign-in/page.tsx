@@ -1,8 +1,11 @@
 import { SignIn } from "@clerk/nextjs";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
+import { getTranslations } from "next-intl/server";
 
-export default function SignInPage() {
+export default async function SignInPage() {
+  const t = await getTranslations("auth");
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-background">
       {/* Left Column: Promo info */}
@@ -40,15 +43,15 @@ export default function SignInPage() {
 
         <div className="space-y-6 z-10 max-w-lg">
           <h2 className="text-display leading-tight">
-            Bienvenue sur Corafric
+            {t("welcomeTitle")}
           </h2>
           <p className="text-body text-white/80 leading-relaxed">
-            Connectez-vous pour commencer à enregistrer des phrases Ewe ou pour valider les contributions audio de la communauté.
+            {t("welcomeSubtitle")}
           </p>
         </div>
 
         <p className="text-caption text-white/50 z-10">
-          &copy; {new Date().getFullYear()} Corafric. Tous droits réservés.
+          &copy; {new Date().getFullYear()} {t("allRightsReserved")}
         </p>
       </div>
 
@@ -70,3 +73,4 @@ export default function SignInPage() {
     </div>
   );
 }
+

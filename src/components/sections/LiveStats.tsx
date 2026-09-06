@@ -88,10 +88,10 @@ export function LiveStats() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end">
             <div className="lg:col-span-7 space-y-2">
               <span className="text-xs font-semibold uppercase tracking-widest text-primary block font-display">
-                Objectif Collectif
+                {t("collectiveGoal")}
               </span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-display text-foreground leading-tight tracking-tight">
-                10 000 voix pour l'Afrique.
+                {t("collectiveGoalTitle")}
               </h2>
             </div>
             <div className="lg:col-span-5 flex flex-col lg:flex-row gap-4 lg:items-center justify-start lg:justify-end">
@@ -112,7 +112,7 @@ export function LiveStats() {
                   {currentCount.toLocaleString()}
                 </span>
                 <span className="text-text-muted text-lg sm:text-xl font-display">
-                  / {goal.toLocaleString()} audios
+                  / {goal.toLocaleString()} {t("audiosUnit")}
                 </span>
               </div>
               <div className="text-left sm:text-right">
@@ -157,28 +157,28 @@ export function LiveStats() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-8 py-10">
           {/* Stat 1 */}
           <div className="border-l-2 border-primary/40 pl-4 sm:pl-5">
-            <p className="text-text-muted text-xs uppercase tracking-widest font-medium mb-1">Validés</p>
+            <p className="text-text-muted text-xs uppercase tracking-widest font-medium mb-1">{t("validatedStat")}</p>
             <p className="text-2xl sm:text-4xl font-display font-bold text-foreground tracking-tight tabular-nums">
               {isLoaded ? stats.approvedRecordings.toLocaleString() : "—"}
             </p>
           </div>
           {/* Stat 2 */}
           <div className="border-l-2 border-border/60 pl-4 sm:pl-5">
-            <p className="text-text-muted text-xs uppercase tracking-widest font-medium mb-1">Heures</p>
+            <p className="text-text-muted text-xs uppercase tracking-widest font-medium mb-1">{t("hoursStat")}</p>
             <p className="text-2xl sm:text-4xl font-display font-bold text-foreground tracking-tight tabular-nums">
               {isLoaded ? `${stats.totalHours.toFixed(1)}h` : "—"}
             </p>
           </div>
           {/* Stat 3 */}
           <div className="border-l-2 border-border/60 pl-4 sm:pl-5">
-            <p className="text-text-muted text-xs uppercase tracking-widest font-medium mb-1">Phrases</p>
+            <p className="text-text-muted text-xs uppercase tracking-widest font-medium mb-1">{t("sentencesStat")}</p>
             <p className="text-2xl sm:text-4xl font-display font-bold text-foreground tracking-tight tabular-nums">
               {isLoaded ? stats.totalSentences.toLocaleString() : "—"}
             </p>
           </div>
           {/* Stat 4 */}
           <div className="border-l-2 border-border/60 pl-4 sm:pl-5">
-            <p className="text-text-muted text-xs uppercase tracking-widest font-medium mb-1">Contributeurs</p>
+            <p className="text-text-muted text-xs uppercase tracking-widest font-medium mb-1">{t("contributorsStat")}</p>
             <p className="text-2xl sm:text-4xl font-display font-bold text-foreground tracking-tight tabular-nums">
               {isLoaded ? stats.totalUsers.toLocaleString() : "—"}
             </p>

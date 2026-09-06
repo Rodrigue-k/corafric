@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Star } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "../ui/Button";
 
 interface ValidationControlsProps {
@@ -9,20 +10,21 @@ interface ValidationControlsProps {
   disabled?: boolean;
 }
 
-const SCORE_LABELS: Record<number, string> = {
-  1: "Très mauvais",
-  2: "Mauvais",
-  3: "Correct",
-  4: "Bon",
-  5: "Excellent",
-};
-
 export const ValidationControls: React.FC<ValidationControlsProps> = ({
   onVote,
   disabled = false,
 }) => {
+  const t = useTranslations("validate");
   const [hovered, setHovered] = useState<number>(0);
   const [selected, setSelected] = useState<number>(0);
+
+  const scoreLabels: Record<number, string> = {
+    1: t("score1"),
+    2: t("score2"),
+    3: t("score3"),
+    4: t("score4"),
+    5: t("score5"),
+  };
 
   const displayScore = hovered || selected;
 
@@ -35,7 +37,7 @@ export const ValidationControls: React.FC<ValidationControlsProps> = ({
   return (
     <div className="flex flex-col items-center gap-4 w-full">
       {/* Stars */}
-      <div className="flex items-center gap-1.5" role="group" aria-label="Note de 1 à 5 étoiles">
+      <div className="flex items-center gap-1.5" role="group">
         {[1, 2, 3, 4, 5].map((star) => (
           <button
             key={star}
@@ -44,7 +46,7 @@ export const ValidationControls: React.FC<ValidationControlsProps> = ({
             onMouseEnter={() => setHovered(star)}
             onMouseLeave={() => setHovered(0)}
             onClick={() => setSelected(star)}
-            aria-label={`${star} étoile${star > 1 ? "s" : ""} — ${SCORE_LABELS[star]}`}
+            aria-label={`${star} / 5 — ${scoreLabels[star]}`}
             className="transition-transform hover:scale-110 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer p-1"
           >
             <Star
@@ -60,7 +62,7 @@ export const ValidationControls: React.FC<ValidationControlsProps> = ({
 
       {/* Label */}
       <p className="text-xs font-display uppercase tracking-widest text-text-muted h-4">
-        {displayScore > 0 ? SCORE_LABELS[displayScore] : "Sélectionnez une note"}
+        {displayScore > 0 ? scoreLabels[displayScore] : t("selectRating")}
       </p>
 
       {/* Submit */}
@@ -71,8 +73,9 @@ export const ValidationControls: React.FC<ValidationControlsProps> = ({
         size="md"
         className="w-full sm:w-auto px-8 rounded-full"
       >
-        Valider la note
+        {t("submitRating")}
       </Button>
     </div>
   );
 };
+

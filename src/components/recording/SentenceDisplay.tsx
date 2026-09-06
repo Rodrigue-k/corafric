@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslations } from "next-intl";
 import { Sentence } from "@/types";
 
 interface SentenceDisplayProps {
@@ -6,19 +7,20 @@ interface SentenceDisplayProps {
 }
 
 export const SentenceDisplay: React.FC<SentenceDisplayProps> = ({ sentence }) => {
+  const t = useTranslations("contribute");
   const frenchTranslation = sentence.translation_fr || null;
 
   return (
     <div className="w-full text-center space-y-5 py-12">
       <div className="flex items-center justify-center gap-2">
         <span className="text-xs font-semibold uppercase tracking-widest text-primary">
-          Langue Éwé
+          {t("languageEwe")}
         </span>
         {sentence.source && (
           <>
             <span className="text-border">·</span>
             <span className="text-xs text-text-muted hidden sm:inline">
-              Source : {sentence.source.replace(/^https?:\/\//, "").split("/")[0]}
+              {t("source")} : {sentence.source.replace(/^https?:\/\//, "").split("/")[0]}
             </span>
           </>
         )}
@@ -32,9 +34,10 @@ export const SentenceDisplay: React.FC<SentenceDisplayProps> = ({ sentence }) =>
       {/* French Translation if available */}
       {frenchTranslation && (
         <p className="text-sm text-text-muted italic max-w-lg mx-auto">
-          Traduction : {frenchTranslation}
+          {t("translation")} : {frenchTranslation}
         </p>
       )}
     </div>
   );
 };
+

@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Check, Languages, Sparkles } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { X, Check } from "lucide-react";
 
 interface SuggestTranslationModalProps {
   wordId: string;
@@ -20,6 +21,7 @@ export const SuggestTranslationModal: React.FC<SuggestTranslationModalProps> = (
   onClose,
   onSuccess,
 }) => {
+  const t = useTranslations("dictionaryModal");
   const [suggestedFr, setSuggestedFr] = useState(currentFr || "");
   const [suggestedEn, setSuggestedEn] = useState(currentEn || "");
   const [suggestedDef, setSuggestedDef] = useState("");
@@ -31,7 +33,7 @@ export const SuggestTranslationModal: React.FC<SuggestTranslationModalProps> = (
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!suggestedFr.trim() && !suggestedEn.trim() && !suggestedDef.trim()) {
-      setError("Veuillez renseigner au moins une traduction ou définition.");
+      setError(t("errorRequired"));
       return;
     }
 
@@ -82,13 +84,13 @@ export const SuggestTranslationModal: React.FC<SuggestTranslationModalProps> = (
         {/* Header */}
         <div className="space-y-1">
           <span className="text-primary font-display font-bold text-[10px] uppercase tracking-widest block">
-            Contribution Lexicale
+            {t("badge")}
           </span>
           <h2 className="text-xl sm:text-2xl font-bold font-display text-foreground">
-            Corriger ou enrichir « {wordEwe} »
+            {t("title", { word: wordEwe })}
           </h2>
           <p className="text-xs text-text-muted">
-            Proposez une traduction precise pour perfectionner le dictionnaire.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -97,45 +99,45 @@ export const SuggestTranslationModal: React.FC<SuggestTranslationModalProps> = (
             <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
               <Check className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold font-display text-foreground">Merci pour votre proposition</h3>
-            <p className="text-xs text-text-muted">La traduction a ete enregistree avec succes.</p>
+            <h3 className="text-base font-bold font-display text-foreground">{t("thanksTitle")}</h3>
+            <p className="text-xs text-text-muted">{t("thanksDesc")}</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-bold font-display uppercase tracking-wider text-text-muted mb-1">
-                Traduction en Francais *
+                {t("frLabel")}
               </label>
               <input
                 type="text"
                 value={suggestedFr}
                 onChange={(e) => setSuggestedFr(e.target.value)}
-                placeholder="Ex: homme, manger, bonne nuit..."
+                placeholder={t("frPlaceholder")}
                 className="w-full px-4 py-2 bg-transparent border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
               />
             </div>
 
             <div>
               <label className="block text-xs font-bold font-display uppercase tracking-wider text-text-muted mb-1">
-                Traduction en Anglais (Optionnel)
+                {t("enLabel")}
               </label>
               <input
                 type="text"
                 value={suggestedEn}
                 onChange={(e) => setSuggestedEn(e.target.value)}
-                placeholder="Ex: man, eat, good night..."
+                placeholder={t("enPlaceholder")}
                 className="w-full px-4 py-2 bg-transparent border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
               />
             </div>
 
             <div>
               <label className="block text-xs font-bold font-display uppercase tracking-wider text-text-muted mb-1">
-                Definition ou Nuance (Optionnel)
+                {t("defLabel")}
               </label>
               <textarea
                 value={suggestedDef}
                 onChange={(e) => setSuggestedDef(e.target.value)}
-                placeholder="Sens exact ou contexte d'utilisation..."
+                placeholder={t("defPlaceholder")}
                 rows={2}
                 className="w-full px-4 py-2 bg-transparent border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-primary transition-colors resize-none"
               />
@@ -149,14 +151,14 @@ export const SuggestTranslationModal: React.FC<SuggestTranslationModalProps> = (
                 onClick={onClose}
                 className="px-4 py-2 rounded-lg border border-border text-xs font-bold font-display uppercase tracking-wider text-text-muted hover:bg-black/5 transition-colors cursor-pointer"
               >
-                Annuler
+                {t("cancel")}
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
                 className="px-5 py-2 rounded-lg bg-primary text-white text-xs font-bold font-display uppercase tracking-wider hover:bg-primary/90 transition-colors disabled:opacity-50 cursor-pointer"
               >
-                {isSubmitting ? "Envoi..." : "Soumettre la traduction"}
+                {isSubmitting ? t("submitting") : t("submit")}
               </button>
             </div>
           </form>
@@ -165,3 +167,4 @@ export const SuggestTranslationModal: React.FC<SuggestTranslationModalProps> = (
     </div>
   );
 };
+

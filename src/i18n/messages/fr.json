@@ -9,7 +9,12 @@
     "profile": "Profil et Statistiques",
     "signIn": "Connexion",
     "join": "S'inscrire",
-    "support": "Soutenir"
+    "support": "Soutenir",
+    "menu": "Menu",
+    "close": "Fermer",
+    "language": "Langue",
+    "account": "Compte",
+    "myProfile": "Mon profil et statistiques"
   },
 
   "landing": {
@@ -18,6 +23,14 @@
     "subtitle": "La première académie numérique et plateforme participative pour préserver nos langues locales et construire les technologies vocales africaines.",
     "ctaPrimary": "Donner ma voix",
     "ctaSecondary": "Dictionnaire Vocal",
+    "methodology": "Méthodologie",
+    "collectiveGoal": "Objectif Collectif",
+    "collectiveGoalTitle": "10 000 voix pour l'Afrique.",
+    "audiosUnit": "audios",
+    "validatedStat": "Validés",
+    "hoursStat": "Heures",
+    "sentencesStat": "Phrases",
+    "contributorsStat": "Contributeurs",
     "voicePreview": {
       "lang": "Éwé",
       "phrase": "« Eŋlɔ wò gbe ɖe mɔ̃ me »",
@@ -45,9 +58,8 @@
       "legendActive": "Phase 1 : Éwé (Togo et Ghana)",
       "legendNext": "Phases suivantes (Continent)"
     }
-
-
   },
+
   "contribute": {
     "title": "Studio Vocal",
     "phraseLabel": "Lecture à haute voix",
@@ -58,8 +70,43 @@
     "skip": "Passer cette phrase",
     "submitting": "Traitement...",
     "success": "Audio sauvegardé !",
-    "nextPhrase": "Phrase suivante"
+    "nextPhrase": "Phrase suivante",
+    "changeFormat": "Changer de format",
+    "preQualityStep": "Étape préalable de qualité",
+    "envCheckTitle": "Vérification de l'environnement",
+    "envCheckDesc": "Pour garantir un dataset de référence et éviter le rejet automatique de vos audios, confirmez ces 3 points avant d'accéder au studio.",
+    "readyToRecord": "Je suis prêt(e) — Entrer dans le studio",
+    "checkAllPoints": "Cochez les 3 points ({checked}/3)",
+    "oncePerSession": "Cette vérification est requise une seule fois au début de votre session d'enregistrement.",
+    "quietLabel": "Je suis dans un endroit calme",
+    "quietDesc": "Pas de musique, pas de rue bruyante, pas de ventilateur ou climatiseur direct.",
+    "distanceLabel": "Mon micro est bien positionné",
+    "distanceDesc": "À 10–15 cm de ma bouche, pour capter une voix nette sans saturation.",
+    "volumeLabel": "Mon volume et articulation sont corrects",
+    "volumeDesc": "Je vais parler d'une voix naturelle et claire, en respectant les tons.",
+    "modeTitle": "Mode de contribution",
+    "modeSubtitle": "Sélectionnez un format d'enregistrement pour enrichir le corpus vocal en langue Éwé.",
+    "enrichCorpus": "Enrichir le corpus",
+    "dictionaryPillarTitle": "Dictionnaire Vocal",
+    "dictionaryPillarSubtitle": "Mots isolés",
+    "dictionaryPillarDesc": "Enregistrez des termes individuels avec leur définition pour fixer la prononciation et les variations tonales.",
+    "dictionaryPillarCta": "Commencer le dictionnaire",
+    "sentencesPillarTitle": "Corpus Textuel",
+    "sentencesPillarSubtitle": "Phrases complètes",
+    "sentencesPillarDesc": "Lisez des phrases entières dans leur contexte pour modéliser la syntaxe, la prosodie et le rythme naturel.",
+    "sentencesPillarCta": "Commencer les phrases",
+    "languageEwe": "Langue Éwé",
+    "source": "Source",
+    "translation": "Traduction",
+    "english": "Anglais",
+    "anonymousGateSaved": "Progression sauvegardée",
+    "anonymousGateTitle": "Créez votre profil pour poursuivre vos contributions",
+    "anonymousGateDesc": "Vous avez réalisé vos 3 premiers enregistrements. Créez un compte pour associer vos futures contributions à votre profil, suivre vos validations et figurer dans le classement public.",
+    "createAccount": "Créer un compte",
+    "signIn": "Se connecter",
+    "closeAndBrowse": "Fermer et continuer la navigation"
   },
+
   "validate": {
     "title": "Contrôle Qualité Communautaire",
     "instruction": "L'audio correspond-il fidèlement au texte et au bon accent ?",
@@ -67,13 +114,39 @@
     "valid": "Parfait",
     "invalid": "Rejeter",
     "sessionCount": "{count} validations",
+    "totalValidated": "Total validés",
+    "session": "Session",
+    "thisSession": "+{count} cette session",
     "emptyTitle": "File de validation complétée",
     "emptyDesc": "Tous les enregistrements soumis ont été examinés ou le corpus attend de nouvelles voix. Enregistrez les prochaines phrases pour alimenter la file de validation communautaire.",
-    "emptyCta": "Enregistrer des audios"
+    "emptyCta": "Enregistrer des audios",
+    "refreshQueue": "Actualiser la file",
+    "singleMode": "Simple",
+    "comparativeMode": "Comparatif",
+    "loadingAudio": "Chargement de l'audio...",
+    "retry": "Réessayer",
+    "recordingNumber": "Enregistrement",
+    "languageEwe": "Éwé",
+    "scoreSubmitted": "Note soumise",
+    "score1": "Très mauvais",
+    "score2": "Mauvais",
+    "score3": "Correct",
+    "score4": "Bon",
+    "score5": "Excellent",
+    "selectRating": "Sélectionnez une note",
+    "submitRating": "Valider la note",
+    "comparativeSubmittedTitle": "Notes soumises avec succès !",
+    "comparativeSubmittedDesc": "Chargement du prochain groupe...",
+    "scoredAudios": "{scored} / {total} audios notés",
+    "submitComparativeRatings": "Soumettre mes {count} notes",
+    "submittingVotes": "Envoi en cours...",
+    "audioLabel": "Audio"
   },
+
   "leaderboard": {
     "title": "Les Pionniers de la Langue",
     "subtitle": "Le classement officiel des contributeurs qui bâtissent le patrimoine numérique de l'Afrique.",
+    "badge": "Reconnaissance communautaire",
     "rank": "Rang",
     "user": "Pionnier",
     "score": "Score",
@@ -84,6 +157,36 @@
     "emptyCta": "Prendre la tête du classement",
     "scoringRule": "Barème : +10 pts / audio · +15 pts si approuvé · +50 pts Voix Officielle · +3 pts / validation"
   },
+
+  "profile": {
+    "title": "Profil et Statistiques",
+    "loading": "Chargement du profil...",
+    "requireAuthTitle": "Connexion requise",
+    "requireAuthDesc": "Connectez-vous pour voir votre profil et vos statistiques de contribution.",
+    "publicIdentityTitle": "Identité publique et Confidentialité",
+    "publicIdentityDesc": "Ce pseudonyme s'affichera publiquement sur le dictionnaire (« Voix : @votre_pseudo ») et le classement.",
+    "pseudoPlaceholder": "votre_pseudo",
+    "saving": "Enregistrement...",
+    "saved": "Enregistré",
+    "savePseudo": "Enregistrer le pseudo",
+    "memberSince": "Membre depuis",
+    "leaderboardAndScore": "Classement & Score",
+    "rankNumber": "Rang #{rank}",
+    "points": "pts",
+    "contributions": "Contributions",
+    "contributionsDesc": "Audios enregistrés",
+    "validations": "Validations",
+    "validationsDesc": "Audios notés",
+    "wordsWon": "Mots remportés",
+    "wordsWonDesc": "Voix officielle",
+    "avgScore": "Note moyenne",
+    "avgScoreDesc": "Score communautaire",
+    "wordsWonTitle": "Mots dont vous êtes la Voix Officielle",
+    "emptyTitle": "Commencez à contribuer",
+    "emptyDesc": "Enregistrez votre premier mot pour apparaître dans le classement et contribuer à la préservation linguistique.",
+    "noData": "Aucune donnée disponible."
+  },
+
   "dictionary": {
     "title": "Dictionnaire Vocal Interactif",
     "subtitle": "Explorez, apprenez et écoutez le patrimoine lexical Éwé.",
@@ -91,15 +194,72 @@
     "noResults": "Aucun mot trouvé dans notre lexique.",
     "listen": "Écouter la prononciation",
     "wordFr": "Français",
-    "wordEn": "Anglais"
+    "wordEn": "Anglais",
+    "voiceBy": "Voix : @{username}",
+    "suggestCorrection": "Corriger / Proposer une traduction",
+    "prev": "Précédent",
+    "next": "Suivant",
+    "page": "Page"
   },
+
+  "dictionaryModal": {
+    "badge": "Contribution Lexicale",
+    "title": "Corriger ou enrichir « {word} »",
+    "subtitle": "Proposez une traduction précise pour perfectionner le dictionnaire.",
+    "thanksTitle": "Merci pour votre proposition",
+    "thanksDesc": "La traduction a été enregistrée avec succès.",
+    "frLabel": "Traduction en Français *",
+    "frPlaceholder": "Ex: homme, manger, bonne nuit...",
+    "enLabel": "Traduction en Anglais (Optionnel)",
+    "enPlaceholder": "Ex: man, eat, good night...",
+    "defLabel": "Définition ou Nuance (Optionnel)",
+    "defPlaceholder": "Sens exact ou contexte d'utilisation...",
+    "cancel": "Annuler",
+    "submit": "Soumettre la traduction",
+    "submitting": "Envoi...",
+    "errorRequired": "Veuillez renseigner au moins une traduction ou définition."
+  },
+
+  "officialVoiceGuide": {
+    "badge": "Reconnaissance et Qualité",
+    "title": "Comment devenir la Voix Officielle d'un mot dans le Dictionnaire ?",
+    "intro": "Sur Corafric, chaque mot du dictionnaire est porté par un locuteur réel. Les voix de référence sont validées par la communauté grâce à un protocole d'écoute à l'aveugle.",
+    "step1Title": "Enregistrement net",
+    "step1Desc": "Parlez dans une pièce silencieuse en respectant les tons de la langue Éwé.",
+    "step2Title": "Écoute à l'aveugle",
+    "step2Desc": "Trois locuteurs natifs évaluent la clarté et la prononciation du mot.",
+    "step3Title": "Moyenne d'excellence",
+    "step3Desc": "L'enregistrement ayant la note la plus haute pour ce mot est sélectionné.",
+    "step4Title": "Attribution du badge",
+    "step4Desc": "Votre nom apparaît publiquement sur la fiche du mot dans le dictionnaire mondial."
+  },
+
   "explore": {
     "title": "L'Open Data Africain",
+    "subtitle": "Explorez et téléchargez les jeux de données vocales collectés pour la recherche et les modèles de traitement vocal.",
+    "badge": "Données ouvertes",
     "leaderboardTitle": "Top Bâtisseurs",
     "downloadTitle": "Accès au Dataset Vocal",
     "downloadDesc": "Le plus grand jeu de données vocal open-source en Éwé, libre et accessible pour la recherche, les universités et les développeurs d'Intelligence Artificielle.",
-    "downloadBtn": "Télécharger le Dataset"
+    "downloadBtn": "Télécharger le Dataset",
+    "audios": "Audios",
+    "validated": "Validés",
+    "hours": "Heures audio",
+    "contributors": "Contributeurs",
+    "validationsCount": "{count} validations",
+    "audiosCount": "audios",
+    "noContributors": "Aucun contributeur répertorié.",
+    "license": "Licence",
+    "licenseFree": "CC-BY (Libre)",
+    "audioFormat": "Format Audio",
+    "audioFormatOpus": "WebM (OPUS)",
+    "languages": "Langues",
+    "recordingsCount": "{count} enregistrements",
+    "active": "Actif",
+    "soon": "Bientôt",
+    "error": "Erreur de chargement."
   },
+
   "brandShowcase": {
     "tagline": "L'Infrastructure Vocale de l'Afrique.",
     "description": "Corafric : plateforme technologique libre pour la numérisation, la préservation et l'intégration des langues africaines dans l'IA.",
@@ -110,16 +270,19 @@
     "cookies": "Cookies",
     "copyright": "Corafric. Patrimoine linguistique et IA ouverte."
   },
+
   "privacy": {
     "title": "Confidentialité",
     "content": "Plateforme communautaire transparente. Données vocales sous licence libre CC-BY. Aucune collecte de données personnelles sensibles. Enregistrements anonymisés pour la recherche.",
     "back": "Retour"
   },
+
   "cookies": {
     "title": "Politique de Cookies",
     "content": "Uniquement des cookies techniques indispensables à votre session. Aucun traceur publicitaire. Aucun profilage commercial.",
     "back": "Retour"
   },
+
   "contribuer": {
     "hero": {
       "tag": "IMPACT ET TRANSMISSION",
@@ -143,6 +306,28 @@
     "partnership": {
       "text": "Institution, Entreprise ou Université ? Devenez partenaire de l'infrastructure linguistique africaine.",
       "cta": "Devenir Partenaire"
-    }
+    },
+    "linkCopied": "Lien copié !"
+  },
+
+  "auth": {
+    "welcomeTitle": "Bienvenue sur Corafric",
+    "welcomeSubtitle": "Connectez-vous pour commencer à enregistrer des phrases et mots Éwé ou pour valider les contributions audio de la communauté.",
+    "signUpTitle": "Créer un compte Corafric",
+    "signUpSubtitle": "Rejoignez-nous aujourd'hui et participez à la construction du premier dataset ouvert de voix africaines en langue Éwé.",
+    "allRightsReserved": "Corafric. Tous droits réservés."
+  },
+
+  "alphabet": {
+    "listen": "Écouter la prononciation",
+    "tone": "Ton",
+    "spellerTitle": "Moteur de Synthèse par Concaténation",
+    "spellerDesc": "Assemblage et fusion audio des phonèmes pour lire ou épeler n'importe quel mot",
+    "spellerBadge": "Fusion Web Audio API",
+    "spellerPlaceholder": "Tapez un mot (ex: Corafric, Ewe, Togo, ɖɛ...)",
+    "spellerStop": "Arrêter",
+    "spellerSpeak": "Prononcer le mot",
+    "spellerSpell": "Épeler",
+    "spellerSequence": "Séquence :"
   }
 }

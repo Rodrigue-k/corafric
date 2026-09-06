@@ -218,14 +218,14 @@ export default function DictionaryClient() {
                             ? "text-primary bg-primary/10"
                             : "text-text-muted/40 hover:text-primary hover:bg-primary/5"
                         }`}
-                        title="Écouter la prononciation"
-                        aria-label="Écouter"
+                        title={t("listen")}
+                        aria-label={t("listen")}
                       >
                         <Volume2 className="w-5 h-5" />
                       </button>
                       {word.official_voice_username && (
                         <span className="hidden sm:inline-flex items-center text-[10px] font-display uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 border border-amber-500/20 font-medium">
-                          Voix : @{word.official_voice_username}
+                          {t("voiceBy", { username: word.official_voice_username })}
                         </span>
                       )}
                     </div>
@@ -233,7 +233,7 @@ export default function DictionaryClient() {
                 </div>
                 {word.official_voice_username && word.audio_url && (
                   <span className="sm:hidden inline-flex items-center text-[10px] font-display uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 border border-amber-500/20 font-medium w-fit mt-1">
-                    Voix : @{word.official_voice_username}
+                    {t("voiceBy", { username: word.official_voice_username })}
                   </span>
                 )}
                 {word.part_of_speech && (
@@ -280,7 +280,7 @@ export default function DictionaryClient() {
                     className="inline-flex items-center gap-1.5 text-[11px] font-display text-text-muted/70 hover:text-primary transition-colors cursor-pointer"
                   >
                     <Edit3 className="w-3 h-3" />
-                    <span>Corriger / Proposer une traduction</span>
+                    <span>{t("suggestCorrection")}</span>
                   </button>
                 </div>
               </div>
@@ -316,11 +316,11 @@ export default function DictionaryClient() {
           className="inline-flex items-center gap-1 px-4 py-2 text-xs font-semibold rounded-full bg-transparent border border-border hover:bg-black/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4" />
-          <span>Précédent</span>
+          <span>{t("prev")}</span>
         </button>
 
         <span className="text-xs text-text-muted font-display tracking-widest uppercase">
-          Page {page}
+          {t("page")} {page}
         </span>
 
         <button
@@ -328,7 +328,7 @@ export default function DictionaryClient() {
           disabled={results.length < limit || isLoading}
           className="inline-flex items-center gap-1 px-4 py-2 text-xs font-semibold rounded-full bg-transparent border border-border hover:bg-black/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
         >
-          <span>Suivant</span>
+          <span>{t("next")}</span>
           <ChevronRight className="w-4 h-4" />
         </button>
       </div>

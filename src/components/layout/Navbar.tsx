@@ -95,7 +95,7 @@ export const Navbar: React.FC = () => {
               </div>
             )}
             <span className="text-xs font-semibold hidden sm:inline text-foreground">
-              {isMenuOpen ? "Fermer" : "Menu"}
+              {isMenuOpen ? t("close") : t("menu")}
             </span>
           </button>
         </div>
@@ -187,7 +187,7 @@ export const Navbar: React.FC = () => {
                 >
                   <UserButton.MenuItems>
                     <UserButton.Link
-                      label="Mon profil et statistiques"
+                      label={t("myProfile")}
                       href={`/${currentLocale}/profile`}
                       labelIcon={<User className="w-4 h-4" />}
                     />
@@ -291,7 +291,7 @@ export const Navbar: React.FC = () => {
             {/* Drawer Bottom Actions */}
             <div className="pt-6 border-t border-border space-y-4">
               <div className="flex items-center justify-between text-xs text-text-muted">
-                <span>Langue</span>
+                <span>{t("language")}</span>
                 <div className="flex items-center bg-black/5 rounded-full p-0.5 border border-border">
                   <button
                     onClick={() => handleLanguageChange("fr")}
@@ -327,7 +327,7 @@ export const Navbar: React.FC = () => {
                 </div>
               ) : (
                 <div className="flex items-center justify-between pt-2">
-                  <span className="text-xs text-text-muted">Compte</span>
+                  <span className="text-xs text-text-muted">{t("account")}</span>
                   <UserButton
                     appearance={{
                       elements: {
