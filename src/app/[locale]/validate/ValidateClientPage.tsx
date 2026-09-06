@@ -5,7 +5,8 @@ import { useTranslations } from "next-intl";
 import { ValidationCard } from "@/components/validation/ValidationCard";
 import { ComparativeValidationCard } from "@/components/validation/ComparativeValidationCard";
 import { Button } from "@/components/ui/Button";
-import { AlertCircle, CheckCircle2, LayoutList, Layers } from "lucide-react";
+import { AlertCircle, CheckCircle2, LayoutList, Layers, Mic } from "lucide-react";
+import { Link } from "@/i18n/routing";
 
 interface SingleRecording {
   id: string;
@@ -195,23 +196,26 @@ export default function ValidateClientPage() {
             onVoteSubmitted={handleVoteSubmitted}
           />
         ) : (
-          <div className="max-w-md mx-auto py-16 text-center space-y-3 border-y border-border/40">
-            <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
-              <CheckCircle2 className="w-5 h-5" />
+          <div className="max-w-lg mx-auto py-12 px-6 text-center space-y-5 border border-border/70 rounded-2xl bg-[#FAF8F5]/50">
+            <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
+              <CheckCircle2 className="w-6 h-6" />
             </div>
-            <h3 className="text-2xl font-display font-bold text-foreground tracking-tight">
-              Corpus vérifié
-            </h3>
-            <p className="text-xs text-text-muted max-w-sm mx-auto">
-              Tous les enregistrements en attente ont été validés pour le moment.
-              {mode === "comparative" && (
-                <span className="block mt-1 text-text-muted/70">
-                  Essayez le mode Simple pour voir les audios individuels.
-                </span>
-              )}
-            </p>
-            <div className="pt-2">
-              <Button onClick={() => fetchNext(mode)} variant="primary" size="sm" className="rounded-full">
+            <div className="space-y-1.5">
+              <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground tracking-tight">
+                {t("emptyTitle")}
+              </h3>
+              <p className="text-xs sm:text-sm text-text-muted max-w-md mx-auto leading-relaxed">
+                {t("emptyDesc")}
+              </p>
+            </div>
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link href="/contribute">
+                <Button variant="primary" size="md" className="rounded-full px-6 gap-2">
+                  <Mic className="w-4 h-4" />
+                  <span>{t("emptyCta")}</span>
+                </Button>
+              </Link>
+              <Button onClick={() => fetchNext(mode)} variant="secondary" size="md" className="rounded-full px-5">
                 Actualiser la file
               </Button>
             </div>

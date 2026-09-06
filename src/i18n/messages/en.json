@@ -66,14 +66,23 @@
     "play": "Listen",
     "valid": "Accurate",
     "invalid": "Reject",
-    "sessionCount": "{count} validations"
+    "sessionCount": "{count} validations",
+    "emptyTitle": "Validation queue completed",
+    "emptyDesc": "All submitted recordings have been reviewed or the corpus is awaiting new voices. Record phrases to fuel the community validation queue.",
+    "emptyCta": "Record audios"
   },
   "leaderboard": {
     "title": "Language Pioneers",
-    "subtitle": "Leaderboard of the top contributors building Africa's digital linguistic heritage.",
+    "subtitle": "Official leaderboard of the top contributors building Africa's digital linguistic heritage.",
     "rank": "Rank",
     "user": "Pioneer",
-    "score": "Audios"
+    "score": "Score",
+    "contributions": "Audios",
+    "validations": "Validations",
+    "emptyTitle": "The Leaderboard is open",
+    "emptySubtitle": "The race to the top begins. Record a first word or phrase to write your name on the podium.",
+    "emptyCta": "Take the lead",
+    "scoringRule": "Points: +10 pts / audio · +15 pts if approved · +50 pts Official Voice · +3 pts / validation"
   },
   "dictionary": {
     "title": "Interactive Audio Dictionary",

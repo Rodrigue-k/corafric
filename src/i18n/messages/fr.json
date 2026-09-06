@@ -66,14 +66,23 @@
     "play": "Écouter",
     "valid": "Parfait",
     "invalid": "Rejeter",
-    "sessionCount": "{count} validations"
+    "sessionCount": "{count} validations",
+    "emptyTitle": "File de validation complétée",
+    "emptyDesc": "Tous les enregistrements soumis ont été examinés ou le corpus attend de nouvelles voix. Enregistrez les prochaines phrases pour alimenter la file de validation communautaire.",
+    "emptyCta": "Enregistrer des audios"
   },
   "leaderboard": {
     "title": "Les Pionniers de la Langue",
-    "subtitle": "Le classement des contributeurs qui bâtissent le patrimoine numérique de l'Afrique.",
+    "subtitle": "Le classement officiel des contributeurs qui bâtissent le patrimoine numérique de l'Afrique.",
     "rank": "Rang",
     "user": "Pionnier",
-    "score": "Audios"
+    "score": "Score",
+    "contributions": "Audios",
+    "validations": "Validations",
+    "emptyTitle": "Le Panthéon est ouvert",
+    "emptySubtitle": "La course au sommet commence. Enregistrez un premier mot ou une première phrase pour inscrire votre nom sur le podium.",
+    "emptyCta": "Prendre la tête du classement",
+    "scoringRule": "Barème : +10 pts / audio · +15 pts si approuvé · +50 pts Voix Officielle · +3 pts / validation"
   },
   "dictionary": {
     "title": "Dictionnaire Vocal Interactif",

@@ -54,8 +54,11 @@ export interface Validation {
 
 export interface LeaderboardEntry {
   username: string;
+  score: number;
   total_contributions: number;
   total_validations: number;
+  approved_count?: number;
+  best_count?: number;
   country?: string | null;
   rank?: number;
 }

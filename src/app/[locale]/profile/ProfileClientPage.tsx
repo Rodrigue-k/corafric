@@ -6,8 +6,11 @@ import { Check } from "lucide-react";
 
 interface ProfileStats {
   dbUsername?: string | null;
+  score?: number;
   totalContributions: number;
   totalValidations: number;
+  approvedCount?: number;
+  bestCount?: number;
   avgScoreReceived: number;
   totalRejected: number;
   wordsWon: { word: string; translation: string | null }[];
@@ -147,13 +150,18 @@ export default function ProfileClientPage() {
         </div>
 
         {stats && (
-          <div className="text-left sm:text-right">
+          <div className="text-left sm:text-right space-y-0.5">
             <span className="text-[10px] font-bold font-display uppercase tracking-widest text-text-muted block">
-              Classement
+              Classement & Score
             </span>
-            <span className="text-xl font-display font-bold text-foreground">
-              Rang #{stats.rank}
-            </span>
+            <div className="flex items-baseline sm:justify-end gap-2">
+              <span className="text-xl font-display font-bold text-foreground">
+                Rang #{stats.rank}
+              </span>
+              <span className="text-sm font-mono font-bold text-primary">
+                ({(stats.score || 0).toLocaleString()} pts)
+              </span>
+            </div>
           </div>
         )}
       </div>
