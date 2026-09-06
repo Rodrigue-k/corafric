@@ -56,5 +56,7 @@ test-*.js
 *.wav
 ewe_dataset_raw.json
 /public/audios/unused/
-/public/audios/raw_backup/
+# database backups
+/backups/
+*.json.bak
 
