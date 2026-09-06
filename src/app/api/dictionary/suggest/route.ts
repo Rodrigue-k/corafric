@@ -39,17 +39,8 @@ export async function POST(request: Request) {
       )
     `;
 
-    // If the word currently has no French translation, or if updated by user, enrich word directly
-    if (suggestedFr) {
-      await sql`
-        UPDATE dictionary_words
-        SET 
-          word_fr = COALESCE(word_fr, ${suggestedFr.trim()}),
-          word_en = COALESCE(word_en, ${suggestedEn ? suggestedEn.trim() : null}),
-          definition = COALESCE(definition, ${suggestedDef ? suggestedDef.trim() : null})
-        WHERE id = ${wordId}
-      `;
-    }
+    // Note: The suggestion is safely stored in translation_suggestions for review and moderation.
+    // Direct modification of dictionary_words is disabled to protect dictionary integrity.
 
     return NextResponse.json({
       success: true,
