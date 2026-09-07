@@ -1,5 +1,15 @@
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/db";
+import { formatDisplayName } from "@/lib/userUtils";
+
+function cleanWordResults(rows: unknown[]) {
+  return (rows as Array<Record<string, unknown>>).map((w) => ({
+    ...w,
+    official_voice_username: w.official_voice_username
+      ? formatDisplayName(w.official_voice_username as string)
+      : null,
+  }));
+}
 
 export async function GET(request: Request) {
   try {
@@ -38,7 +48,7 @@ export async function GET(request: Request) {
           LOWER(w.word_ewe) ASC
         LIMIT ${limit} OFFSET ${offset}
       `;
-      return NextResponse.json({ words: results, totalCount, page, limit });
+      return NextResponse.json({ words: cleanWordResults(results), totalCount, page, limit });
     }
 
     // Letter Filter Mode
@@ -63,7 +73,7 @@ export async function GET(request: Request) {
       `) as { count: number }[];
 
       return NextResponse.json({ 
-        words: results, 
+        words: cleanWordResults(results), 
         totalCount, 
         filteredCount: letterCountResult[0]?.count || 0,
         page, 
@@ -85,8 +95,7 @@ export async function GET(request: Request) {
       LIMIT ${limit} OFFSET ${offset}
     `;
 
-
-    return NextResponse.json({ words, totalCount, page, limit });
+    return NextResponse.json({ words: cleanWordResults(words), totalCount, page, limit });
   } catch (error) {
     console.error("Error fetching dictionary words:", error);
     return NextResponse.json({ error: "Failed to fetch words" }, { status: 500 });

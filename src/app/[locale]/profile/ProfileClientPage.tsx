@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
+import { formatDisplayName } from "@/lib/userUtils";
 
 interface ProfileStats {
   dbUsername?: string | null;
@@ -47,7 +48,9 @@ export default function ProfileClientPage() {
         if (!ignore) {
           if (data.error) throw new Error(data.error);
           setStats(data);
-          const initialName = data.dbUsername || user?.username || user?.firstName || "";
+          const rawDbName = data.dbUsername;
+          const isRawId = rawDbName && (rawDbName.startsWith("contributeur_user_") || rawDbName.startsWith("validateur_user_"));
+          const initialName = (!isRawId && rawDbName) ? rawDbName : user?.username || user?.firstName || "";
           setPublicUsername(initialName);
         }
       } catch (err: unknown) {
@@ -126,38 +129,40 @@ export default function ProfileClientPage() {
     ? new Date(stats.memberSince).toLocaleDateString("fr-FR", { month: "long", year: "numeric" })
     : null;
 
-  const currentDisplayName = stats?.dbUsername || user.username || user.firstName || "Contributeur";
+  const currentDisplayName = formatDisplayName(stats?.dbUsername, user, user.id);
 
   return (
-    <div className="max-w-4xl mx-auto space-y-12 py-4">
-      {/* Profile Header — Clean, Flat */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-b border-border/60 pb-8">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0">
-            <span className="text-xl font-display font-bold text-primary">
+    <div className="max-w-4xl mx-auto space-y-10 sm:space-y-12 py-2 sm:py-4">
+      {/* Profile Header — Clean, Flat, Responsive */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-b border-border/60 pb-6 sm:pb-8">
+        <div className="flex items-center gap-3.5 sm:gap-4 w-full sm:w-auto min-w-0">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0">
+            <span className="text-lg sm:text-xl font-display font-bold text-primary">
               {(currentDisplayName || "?")[0]?.toUpperCase()}
             </span>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground tracking-tight">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-foreground tracking-tight truncate max-w-full">
                 {currentDisplayName}
               </h1>
-              <span className="text-[11px] font-mono text-text-muted px-2 py-0.5 rounded-full border border-border/60">
-                @{publicUsername || "pseudo"}
-              </span>
+              {publicUsername && (
+                <span className="text-[10px] sm:text-[11px] font-mono text-text-muted px-2 py-0.5 rounded-full border border-border/60 max-w-[160px] truncate shrink-0">
+                  @{publicUsername}
+                </span>
+              )}
             </div>
-            {memberYear && <p className="text-xs text-text-muted mt-1">{t("memberSince")} {memberYear}</p>}
+            {memberYear && <p className="text-xs text-text-muted mt-0.5">{t("memberSince")} {memberYear}</p>}
           </div>
         </div>
 
         {stats && (
-          <div className="text-left sm:text-right space-y-0.5">
+          <div className="text-left sm:text-right space-y-0.5 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-border/40">
             <span className="text-[10px] font-bold font-display uppercase tracking-widest text-text-muted block">
               {t("leaderboardAndScore")}
             </span>
             <div className="flex items-baseline sm:justify-end gap-2">
-              <span className="text-xl font-display font-bold text-foreground">
+              <span className="text-lg sm:text-xl font-display font-bold text-foreground">
                 {t("rankNumber", { rank: stats.rank })}
               </span>
               <span className="text-sm font-mono font-bold text-primary">

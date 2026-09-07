@@ -1,4 +1,5 @@
 import { sql } from "@/lib/db";
+import { formatDisplayName } from "@/lib/userUtils";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -48,7 +49,7 @@ export async function GET() {
 
     const rankedLeaderboard = leaderboardResult.map((entry, idx) => ({
       rank: idx + 1,
-      username: (entry.username as string) || `Contributeur #${idx + 1}`,
+      username: formatDisplayName(entry.username as string, null, entry.id as string) || `Contributeur #${idx + 1}`,
       country: (entry.country as string) || "Togo",
       score: Number(entry.score || 0),
       total_contributions: Number(entry.total_contributions || 0),
