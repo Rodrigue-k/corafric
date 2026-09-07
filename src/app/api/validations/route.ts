@@ -45,6 +45,18 @@ export async function POST(request: Request) {
       );
     }
 
+    // Check that user is not voting on their own recording
+    const recOwner = (await sql`
+      SELECT user_id FROM recordings WHERE id = ${recordingId}
+    `) as { user_id: string | null }[];
+
+    if (recOwner[0]?.user_id && recOwner[0].user_id === userId) {
+      return NextResponse.json(
+        { error: "Vous ne pouvez pas valider ou noter votre propre enregistrement." },
+        { status: 403 }
+      );
+    }
+
     // 1. Insert/update the validation vote with score
     await sql`
       INSERT INTO validations (recording_id, user_id, is_valid, score)

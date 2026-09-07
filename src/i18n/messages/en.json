@@ -5,8 +5,8 @@
     "dictionary": "Dictionary",
     "leaderboard": "Leaderboard",
     "validate": "Validate",
-    "explore": "Corpus & AI",
-    "profile": "Profile & Stats",
+    "explore": "Corpus and AI",
+    "profile": "Profile and Stats",
     "signIn": "Sign In",
     "join": "Join",
     "support": "Support",
@@ -14,11 +14,11 @@
     "close": "Close",
     "language": "Language",
     "account": "Account",
-    "myProfile": "My Profile & Stats"
+    "myProfile": "My Profile and Stats"
   },
 
   "landing": {
-    "badge": "Digital Academy & AI",
+    "badge": "Digital Academy and AI",
     "title": "Africa's voice,\ntraining tomorrow's AI.",
     "subtitle": "The first digital academy and crowdsourced platform to preserve African languages and build indigenous speech technologies.",
     "ctaPrimary": "Lend Your Voice",
@@ -45,17 +45,17 @@
       "title": "Two Strategic Pillars",
       "step1Title": "1. Audio Dictionary",
       "step1Desc": "The official directory to preserve words, definitions, and exact tonal pronunciations.",
-      "step2Title": "2. AI Studio & Sentences",
+      "step2Title": "2. AI Studio and Sentences",
       "step2Desc": "Thousands of community-read sentences to train Speech-to-Text and TTS models.",
       "step3Title": "3. Quality Assurance",
       "step3Desc": "Collaborative validation by native speakers to ensure a high-grade dataset."
     },
     "markets": {
       "label": "DEPLOYMENT",
-      "title": "Official Launch in Ewe (Togo & Ghana).",
+      "title": "Official Launch in Ewe (Togo and Ghana).",
       "subtitle": "Phase 1: Ewe. The infrastructure is engineered to scale across all African languages.",
       "badge": "Status: Active",
-      "legendActive": "Phase 1: Ewe (Togo & Ghana)",
+      "legendActive": "Phase 1: Ewe (Togo and Ghana)",
       "legendNext": "Upcoming phases (Continent)"
     }
   },
@@ -159,18 +159,18 @@
   },
 
   "profile": {
-    "title": "Profile & Statistics",
+    "title": "Profile and Statistics",
     "loading": "Loading profile...",
     "requireAuthTitle": "Sign In Required",
     "requireAuthDesc": "Sign in to view your profile and contribution metrics.",
-    "publicIdentityTitle": "Public Identity & Privacy",
+    "publicIdentityTitle": "Public Identity and Privacy",
     "publicIdentityDesc": "This username is displayed publicly on the dictionary (\"Voice: @your_handle\") and leaderboard.",
     "pseudoPlaceholder": "your_username",
     "saving": "Saving...",
     "saved": "Saved",
     "savePseudo": "Save username",
     "memberSince": "Member since",
-    "leaderboardAndScore": "Rank & Score",
+    "leaderboardAndScore": "Rank and Score",
     "rankNumber": "Rank #{rank}",
     "points": "pts",
     "contributions": "Contributions",
@@ -221,7 +221,7 @@
   },
 
   "officialVoiceGuide": {
-    "badge": "Recognition & Quality",
+    "badge": "Recognition and Quality",
     "title": "How to become the Official Voice of a dictionary word?",
     "intro": "On Corafric, every dictionary word is recorded by a real speaker. Reference voices are elected by community peer-review through a blind listening protocol.",
     "step1Title": "Clean Recording",
@@ -285,7 +285,7 @@
 
   "contribuer": {
     "hero": {
-      "tag": "IMPACT & TRANSMISSION",
+      "tag": "IMPACT ET TRANSMISSION",
       "title": "Bring our languages\ninto the AI era.",
       "subtitle": "Corafric is a technological digital commons built by and for native speakers."
     },

@@ -93,8 +93,8 @@ export async function GET(request: Request) {
       LEFT JOIN validations v ON v.recording_id = r.id AND v.user_id = ${userId}
       WHERE r.status = 'pending'
         AND v.id IS NULL
+        AND (r.user_id IS NULL OR r.user_id != ${userId})
       ORDER BY 
-        CASE WHEN (r.user_id IS NULL OR r.user_id != ${userId}) THEN 0 ELSE 1 END,
         r.validation_count DESC,
         r.created_at ASC
       LIMIT 1

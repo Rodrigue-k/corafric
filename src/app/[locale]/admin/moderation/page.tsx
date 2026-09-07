@@ -147,7 +147,7 @@ export default function AdminModerationPage() {
             <span className="px-2 py-0.5 text-xs font-semibold uppercase tracking-wider rounded-full bg-terracotta-100 text-terracotta-700">
               Back-Office
             </span>
-            <span className="text-xs text-earth-500">Sécurité & Qualité</span>
+            <span className="text-xs text-earth-500">Sécurité et Qualité</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-serif font-bold text-earth-900">
             Modération des Suggestions
@@ -358,7 +358,7 @@ export default function AdminModerationPage() {
                       disabled={isProcessing}
                       className="px-4 py-1.5 text-xs font-medium text-white bg-terracotta-600 hover:bg-terracotta-700 rounded-lg shadow-xs transition-colors flex items-center gap-1.5 disabled:opacity-50"
                     >
-                      <span>Approuver & Fusionner</span>
+                      <span>Approuver et fusionner</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
