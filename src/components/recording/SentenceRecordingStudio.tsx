@@ -193,6 +193,19 @@ export const SentenceRecordingStudio: React.FC<SentenceRecordingStudioProps> = (
         body: formData,
       });
 
+      if (!res.ok) {
+        let errMsg = "Erreur de soumission de l'enregistrement.";
+        try {
+          const errData = await res.json();
+          if (errData.reason || errData.error) {
+            errMsg = errData.reason || errData.error;
+          }
+        } catch {
+          // Response is not JSON
+        }
+        throw new Error(errMsg);
+      }
+
       const data = await res.json();
       if (data.error) {
         const message = data.reason || data.error;

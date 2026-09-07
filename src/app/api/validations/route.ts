@@ -10,8 +10,15 @@ export async function POST(request: Request) {
     }
 
     // Ensure validator exists in users table
-    const clerkUser = await currentUser();
-    const username = clerkUser?.username || clerkUser?.firstName || `validateur_${userId.substring(0, 8)}`;
+    let username = `validateur_${userId.substring(0, 8)}`;
+    try {
+      const clerkUser = await currentUser();
+      if (clerkUser?.username || clerkUser?.firstName) {
+        username = clerkUser.username || clerkUser.firstName || username;
+      }
+    } catch {
+      // Fallback if Clerk Backend API is busy or ratelimited
+    }
     await ensureDbUser(userId, username);
 
     const body = await request.json() as { recordingId?: string; score?: number; isValid?: boolean };

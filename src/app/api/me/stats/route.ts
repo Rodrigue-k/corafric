@@ -11,9 +11,16 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const clerkUser = await currentUser();
-    const fallbackName = clerkUser?.username || clerkUser?.firstName || `contributeur_${userId.substring(0, 8)}`;
-    await ensureDbUser(userId, fallbackName);
+    let fallbackName = `contributeur_${userId.substring(0, 8)}`;
+    try {
+      const clerkUser = await currentUser();
+      if (clerkUser?.username || clerkUser?.firstName) {
+        fallbackName = clerkUser.username || clerkUser.firstName || fallbackName;
+      }
+    } catch {
+      // ignore Clerk API transient errors
+    }
+    void ensureDbUser(userId, fallbackName);
 
     // User base stats
     const userStats = (await sql`

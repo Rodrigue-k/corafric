@@ -15,9 +15,16 @@ export async function GET() {
       });
     }
 
-    const clerkUser = await currentUser();
-    const username = clerkUser?.username || clerkUser?.firstName || `contributeur_${userId.substring(0, 8)}`;
-    await ensureDbUser(userId, username);
+    let username = `contributeur_${userId.substring(0, 8)}`;
+    try {
+      const clerkUser = await currentUser();
+      if (clerkUser?.username || clerkUser?.firstName) {
+        username = clerkUser.username || clerkUser.firstName || username;
+      }
+    } catch {
+      // ignore Clerk API transient errors
+    }
+    void ensureDbUser(userId, username);
 
     // Calculate Pioneer Rank (chronological order of registration / first contribution)
     const rankResult = (await sql`

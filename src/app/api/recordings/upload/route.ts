@@ -163,14 +163,7 @@ export async function POST(request: Request) {
       audioUrl = `/mock-audio/${fileKey}`;
     }
 
-    // Insert recording into database
-    const recordingResult = (await sql`
-      INSERT INTO recordings (sentence_id, word_id, user_id, audio_url, duration_ms, file_size_bytes, status)
-      VALUES (${sentenceId || null}, ${wordId || null}, ${userId}, ${audioUrl}, ${durationMs}, ${fileSize}, 'pending')
-      RETURNING id
-    `) as Record<string, unknown>[];
-
-    // If user is authenticated, ensure user exists and increment contribution counts atomically
+    // If user is authenticated, ensure user exists and increment contribution counts BEFORE inserting recording
     if (userId) {
       const defaultUsername = `contributeur_${userId.substring(0, 8)}`;
       await sql`
@@ -180,6 +173,13 @@ export async function POST(request: Request) {
         SET total_contributions = users.total_contributions + 1
       `;
     }
+
+    // Insert recording into database
+    const recordingResult = (await sql`
+      INSERT INTO recordings (sentence_id, word_id, user_id, audio_url, duration_ms, file_size_bytes, status)
+      VALUES (${sentenceId || null}, ${wordId || null}, ${userId}, ${audioUrl}, ${durationMs}, ${fileSize}, 'pending')
+      RETURNING id
+    `) as Record<string, unknown>[];
 
     // If recorded a sentence, update sentence status
     if (sentenceId) {

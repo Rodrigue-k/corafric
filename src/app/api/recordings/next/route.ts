@@ -19,9 +19,8 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const clerkUser = await currentUser();
-    const username = clerkUser?.username || clerkUser?.firstName || `contributeur_${userId.substring(0, 8)}`;
-    await ensureDbUser(userId, username);
+    // Fast non-blocking user existence check
+    void ensureDbUser(userId);
 
     const { searchParams } = new URL(request.url);
     const mode = searchParams.get("mode"); // "comparative" | null

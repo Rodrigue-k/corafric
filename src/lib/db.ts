@@ -23,8 +23,8 @@ function getPostgresOptions(urlStr: string) {
         user: decodeURIComponent(user),
         password: decodedPassword,
         database: decodeURIComponent(database),
-        max: 20,
-        idle_timeout: 30,
+        max: 10,
+        idle_timeout: 20,
         connect_timeout: 10,
         prepare: false,
       };
@@ -45,16 +45,20 @@ export const sql = databaseUrl
       return mockSql as unknown as ReturnType<typeof postgres>;
     })();
 
-export async function ensureDbUser(userId: string, username: string) {
+export async function ensureDbUser(userId: string, username?: string) {
   try {
-    if (!databaseUrl) {
-      console.warn("Skipping ensureDbUser: DATABASE_URL is not set.");
+    if (!databaseUrl || !userId) {
       return;
     }
+    const safeUsername = (username || `contributeur_${userId.substring(0, 8)}`)
+      .trim()
+      .slice(0, 30);
+
+    // Insert user if not exists. Do not overwrite custom username if already set.
     await sql`
       INSERT INTO users (id, username, country, native_language)
-      VALUES (${userId}, ${username}, 'Togo', 'ewe')
-      ON CONFLICT (id) DO UPDATE SET username = ${username}
+      VALUES (${userId}, ${safeUsername}, 'Togo', 'ewe')
+      ON CONFLICT (id) DO NOTHING
     `;
   } catch (error) {
     console.error("Error in ensureDbUser:", error);

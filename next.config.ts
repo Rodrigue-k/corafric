@@ -38,11 +38,11 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.clerk.accounts.dev https://clerk.corafric.com https://www.googletagmanager.com https://*.google-analytics.com https://va.vercel-scripts.com",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.clerk.accounts.dev https://clerk.corafric.com https://www.googletagmanager.com https://*.google-analytics.com https://va.vercel-scripts.com https://unpkg.com https://cdn.jsdelivr.net",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https: https://img.clerk.com https://*.google-analytics.com https://www.googletagmanager.com",
               "font-src 'self' data:",
-              "connect-src 'self' https://*.clerk.accounts.dev https://clerk.corafric.com https://*.google-analytics.com https://www.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://*.r2.cloudflarestorage.com https://va.vercel-scripts.com",
+              "connect-src 'self' https://*.clerk.accounts.dev https://clerk.corafric.com https://*.google-analytics.com https://www.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://*.r2.cloudflarestorage.com https://va.vercel-scripts.com https://unpkg.com https://cdn.jsdelivr.net",
               "media-src 'self' blob: data: https: https://*.r2.cloudflarestorage.com",
               "worker-src 'self' blob:",
               "frame-src 'self' https://*.clerk.accounts.dev https://clerk.corafric.com",
