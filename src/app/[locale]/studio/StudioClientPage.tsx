@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Link } from "@/i18n/routing";
 import { 
   Mic, 
   Square, 
@@ -17,7 +18,8 @@ import {
   Edit3,
   X,
   Sparkles,
-  Sliders
+  Sliders,
+  ListOrdered
 } from "lucide-react";
 
 interface Sentence {
@@ -521,14 +523,25 @@ export function StudioClientPage() {
           </div>
         </div>
 
-        <button
-          onClick={() => setShowSettings(!showSettings)}
-          className="p-2.5 rounded-xl border border-[#E8E5DF] bg-[#FAF9F6] hover:bg-[#F0EEEA] text-[#141416] transition flex items-center gap-2 text-xs font-semibold shadow-2xs"
-          title="Paramètres de session"
-        >
-          <Sliders className="w-4 h-4 text-[#B84A2A]" />
-          <span className="hidden lg:inline">Paramètres</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/studio/grille"
+            className="px-3.5 py-2.5 rounded-xl border border-[#F2D7CE] bg-[#F9EBE6] hover:bg-[#F2D7CE] text-[#B84A2A] transition flex items-center gap-2 text-xs font-bold shadow-2xs"
+            title="Basculer vers la feuille de pistes du dictionnaire"
+          >
+            <ListOrdered className="w-4 h-4 text-[#B84A2A]" />
+            <span>Pistes Dictionnaire</span>
+          </Link>
+
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="p-2.5 rounded-xl border border-[#E8E5DF] bg-[#FAF9F6] hover:bg-[#F0EEEA] text-[#141416] transition flex items-center gap-2 text-xs font-semibold shadow-2xs"
+            title="Paramètres de session"
+          >
+            <Sliders className="w-4 h-4 text-[#B84A2A]" />
+            <span className="hidden lg:inline">Paramètres</span>
+          </button>
+        </div>
       </div>
 
       {/* ─── Settings Drawer ─── */}
