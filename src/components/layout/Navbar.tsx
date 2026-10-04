@@ -39,6 +39,7 @@ export const Navbar: React.FC = () => {
     { name: t("validate"), href: "/validate" as const },
     { name: t("dictionary"), href: "/dictionary" as const },
     { name: t("leaderboard"), href: "/leaderboard" as const },
+    { name: t("studio"), href: "/studio" as const },
   ];
 
   const handleLanguageChange = (nextLocale: "en" | "fr") => {

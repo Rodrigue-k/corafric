@@ -21,6 +21,11 @@ export async function POST(request: Request) {
     const sentenceId = formData.get("sentenceId") as string | null;
     const wordId = formData.get("wordId") as string | null;
     const durationMsStr = formData.get("durationMs") as string | null;
+    const speakerGender = formData.get("speakerGender") as string | null;
+    const speakerAgeGroup = formData.get("speakerAgeGroup") as string | null;
+    const dialectVariant = formData.get("dialectVariant") as string | null;
+    const micType = formData.get("micType") as string | null;
+    const isStudio = formData.get("isStudio") === "true";
 
     if (!audioFile || (!sentenceId && !wordId)) {
       return NextResponse.json(
@@ -140,8 +145,34 @@ export async function POST(request: Request) {
 
     // Insert recording into database
     const recordingResult = (await sql`
-      INSERT INTO recordings (sentence_id, word_id, user_id, audio_url, duration_ms, file_size_bytes, status)
-      VALUES (${sentenceId || null}, ${wordId || null}, ${userId}, ${audioUrl}, ${durationMs}, ${fileSize}, 'pending')
+      INSERT INTO recordings (
+        sentence_id, 
+        word_id, 
+        user_id, 
+        audio_url, 
+        duration_ms, 
+        file_size_bytes, 
+        status,
+        speaker_gender,
+        speaker_age_group,
+        dialect_variant,
+        mic_type,
+        is_studio
+      )
+      VALUES (
+        ${sentenceId || null}, 
+        ${wordId || null}, 
+        ${userId}, 
+        ${audioUrl}, 
+        ${durationMs}, 
+        ${fileSize}, 
+        'pending',
+        ${speakerGender || null},
+        ${speakerAgeGroup || null},
+        ${dialectVariant || null},
+        ${micType || null},
+        ${isStudio}
+      )
       RETURNING id
     `) as Record<string, unknown>[];
 

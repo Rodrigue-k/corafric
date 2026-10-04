@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  corafric-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: corafric-web
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=postgresql://koudatek_admin:KoudaTek%23Cloud2026!Master@postgres-master:5432/corafric
+      - NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_Zmx1ZW50LXN0YWxsaW9uLTc0LmNsZXJrLmFjY291bnRzLmRldiQ
+      - CLERK_SECRET_KEY=sk_test_7GbbIayvPCEmPWmqR4oiQ8yE5gdKcgW3w6eDEsrdkK
+      - NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+      - NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+      - NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/contribute
+      - NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/contribute
+      - R2_ACCOUNT_ID=70d12898ea8b9fd92eb85cf8dae71315
+      - R2_ACCESS_KEY_ID=3945b6b439cdca745a5afa551b2f8bf3
+      - R2_SECRET_ACCESS_KEY=6c2ba33c4fc7fd29a1d71fb34388564354ec7dad08608b5a4751ce957f4b74e4
+      - R2_BUCKET_NAME=corafric-audio
+      - R2_PUBLIC_URL=https://70d12898ea8b9fd92eb85cf8dae71315.r2.cloudflarestorage.com
+    networks:
+      - postgres_default
+
+networks:
+  postgres_default:
+    external: true
