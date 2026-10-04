@@ -241,115 +241,118 @@ export function StudioGrilleClient() {
   const totalRedoInSession = Object.values(trackStatuses).filter((s) => s === "redo").length;
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto">
+    <div className="flex flex-col gap-5 w-full max-w-7xl mx-auto px-2 sm:px-4 pb-12">
       {/* ─── Top Studio Bar ─── */}
-      <div className="bg-white border border-[#E8E5DF] rounded-2xl p-4 sm:p-6 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-[#F9EBE6] text-[#B84A2A] flex items-center justify-center font-bold shadow-xs shrink-0">
-            <FileText className="w-6 h-6" />
+      <div className="bg-white border border-[#E8E5DF] rounded-2xl p-4 sm:p-6 shadow-xs flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#F9EBE6] text-[#B84A2A] flex items-center justify-center font-bold shadow-xs shrink-0">
+            <FileText className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="font-bold text-lg text-[#141416] tracking-tight font-display">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="font-bold text-base sm:text-lg text-[#141416] tracking-tight font-display">
                 Feuille de Pistes Studio — Vocabulaire Éwé
               </h1>
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#F9EBE6] text-[#B84A2A] border border-[#F2D7CE]">
+              <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-[#F9EBE6] text-[#B84A2A] border border-[#F2D7CE]">
                 {words.length} Mots Numérotés
               </span>
             </div>
             <p className="text-xs text-[#68645E] mt-0.5">
-              Chaque mot a un numéro de piste fixe pour permettre au studio man d'enregistrer en séquence (Piste 01, Piste 02, etc.).
+              Chaque mot possède un numéro de piste séquentiel fixe (Piste 01, Piste 02, etc.).
             </p>
           </div>
         </div>
 
-        {/* Action Tabs & Print */}
-        <div className="flex items-center gap-2 flex-wrap w-full md:w-auto">
-          <div className="flex bg-[#FAF9F6] p-1 rounded-xl border border-[#E8E5DF]">
+        {/* Action Tabs and Navigation */}
+        <div className="flex items-center gap-2 flex-wrap w-full lg:w-auto justify-between lg:justify-end">
+          {/* Segmented Tab Controls */}
+          <div className="flex bg-[#FAF9F6] p-1 rounded-xl border border-[#E8E5DF] w-full sm:w-auto overflow-x-auto">
             <button
               onClick={() => setActiveTab("table")}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
+              className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-semibold transition text-center ${
                 activeTab === "table"
                   ? "bg-white text-[#B84A2A] shadow-xs font-bold"
                   : "text-[#68645E] hover:text-[#141416]"
               }`}
             >
-              Grille Tableau
+              Grille
             </button>
             <button
               onClick={() => {
                 setActiveTab("prompter");
                 setPrompterIndex(0);
               }}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+              className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition ${
                 activeTab === "prompter"
                   ? "bg-white text-[#B84A2A] shadow-xs font-bold"
                   : "text-[#68645E] hover:text-[#141416]"
               }`}
             >
               <Tv className="w-3.5 h-3.5" />
-              <span>Prompteur Cabine</span>
+              <span>Prompteur</span>
             </button>
             <button
               onClick={() => setActiveTab("upload")}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+              className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition ${
                 activeTab === "upload"
                   ? "bg-white text-[#B84A2A] shadow-xs font-bold"
                   : "text-[#68645E] hover:text-[#141416]"
               }`}
             >
               <UploadCloud className="w-3.5 h-3.5" />
-              <span>Import Audios</span>
+              <span>Import</span>
             </button>
           </div>
 
-          <Link
-            href="/studio"
-            className="px-3 py-2 rounded-xl bg-[#FAF9F6] hover:bg-[#F0EEEA] border border-[#E8E5DF] text-[#141416] text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition"
-            title="Revenir à l'enregistrement des phrases directes"
-          >
-            <Mic className="w-3.5 h-3.5 text-[#B84A2A]" />
-            <span className="hidden sm:inline">Studio Phrases</span>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/studio"
+              className="px-3 py-2 rounded-xl bg-[#FAF9F6] hover:bg-[#F0EEEA] border border-[#E8E5DF] text-[#141416] text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition"
+              title="Revenir à l'enregistrement des phrases directes"
+            >
+              <Mic className="w-3.5 h-3.5 text-[#B84A2A]" />
+              <span className="hidden sm:inline">Phrases</span>
+            </Link>
 
-          <button
-            onClick={() => window.print()}
-            className="px-3 py-2 rounded-xl bg-[#FAF9F6] hover:bg-[#F0EEEA] border border-[#E8E5DF] text-[#141416] text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition"
-            title="Imprimer la feuille de pistes pour le studio"
-          >
-            <Printer className="w-3.5 h-3.5 text-[#B84A2A]" />
-            <span className="hidden sm:inline">Imprimer la feuille</span>
-          </button>
+            <button
+              onClick={() => window.print()}
+              className="px-3 py-2 rounded-xl bg-[#FAF9F6] hover:bg-[#F0EEEA] border border-[#E8E5DF] text-[#141416] text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition"
+              title="Imprimer la feuille de pistes pour le studio"
+            >
+              <Printer className="w-3.5 h-3.5 text-[#B84A2A]" />
+              <span className="hidden sm:inline">Imprimer</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* ─── TAB 1: Prompter Mode for Booth / Voice Talent (Plein Écran Cabine) ─── */}
       {activeTab === "prompter" && filteredWords.length > 0 && (
-        <div className="bg-white border-2 border-[#B84A2A] rounded-3xl p-8 sm:p-16 shadow-lg flex flex-col items-center justify-between min-h-[500px] text-center gap-8 relative">
-          <div className="w-full flex items-center justify-between border-b border-[#E8E5DF] pb-4">
-            <div className="flex items-center gap-3">
-              <span className="px-4 py-1.5 rounded-full bg-[#B84A2A] text-white font-black text-sm font-mono tracking-wider shadow-xs">
+        <div className="bg-white border-2 border-[#B84A2A] rounded-3xl p-5 sm:p-12 shadow-lg flex flex-col items-center justify-between min-h-[420px] sm:min-h-[500px] text-center gap-6 relative">
+          <div className="w-full flex items-center justify-between border-b border-[#E8E5DF] pb-3 gap-2">
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-1 rounded-full bg-[#B84A2A] text-white font-black text-xs sm:text-sm font-mono tracking-wider shadow-xs">
                 {filteredWords[prompterIndex]?.trackLabel}
               </span>
-              <span className="text-xs text-[#68645E]">
-                Mot {prompterIndex + 1} sur {filteredWords.length}
+              <span className="text-[11px] sm:text-xs text-[#68645E]">
+                {prompterIndex + 1} / {filteredWords.length}
               </span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setStatus(filteredWords[prompterIndex]?.trackNumber, "recorded")}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition border ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition border ${
                   trackStatuses[filteredWords[prompterIndex]?.trackNumber] === "recorded"
                     ? "bg-emerald-700 text-white border-emerald-700"
                     : "bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100"
                 }`}
               >
                 <Check className="w-3.5 h-3.5" />
-                <span>Prise Validée</span>
+                <span>Validé</span>
               </button>
               <button
                 onClick={() => setStatus(filteredWords[prompterIndex]?.trackNumber, "redo")}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition border ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition border ${
                   trackStatuses[filteredWords[prompterIndex]?.trackNumber] === "redo"
                     ? "bg-amber-600 text-white border-amber-600"
                     : "bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100"
@@ -360,52 +363,53 @@ export function StudioGrilleClient() {
               </button>
               <button
                 onClick={() => setActiveTab("table")}
-                className="p-2 rounded-xl text-[#68645E] hover:text-[#141416]"
+                className="p-1.5 rounded-xl text-[#68645E] hover:text-[#141416]"
+                title="Quitter le prompteur"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
           </div>
 
           {/* Huge Booth Prompter Word */}
-          <div className="flex flex-col items-center gap-5 my-auto max-w-4xl">
+          <div className="flex flex-col items-center gap-4 my-auto max-w-4xl px-2">
             <span className="text-xs uppercase tracking-widest font-bold text-[#B84A2A]">Mot Éwé à prononcer :</span>
-            <h2 className="text-4xl sm:text-6xl md:text-7xl font-bold font-display text-[#141416] tracking-tight leading-tight select-all">
+            <h2 className="text-3xl sm:text-5xl md:text-7xl font-bold font-display text-[#141416] tracking-tight leading-tight select-all">
               « {filteredWords[prompterIndex]?.wordEwe} »
             </h2>
             {filteredWords[prompterIndex]?.wordFr && (
-              <p className="text-xl sm:text-2xl text-[#68645E] italic mt-2">
+              <p className="text-lg sm:text-2xl text-[#68645E] italic">
                 Traduction : « {filteredWords[prompterIndex]?.wordFr} »
               </p>
             )}
             {filteredWords[prompterIndex]?.definition && (
-              <p className="text-sm text-[#68645E]/80 max-w-xl">
+              <p className="text-xs sm:text-sm text-[#68645E]/80 max-w-xl">
                 {filteredWords[prompterIndex]?.definition}
               </p>
             )}
           </div>
 
           {/* Prompter Controls Footer */}
-          <div className="w-full flex items-center justify-between border-t border-[#E8E5DF] pt-6">
+          <div className="w-full flex items-center justify-between border-t border-[#E8E5DF] pt-4 gap-2">
             <button
               onClick={() => setPrompterIndex((prev) => Math.max(0, prev - 1))}
               disabled={prompterIndex === 0}
-              className="px-5 py-3 rounded-xl bg-[#FAF9F6] border border-[#E8E5DF] text-[#141416] font-semibold text-sm disabled:opacity-30 flex items-center gap-2 hover:bg-[#F0EEEA]"
+              className="px-4 py-2.5 rounded-xl bg-[#FAF9F6] border border-[#E8E5DF] text-[#141416] font-semibold text-xs sm:text-sm disabled:opacity-30 flex items-center gap-1.5 hover:bg-[#F0EEEA]"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Précédent [←]</span>
+              <span>Précédent</span>
             </button>
 
-            <div className="text-xs text-[#68645E] font-medium hidden sm:block">
+            <div className="text-xs text-[#68645E] font-medium hidden md:block">
               Appuyez sur <kbd className="px-2 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded text-[#141416] font-mono">Entrée</kbd> pour valider et passer à la suivante
             </div>
 
             <button
               onClick={() => setPrompterIndex((prev) => Math.min(filteredWords.length - 1, prev + 1))}
               disabled={prompterIndex === filteredWords.length - 1}
-              className="px-6 py-3 rounded-xl bg-[#B84A2A] hover:bg-[#A03E22] text-white font-bold text-sm disabled:opacity-30 flex items-center gap-2 shadow-xs"
+              className="px-5 py-2.5 rounded-xl bg-[#B84A2A] hover:bg-[#A03E22] text-white font-bold text-xs sm:text-sm disabled:opacity-30 flex items-center gap-1.5 shadow-xs"
             >
-              <span>Suivant [→]</span>
+              <span>Suivant</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -414,23 +418,23 @@ export function StudioGrilleClient() {
 
       {/* ─── TAB 2: Batch Audio Uploader (Déposez les fichiers du studio man) ─── */}
       {activeTab === "upload" && (
-        <div className="bg-white border border-[#E8E5DF] rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col gap-6">
+        <div className="bg-white border border-[#E8E5DF] rounded-3xl p-4 sm:p-8 shadow-sm flex flex-col gap-5">
           <div>
-            <h2 className="text-lg font-bold font-display text-[#141416]">
+            <h2 className="text-base sm:text-lg font-bold font-display text-[#141416]">
               Importation Automatique des Pistes du Studio
             </h2>
             <p className="text-xs text-[#68645E] mt-1">
-              Déposez tous les fichiers audio livrés par le studio man (ex: <code className="bg-[#FAF9F6] px-1 py-0.5 rounded border border-[#E8E5DF]">piste_001.wav</code>, <code className="bg-[#FAF9F6] px-1 py-0.5 rounded border border-[#E8E5DF]">track 02.mp3</code>, etc.). Le système associe automatiquement chaque fichier à son mot selon son numéro de piste.
+              Déposez les fichiers audio du studio (ex: <code className="bg-[#FAF9F6] px-1 py-0.5 rounded border border-[#E8E5DF]">piste_001.wav</code>, <code className="bg-[#FAF9F6] px-1 py-0.5 rounded border border-[#E8E5DF]">002.mp3</code>). Le système associe automatiquement chaque fichier selon son numéro de piste.
             </p>
           </div>
 
           {/* Dropzone */}
-          <label className="border-2 border-dashed border-[#B84A2A]/40 hover:border-[#B84A2A] bg-[#F9EBE6]/30 hover:bg-[#F9EBE6]/50 rounded-2xl p-10 flex flex-col items-center justify-center gap-3 cursor-pointer transition text-center">
-            <UploadCloud className="w-12 h-12 text-[#B84A2A]" />
-            <span className="font-bold text-sm text-[#141416]">
-              Cliquez pour sélectionner ou glissez les fichiers audio ici
+          <label className="border-2 border-dashed border-[#B84A2A]/40 hover:border-[#B84A2A] bg-[#F9EBE6]/30 hover:bg-[#F9EBE6]/50 rounded-2xl p-6 sm:p-10 flex flex-col items-center justify-center gap-2.5 cursor-pointer transition text-center">
+            <UploadCloud className="w-10 h-10 sm:w-12 sm:h-12 text-[#B84A2A]" />
+            <span className="font-bold text-xs sm:text-sm text-[#141416]">
+              Sélectionner ou glisser les fichiers audio
             </span>
-            <span className="text-xs text-[#68645E]">
+            <span className="text-[11px] text-[#68645E]">
               Formats supportés : .wav, .mp3, .webm, .m4a, .ogg
             </span>
             <input
@@ -445,16 +449,16 @@ export function StudioGrilleClient() {
           {/* Files Matching List */}
           {uploadedFiles.length > 0 && (
             <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-between border-b border-[#E8E5DF] pb-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E8E5DF] pb-2 gap-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-[#68645E]">
                   {uploadedFiles.length} fichiers détectés
                 </span>
                 <button
                   onClick={handleBatchUpload}
                   disabled={isBatchUploading || uploadedFiles.every((f) => f.status === "done")}
-                  className="px-5 py-2 rounded-xl bg-[#B84A2A] hover:bg-[#A03E22] text-white font-bold text-xs shadow-xs disabled:opacity-40 flex items-center gap-2"
+                  className="px-4 py-2 rounded-xl bg-[#B84A2A] hover:bg-[#A03E22] text-white font-bold text-xs shadow-xs disabled:opacity-40 flex items-center justify-center gap-2"
                 >
-                  {isBatchUploading ? "Import en cours..." : "Lancer l'enregistrement dans la base de données"}
+                  {isBatchUploading ? "Import en cours..." : "Enregistrer dans la base"}
                 </button>
               </div>
 
@@ -462,7 +466,7 @@ export function StudioGrilleClient() {
                 {uploadedFiles.map((item, idx) => (
                   <div
                     key={idx}
-                    className={`p-3 rounded-xl border flex items-center justify-between text-xs transition ${
+                    className={`p-3 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs transition ${
                       item.status === "done"
                         ? "bg-emerald-50 border-emerald-200 text-emerald-900"
                         : item.matchedWord
@@ -470,19 +474,19 @@ export function StudioGrilleClient() {
                         : "bg-amber-50 border-amber-200 text-amber-900"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="font-mono font-bold px-2 py-0.5 rounded bg-white border border-[#E8E5DF]">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-mono font-bold px-2 py-0.5 rounded bg-white border border-[#E8E5DF] text-[11px]">
                         {item.trackNum ? `PISTE ${item.trackNum.toString().padStart(3, "0")}` : "Non reconnu"}
                       </span>
-                      <span className="font-medium truncate max-w-[200px]">{item.file.name}</span>
+                      <span className="font-medium truncate max-w-[180px]">{item.file.name}</span>
                       {item.matchedWord ? (
                         <span className="font-bold text-[#B84A2A]">➔ « {item.matchedWord.wordEwe} » ({item.matchedWord.wordFr})</span>
                       ) : (
-                        <span className="text-amber-700 font-semibold">Aucun mot associé à ce numéro de piste</span>
+                        <span className="text-amber-700 font-semibold">Aucun mot associé</span>
                       )}
                     </div>
 
-                    <div>
+                    <div className="self-end sm:self-auto">
                       {item.status === "done" && <span className="font-bold text-emerald-700 flex items-center gap-1"><Check className="w-3.5 h-3.5" /> Enregistré</span>}
                       {item.status === "uploading" && <span className="font-bold text-[#B84A2A] animate-pulse">Envoi R2...</span>}
                       {item.status === "ready" && <span className="text-[#68645E]">Prêt</span>}
@@ -496,9 +500,9 @@ export function StudioGrilleClient() {
         </div>
       )}
 
-      {/* ─── TAB 3: Main Sequential Grid Table (Grille Tableau Studio) ─── */}
+      {/* ─── TAB 3: Main Sequential Grid (Grille Tableau Studio) ─── */}
       {activeTab === "table" && (
-        <div className="bg-white border border-[#E8E5DF] rounded-3xl p-4 sm:p-6 shadow-sm flex flex-col gap-5">
+        <div className="bg-white border border-[#E8E5DF] rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 shadow-sm flex flex-col gap-4">
           {/* Controls Bar */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             {/* Search Input */}
@@ -518,12 +522,12 @@ export function StudioGrilleClient() {
               )}
             </div>
 
-            {/* Filters */}
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <div className="flex bg-[#FAF9F6] p-1 rounded-xl border border-[#E8E5DF] text-xs">
+            {/* Filter Pills */}
+            <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto">
+              <div className="flex bg-[#FAF9F6] p-1 rounded-xl border border-[#E8E5DF] text-xs w-full sm:w-auto">
                 <button
                   onClick={() => setFilterMode("all")}
-                  className={`px-3 py-1 rounded-lg font-medium transition ${
+                  className={`flex-1 sm:flex-initial px-3 py-1 rounded-lg font-medium transition text-center ${
                     filterMode === "all" ? "bg-white text-[#B84A2A] font-bold shadow-2xs" : "text-[#68645E]"
                   }`}
                 >
@@ -531,7 +535,7 @@ export function StudioGrilleClient() {
                 </button>
                 <button
                   onClick={() => setFilterMode("without_audio")}
-                  className={`px-3 py-1 rounded-lg font-medium transition ${
+                  className={`flex-1 sm:flex-initial px-3 py-1 rounded-lg font-medium transition text-center ${
                     filterMode === "without_audio" ? "bg-white text-[#B84A2A] font-bold shadow-2xs" : "text-[#68645E]"
                   }`}
                 >
@@ -539,7 +543,7 @@ export function StudioGrilleClient() {
                 </button>
                 <button
                   onClick={() => setFilterMode("with_audio")}
-                  className={`px-3 py-1 rounded-lg font-medium transition ${
+                  className={`flex-1 sm:flex-initial px-3 py-1 rounded-lg font-medium transition text-center ${
                     filterMode === "with_audio" ? "bg-white text-[#B84A2A] font-bold shadow-2xs" : "text-[#68645E]"
                   }`}
                 >
@@ -550,9 +554,9 @@ export function StudioGrilleClient() {
           </div>
 
           {/* Session Progress Ribbon */}
-          <div className="flex items-center justify-between bg-[#FAF9F6] px-4 py-2.5 rounded-xl border border-[#E8E5DF] text-xs text-[#68645E]">
-            <div className="flex items-center gap-4">
-              <span>Pistes cochées : <strong className="text-emerald-700">{totalRecordedInSession}</strong></span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-[#FAF9F6] px-3.5 py-2.5 rounded-xl border border-[#E8E5DF] text-xs text-[#68645E] gap-2">
+            <div className="flex items-center gap-3 flex-wrap">
+              <span>Cochées : <strong className="text-emerald-700">{totalRecordedInSession}</strong></span>
               <span>À refaire : <strong className="text-amber-700">{totalRedoInSession}</strong></span>
               <span>Affichés : <strong>{filteredWords.length} mots</strong></span>
             </div>
@@ -563,13 +567,13 @@ export function StudioGrilleClient() {
                   localStorage.removeItem("corafric_studio_track_statuses");
                 }
               }}
-              className="text-[11px] text-[#68645E] hover:text-[#B84A2A] underline"
+              className="text-[11px] text-[#68645E] hover:text-[#B84A2A] underline text-left sm:text-right"
             >
               Réinitialiser la session
             </button>
           </div>
 
-          {/* Table */}
+          {/* Content Views: Responsive Card List on Mobile + Table on Desktop */}
           {isLoading ? (
             <div className="py-20 flex flex-col items-center justify-center gap-3 text-[#68645E]">
               <div className="w-8 h-8 border-2 border-[#B84A2A] border-t-transparent rounded-full animate-spin" />
@@ -580,105 +584,190 @@ export function StudioGrilleClient() {
               Aucun mot ne correspond à votre recherche.
             </div>
           ) : (
-            <div className="overflow-x-auto border border-[#E8E5DF] rounded-2xl">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="bg-[#FAF9F6] border-b border-[#E8E5DF] text-[#68645E] uppercase tracking-wider font-semibold">
-                    <th className="py-3 px-4 w-28 text-center font-mono">N° Piste</th>
-                    <th className="py-3 px-4 font-display text-sm">Mot Éwé (Texte à lire)</th>
-                    <th className="py-3 px-4">Traduction Française</th>
-                    <th className="py-3 px-4 hidden md:table-cell">Définition / Contexte</th>
-                    <th className="py-3 px-4 text-center w-36">Statut Prise</th>
-                    <th className="py-3 px-4 text-center w-24">Audio</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#E8E5DF]">
-                  {filteredWords.map((word) => {
-                    const status = trackStatuses[word.trackNumber] || "pending";
-                    return (
-                      <tr 
-                        key={word.id}
-                        className={`transition hover:bg-[#FAF9F6]/80 ${
-                          status === "recorded" 
-                            ? "bg-emerald-50/40" 
-                            : status === "redo" 
-                            ? "bg-amber-50/40" 
-                            : ""
-                        }`}
-                      >
-                        {/* Track Number */}
-                        <td className="py-3.5 px-4 text-center font-mono font-bold text-xs">
-                          <span className="px-2.5 py-1 rounded-lg bg-[#FAF9F6] border border-[#E8E5DF] text-[#B84A2A] font-black">
-                            {word.trackLabel}
-                          </span>
-                        </td>
+            <>
+              {/* 1. MOBILE CARDS VIEW (block on mobile, hidden on desktop) */}
+              <div className="block md:hidden space-y-3">
+                {filteredWords.map((word) => {
+                  const status = trackStatuses[word.trackNumber] || "pending";
+                  return (
+                    <div
+                      key={word.id}
+                      className={`p-4 rounded-2xl border transition flex flex-col gap-3 shadow-2xs ${
+                        status === "recorded"
+                          ? "bg-emerald-50/50 border-emerald-300"
+                          : status === "redo"
+                          ? "bg-amber-50/50 border-amber-300"
+                          : "bg-white border-[#E8E5DF]"
+                      }`}
+                    >
+                      {/* Top Row: Track Badge + Audio Play */}
+                      <div className="flex items-center justify-between">
+                        <span className="px-3 py-1 rounded-xl bg-[#FAF9F6] border border-[#E8E5DF] text-[#B84A2A] font-black font-mono text-xs shadow-2xs">
+                          {word.trackLabel}
+                        </span>
+                        {word.hasAudio && word.audioUrl ? (
+                          <button
+                            onClick={() => {
+                              const audio = new Audio(word.audioUrl!);
+                              audio.play();
+                            }}
+                            className="px-3 py-1.5 rounded-xl bg-[#FAF9F6] hover:bg-[#F9EBE6] text-[#B84A2A] border border-[#E8E5DF] text-xs font-bold flex items-center gap-1.5 transition"
+                          >
+                            <Volume2 className="w-3.5 h-3.5" />
+                            <span>Écouter</span>
+                          </button>
+                        ) : (
+                          <span className="text-[10px] text-[#68645E]/50 font-mono">Sans audio</span>
+                        )}
+                      </div>
 
-                        {/* Word Ewe in Corafric font */}
-                        <td className="py-3.5 px-4 font-display font-bold text-base text-[#141416]">
+                      {/* Word Info */}
+                      <div>
+                        <h3 className="font-display font-bold text-xl text-[#141416]">
                           « {word.wordEwe} »
-                        </td>
+                        </h3>
+                        <p className="text-xs font-medium text-[#68645E] mt-0.5">
+                          {word.wordFr || <span className="italic text-[#68645E]/50">Pas de traduction</span>}
+                        </p>
+                        {word.definition && (
+                          <p className="text-[11px] text-[#68645E]/70 mt-1 line-clamp-2">
+                            {word.definition}
+                          </p>
+                        )}
+                      </div>
 
-                        {/* Word French */}
-                        <td className="py-3.5 px-4 font-medium text-[#141416]">
-                          {word.wordFr || <span className="text-[#68645E]/50 italic">Non renseigné</span>}
-                        </td>
+                      {/* Bottom Large Touch Action Buttons for Live Studio Session */}
+                      <div className="grid grid-cols-2 gap-2 pt-1 border-t border-[#E8E5DF]/60">
+                        <button
+                          onClick={() => setStatus(word.trackNumber, status === "recorded" ? "pending" : "recorded")}
+                          className={`min-h-[42px] rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition border ${
+                            status === "recorded"
+                              ? "bg-emerald-700 text-white border-emerald-700 shadow-xs"
+                              : "bg-white text-[#141416] hover:text-emerald-700 border-[#E8E5DF]"
+                          }`}
+                        >
+                          <Check className="w-4 h-4 text-emerald-600 group-hover:text-white" />
+                          <span>{status === "recorded" ? "Prise Validée ✅" : "Valider prise"}</span>
+                        </button>
 
-                        {/* Definition */}
-                        <td className="py-3.5 px-4 text-[#68645E] hidden md:table-cell max-w-xs truncate">
-                          {word.definition || "—"}
-                        </td>
+                        <button
+                          onClick={() => setStatus(word.trackNumber, status === "redo" ? "pending" : "redo")}
+                          className={`min-h-[42px] rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition border ${
+                            status === "redo"
+                              ? "bg-amber-600 text-white border-amber-600 shadow-xs"
+                              : "bg-white text-[#141416] hover:text-amber-600 border-[#E8E5DF]"
+                          }`}
+                        >
+                          <AlertTriangle className="w-4 h-4 text-amber-600" />
+                          <span>{status === "redo" ? "À refaire ⚠️" : "À refaire"}</span>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
 
-                        {/* Action Buttons for Studio Man */}
-                        <td className="py-3.5 px-4 text-center">
-                          <div className="flex items-center justify-center gap-1.5">
-                            <button
-                              onClick={() => setStatus(word.trackNumber, status === "recorded" ? "pending" : "recorded")}
-                              className={`p-1.5 rounded-lg text-xs font-bold transition border ${
-                                status === "recorded"
-                                  ? "bg-emerald-700 text-white border-emerald-700"
-                                  : "bg-white text-[#68645E] hover:text-emerald-700 border-[#E8E5DF]"
-                              }`}
-                              title="Marquer comme Enregistré (Piste validée)"
-                            >
-                              <Check className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                              onClick={() => setStatus(word.trackNumber, status === "redo" ? "pending" : "redo")}
-                              className={`p-1.5 rounded-lg text-xs font-bold transition border ${
-                                status === "redo"
-                                  ? "bg-amber-600 text-white border-amber-600"
-                                  : "bg-white text-[#68645E] hover:text-amber-600 border-[#E8E5DF]"
-                              }`}
-                              title="Marquer comme À refaire"
-                            >
-                              <AlertTriangle className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </td>
+              {/* 2. DESKTOP TABLE VIEW (hidden on mobile, block on md+) */}
+              <div className="hidden md:block overflow-x-auto border border-[#E8E5DF] rounded-2xl">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-[#FAF9F6] border-b border-[#E8E5DF] text-[#68645E] uppercase tracking-wider font-semibold">
+                      <th className="py-3 px-4 w-28 text-center font-mono">N° Piste</th>
+                      <th className="py-3 px-4 font-display text-sm">Mot Éwé (Texte à lire)</th>
+                      <th className="py-3 px-4">Traduction Française</th>
+                      <th className="py-3 px-4">Définition / Contexte</th>
+                      <th className="py-3 px-4 text-center w-36">Statut Prise</th>
+                      <th className="py-3 px-4 text-center w-24">Audio</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#E8E5DF]">
+                    {filteredWords.map((word) => {
+                      const status = trackStatuses[word.trackNumber] || "pending";
+                      return (
+                        <tr 
+                          key={word.id}
+                          className={`transition hover:bg-[#FAF9F6]/80 ${
+                            status === "recorded" 
+                              ? "bg-emerald-50/40" 
+                              : status === "redo" 
+                              ? "bg-amber-50/40" 
+                              : ""
+                          }`}
+                        >
+                          {/* Track Number */}
+                          <td className="py-3.5 px-4 text-center font-mono font-bold text-xs">
+                            <span className="px-2.5 py-1 rounded-lg bg-[#FAF9F6] border border-[#E8E5DF] text-[#B84A2A] font-black">
+                              {word.trackLabel}
+                            </span>
+                          </td>
 
-                        {/* Audio play button */}
-                        <td className="py-3.5 px-4 text-center">
-                          {word.hasAudio && word.audioUrl ? (
-                            <button
-                              onClick={() => {
-                                const audio = new Audio(word.audioUrl!);
-                                audio.play();
-                              }}
-                              className="p-1.5 rounded-lg bg-[#FAF9F6] hover:bg-[#F9EBE6] text-[#B84A2A] border border-[#E8E5DF] transition"
-                              title="Écouter l'enregistrement"
-                            >
-                              <Volume2 className="w-3.5 h-3.5" />
-                            </button>
-                          ) : (
-                            <span className="text-[10px] text-[#68645E]/40 font-mono">Sans audio</span>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                          {/* Word Ewe in Corafric font */}
+                          <td className="py-3.5 px-4 font-display font-bold text-base text-[#141416]">
+                            « {word.wordEwe} »
+                          </td>
+
+                          {/* Word French */}
+                          <td className="py-3.5 px-4 font-medium text-[#141416]">
+                            {word.wordFr || <span className="text-[#68645E]/50 italic">Non renseigné</span>}
+                          </td>
+
+                          {/* Definition */}
+                          <td className="py-3.5 px-4 text-[#68645E] max-w-xs truncate">
+                            {word.definition || "—"}
+                          </td>
+
+                          {/* Action Buttons for Studio Man */}
+                          <td className="py-3.5 px-4 text-center">
+                            <div className="flex items-center justify-center gap-1.5">
+                              <button
+                                onClick={() => setStatus(word.trackNumber, status === "recorded" ? "pending" : "recorded")}
+                                className={`p-1.5 rounded-lg text-xs font-bold transition border ${
+                                  status === "recorded"
+                                    ? "bg-emerald-700 text-white border-emerald-700"
+                                    : "bg-white text-[#68645E] hover:text-emerald-700 border-[#E8E5DF]"
+                                }`}
+                                title="Marquer comme Enregistré (Piste validée)"
+                              >
+                                <Check className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                onClick={() => setStatus(word.trackNumber, status === "redo" ? "pending" : "redo")}
+                                className={`p-1.5 rounded-lg text-xs font-bold transition border ${
+                                  status === "redo"
+                                    ? "bg-amber-600 text-white border-amber-600"
+                                    : "bg-white text-[#68645E] hover:text-amber-600 border-[#E8E5DF]"
+                                }`}
+                                title="Marquer comme À refaire"
+                              >
+                                <AlertTriangle className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </td>
+
+                          {/* Audio play button */}
+                          <td className="py-3.5 px-4 text-center">
+                            {word.hasAudio && word.audioUrl ? (
+                              <button
+                                onClick={() => {
+                                  const audio = new Audio(word.audioUrl!);
+                                  audio.play();
+                                }}
+                                className="p-1.5 rounded-lg bg-[#FAF9F6] hover:bg-[#F9EBE6] text-[#B84A2A] border border-[#E8E5DF] transition"
+                                title="Écouter l'enregistrement"
+                              >
+                                <Volume2 className="w-3.5 h-3.5" />
+                              </button>
+                            ) : (
+                              <span className="text-[10px] text-[#68645E]/40 font-mono">Sans audio</span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </div>
       )}

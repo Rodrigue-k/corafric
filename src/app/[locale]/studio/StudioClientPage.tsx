@@ -483,39 +483,39 @@ export function StudioClientPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-5xl mx-auto py-2">
+    <div className="flex flex-col gap-5 w-full max-w-5xl mx-auto px-2 sm:px-4 py-2 pb-12">
       {/* ─── Top Brand HUD & Performance Bar ─── */}
-      <div className="bg-white border border-[#E8E5DF] rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xs">
-        <div className="flex items-center gap-3.5 w-full md:w-auto">
-          <div className="w-10 h-10 rounded-xl bg-[#F9EBE6] text-[#B84A2A] flex items-center justify-center font-bold shadow-xs">
+      <div className="bg-white border border-[#E8E5DF] rounded-2xl p-3.5 sm:p-5 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4 shadow-xs">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#F9EBE6] text-[#B84A2A] flex items-center justify-center font-bold shadow-xs shrink-0">
             <Zap className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-base text-[#141416] tracking-tight">Studio Opérateur Pro</span>
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#F9EBE6] text-[#B84A2A] border border-[#F2D7CE]">
-                Haute Cadence
+              <span className="font-bold text-sm sm:text-base text-[#141416] tracking-tight">Studio Opérateur Pro</span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-[#F9EBE6] text-[#B84A2A] border border-[#F2D7CE]">
+                Cadence
               </span>
             </div>
             <p className="text-xs text-[#68645E] mt-0.5">
-              Opérateur : <span className="text-[#141416] font-medium">{operatorName}</span> • Micro : <span className="text-[#141416] font-medium">{micType === "studio_xlr_usb" ? "Studio Pro" : "Micro standard"}</span>
+              Opérateur : <span className="text-[#141416] font-medium">{operatorName}</span>
             </p>
           </div>
         </div>
 
         {/* Real-time Session Metrics with Warm Brand Badges */}
-        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3 w-full md:w-auto text-center">
-          <div className="bg-[#FAF9F6] px-3.5 py-2 rounded-xl border border-[#E8E5DF]">
-            <span className="block text-lg sm:text-xl font-black text-[#B84A2A]">{stats.sessionCount}</span>
-            <span className="text-[10px] font-medium text-[#68645E] uppercase tracking-wider">Enregistrées</span>
+        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 w-full md:w-auto text-center">
+          <div className="bg-[#FAF9F6] px-2.5 sm:px-3.5 py-2 rounded-xl border border-[#E8E5DF]">
+            <span className="block text-base sm:text-xl font-black text-[#B84A2A]">{stats.sessionCount}</span>
+            <span className="text-[9px] sm:text-[10px] font-medium text-[#68645E] uppercase tracking-wider">Enregistrées</span>
           </div>
-          <div className="bg-[#FAF9F6] px-3.5 py-2 rounded-xl border border-[#E8E5DF]">
-            <span className="block text-lg sm:text-xl font-black text-[#141416]">{formatTime(stats.sessionDurationMs)}</span>
-            <span className="text-[10px] font-medium text-[#68645E] uppercase tracking-wider">Audio Net</span>
+          <div className="bg-[#FAF9F6] px-2.5 sm:px-3.5 py-2 rounded-xl border border-[#E8E5DF]">
+            <span className="block text-base sm:text-xl font-black text-[#141416]">{formatTime(stats.sessionDurationMs)}</span>
+            <span className="text-[9px] sm:text-[10px] font-medium text-[#68645E] uppercase tracking-wider">Audio Net</span>
           </div>
-          <div className="bg-[#FAF9F6] px-3.5 py-2 rounded-xl border border-[#E8E5DF]">
-            <span className="block text-lg sm:text-xl font-black text-[#C89211]">{hourlyRate}/h</span>
-            <span className="text-[10px] font-medium text-[#68645E] uppercase tracking-wider">Cadence</span>
+          <div className="bg-[#FAF9F6] px-2.5 sm:px-3.5 py-2 rounded-xl border border-[#E8E5DF]">
+            <span className="block text-base sm:text-xl font-black text-[#C89211]">{hourlyRate}/h</span>
+            <span className="text-[9px] sm:text-[10px] font-medium text-[#68645E] uppercase tracking-wider">Cadence</span>
           </div>
           <div className="hidden sm:block bg-[#FAF9F6] px-3.5 py-2 rounded-xl border border-[#E8E5DF]">
             <span className="block text-lg sm:text-xl font-black text-[#B84A2A]/70">{stats.sessionFlaggedCount}</span>
@@ -523,23 +523,23 @@ export function StudioClientPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 justify-between md:justify-end">
           <Link
             href="/studio/grille"
-            className="px-3.5 py-2.5 rounded-xl border border-[#F2D7CE] bg-[#F9EBE6] hover:bg-[#F2D7CE] text-[#B84A2A] transition flex items-center gap-2 text-xs font-bold shadow-2xs"
+            className="flex-1 md:flex-initial px-3.5 py-2 rounded-xl border border-[#F2D7CE] bg-[#F9EBE6] hover:bg-[#F2D7CE] text-[#B84A2A] transition flex items-center justify-center gap-1.5 text-xs font-bold shadow-2xs"
             title="Basculer vers la feuille de pistes du dictionnaire"
           >
             <ListOrdered className="w-4 h-4 text-[#B84A2A]" />
-            <span>Pistes Dictionnaire</span>
+            <span>Pistes Dico</span>
           </Link>
 
           <button
             onClick={() => setShowSettings(!showSettings)}
-            className="p-2.5 rounded-xl border border-[#E8E5DF] bg-[#FAF9F6] hover:bg-[#F0EEEA] text-[#141416] transition flex items-center gap-2 text-xs font-semibold shadow-2xs"
+            className="p-2 rounded-xl border border-[#E8E5DF] bg-[#FAF9F6] hover:bg-[#F0EEEA] text-[#141416] transition flex items-center gap-1.5 text-xs font-semibold shadow-2xs"
             title="Paramètres de session"
           >
             <Sliders className="w-4 h-4 text-[#B84A2A]" />
-            <span className="hidden lg:inline">Paramètres</span>
+            <span className="hidden sm:inline">Paramètres</span>
           </button>
         </div>
       </div>
