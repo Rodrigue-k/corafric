@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Link } from "@/i18n/routing";
 import { 
   Printer, 
@@ -33,6 +33,8 @@ interface WordTrack {
   partOfSpeech: string;
   hasAudio: boolean;
   audioUrl: string | null;
+  status?: "pending" | "recorded" | "redo";
+  operatorName?: string | null;
 }
 
 type TrackStatus = "pending" | "recorded" | "redo";
@@ -40,13 +42,14 @@ type TrackStatus = "pending" | "recorded" | "redo";
 export function StudioGrilleClient() {
   const [words, setWords] = useState<WordTrack[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Search and filter
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filterMode, setFilterMode] = useState<"all" | "without_audio" | "with_audio">("all");
 
-  // Track progress status per trackNumber stored in localStorage
+  // Track progress status per trackNumber stored in DB and cached in state
   const [trackStatuses, setTrackStatuses] = useState<Record<number, TrackStatus>>({});
 
   // View modes: 'table' | 'prompter' | 'upload'
@@ -59,52 +62,69 @@ export function StudioGrilleClient() {
   const [uploadedFiles, setUploadedFiles] = useState<{ file: File; trackNum: number | null; matchedWord: WordTrack | null; status: "ready" | "uploading" | "done" | "error" }[]>([]);
   const [isBatchUploading, setIsBatchUploading] = useState<boolean>(false);
 
-  // Load words from API
-  useEffect(() => {
-    let isMounted = true;
-    (async () => {
-      try {
-        setIsLoading(true);
-        const res = await fetch("/api/studio/words?limit=1500");
-        if (!res.ok) throw new Error("Erreur de chargement de la liste des mots");
-        const data = await res.json();
-        if (isMounted) {
-          setWords(data.words || []);
-          setIsLoading(false);
-        }
-      } catch (err: unknown) {
-        if (isMounted) {
-          setErrorMsg(err instanceof Error ? err.message : "Erreur réseau");
-          setIsLoading(false);
-        }
-      }
-    })();
-    return () => { isMounted = false; };
-  }, []);
+  // Fetch words with database statuses
+  const fetchWords = useCallback(async (showLoading = true) => {
+    try {
+      if (showLoading) setIsLoading(true);
+      else setIsSyncing(true);
 
-  // Load track statuses from localStorage
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("corafric_studio_track_statuses");
-        if (saved) {
-          setTrackStatuses(JSON.parse(saved));
-        }
-      } catch {
-        // ignore
+      const res = await fetch("/api/studio/words?limit=1500");
+      if (!res.ok) throw new Error("Erreur de chargement de la liste des mots");
+      const data = await res.json();
+      const fetchedWords = (data.words || []) as WordTrack[];
+      setWords(fetchedWords);
+
+      // Populate statuses directly from the shared PostgreSQL database
+      setTrackStatuses((prev) => {
+        const next = { ...prev };
+        fetchedWords.forEach((w) => {
+          next[w.trackNumber] = w.status || (w.hasAudio ? "recorded" : "pending");
+        });
+        return next;
+      });
+    } catch (err: unknown) {
+      if (showLoading) {
+        setErrorMsg(err instanceof Error ? err.message : "Erreur réseau");
       }
+    } finally {
+      if (showLoading) setIsLoading(false);
+      else setIsSyncing(false);
     }
   }, []);
 
-  // Save track status
-  const setStatus = (trackNum: number, status: TrackStatus) => {
-    setTrackStatuses((prev) => {
-      const updated = { ...prev, [trackNum]: status };
-      if (typeof window !== "undefined") {
-        localStorage.setItem("corafric_studio_track_statuses", JSON.stringify(updated));
-      }
-      return updated;
-    });
+  // Initial load and periodic 8-second background synchronization for multiple studio devices
+  useEffect(() => {
+    fetchWords(true);
+    const interval = setInterval(() => {
+      fetchWords(false);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, [fetchWords]);
+
+  // Save track status in PostgreSQL DB so all team devices stay in sync
+  const setStatus = async (trackNum: number, status: TrackStatus) => {
+    // 1. Optimistic UI update
+    setTrackStatuses((prev) => ({ ...prev, [trackNum]: status }));
+
+    const word = words.find((w) => w.trackNumber === trackNum);
+    if (!word) return;
+
+    // 2. Persist in database
+    try {
+      const operatorName = typeof window !== "undefined" ? localStorage.getItem("corafric_studio_operator") || "Studio" : "Studio";
+      await fetch("/api/studio/words", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          wordId: word.id,
+          trackNumber: trackNum,
+          status,
+          operatorName,
+        }),
+      });
+    } catch (err) {
+      console.error("DB Sync error for track:", trackNum, err);
+    }
   };
 
   // Filtered words
@@ -256,6 +276,10 @@ export function StudioGrilleClient() {
               <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-[#F9EBE6] text-[#B84A2A] border border-[#F2D7CE]">
                 {words.length} Mots Numérotés
               </span>
+              <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                <span className={`w-1.5 h-1.5 rounded-full ${isSyncing ? "bg-[#B84A2A] animate-ping" : "bg-emerald-600"}`} />
+                <span>{isSyncing ? "Synchro..." : "En direct (Synchronisé multi-postes)"}</span>
+              </div>
             </div>
             <p className="text-xs text-[#68645E] mt-0.5">
               Chaque mot possède un numéro de piste séquentiel fixe (Piste 01, Piste 02, etc.).
@@ -561,15 +585,24 @@ export function StudioGrilleClient() {
               <span>Affichés : <strong>{filteredWords.length} mots</strong></span>
             </div>
             <button
-              onClick={() => {
-                if (confirm("Réinitialiser les statuts cochés pour cette session ?")) {
+              onClick={async () => {
+                if (confirm("Réinitialiser les statuts cochés pour toute l'équipe sur la base de données ?")) {
                   setTrackStatuses({});
-                  localStorage.removeItem("corafric_studio_track_statuses");
+                  try {
+                    await fetch("/api/studio/words", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ action: "reset_all" }),
+                    });
+                    fetchWords(false);
+                  } catch (err) {
+                    console.error("Reset error:", err);
+                  }
                 }
               }}
               className="text-[11px] text-[#68645E] hover:text-[#B84A2A] underline text-left sm:text-right"
             >
-              Réinitialiser la session
+              Réinitialiser les statuts (Équipe)
             </button>
           </div>
 
