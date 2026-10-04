@@ -10,12 +10,14 @@ import {
   SkipForward, 
   Flag, 
   CheckCircle2, 
-  AlertTriangle, 
+  AlertCircle, 
   Settings, 
   Volume2, 
   Zap, 
   Edit3,
-  X
+  X,
+  Sparkles,
+  Sliders
 } from "lucide-react";
 
 interface Sentence {
@@ -479,84 +481,84 @@ export function StudioClientPage() {
   };
 
   return (
-    <div className="flex flex-col gap-5 w-full">
-      {/* Top Studio HUD and Session Bar */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 text-white flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-black">
-            <Zap className="w-5 h-5 text-amber-400 animate-pulse" />
+    <div className="flex flex-col gap-6 w-full max-w-5xl mx-auto py-2">
+      {/* ─── Top Brand HUD & Performance Bar ─── */}
+      <div className="bg-white border border-[#E8E5DF] rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xs">
+        <div className="flex items-center gap-3.5 w-full md:w-auto">
+          <div className="w-10 h-10 rounded-xl bg-[#F9EBE6] text-[#B84A2A] flex items-center justify-center font-bold shadow-xs">
+            <Zap className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-lg text-slate-100">Studio Haute Cadence</span>
-              <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                Mode Opérateur Actif
+              <span className="font-bold text-base text-[#141416] tracking-tight">Studio Opérateur Pro</span>
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#F9EBE6] text-[#B84A2A] border border-[#F2D7CE]">
+                Haute Cadence
               </span>
             </div>
-            <p className="text-xs text-slate-400">
-              Opérateur : <span className="text-slate-200 font-medium">{operatorName}</span> • Micro : <span className="text-slate-200">{micType === "studio_xlr_usb" ? "Studio Pro" : "Micro standard"}</span>
+            <p className="text-xs text-[#68645E] mt-0.5">
+              Opérateur : <span className="text-[#141416] font-medium">{operatorName}</span> • Micro : <span className="text-[#141416] font-medium">{micType === "studio_xlr_usb" ? "Studio Pro" : "Micro standard"}</span>
             </p>
           </div>
         </div>
 
-        {/* Real-time Session Metrics */}
-        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-4 w-full md:w-auto text-center">
-          <div className="bg-slate-800/80 px-3 py-2 rounded-xl border border-slate-700/50">
-            <span className="block text-xl sm:text-2xl font-black text-amber-400">{stats.sessionCount}</span>
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider">Enregistrées</span>
+        {/* Real-time Session Metrics with Warm Brand Badges */}
+        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3 w-full md:w-auto text-center">
+          <div className="bg-[#FAF9F6] px-3.5 py-2 rounded-xl border border-[#E8E5DF]">
+            <span className="block text-lg sm:text-xl font-black text-[#B84A2A]">{stats.sessionCount}</span>
+            <span className="text-[10px] font-medium text-[#68645E] uppercase tracking-wider">Enregistrées</span>
           </div>
-          <div className="bg-slate-800/80 px-3 py-2 rounded-xl border border-slate-700/50">
-            <span className="block text-xl sm:text-2xl font-black text-emerald-400">{formatTime(stats.sessionDurationMs)}</span>
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider">Audio Net</span>
+          <div className="bg-[#FAF9F6] px-3.5 py-2 rounded-xl border border-[#E8E5DF]">
+            <span className="block text-lg sm:text-xl font-black text-[#141416]">{formatTime(stats.sessionDurationMs)}</span>
+            <span className="text-[10px] font-medium text-[#68645E] uppercase tracking-wider">Audio Net</span>
           </div>
-          <div className="bg-slate-800/80 px-3 py-2 rounded-xl border border-slate-700/50">
-            <span className="block text-xl sm:text-2xl font-black text-cyan-400">{hourlyRate}/h</span>
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider">Cadence</span>
+          <div className="bg-[#FAF9F6] px-3.5 py-2 rounded-xl border border-[#E8E5DF]">
+            <span className="block text-lg sm:text-xl font-black text-[#C89211]">{hourlyRate}/h</span>
+            <span className="text-[10px] font-medium text-[#68645E] uppercase tracking-wider">Cadence</span>
           </div>
-          <div className="hidden sm:block bg-slate-800/80 px-3 py-2 rounded-xl border border-slate-700/50">
-            <span className="block text-xl sm:text-2xl font-black text-rose-400">{stats.sessionFlaggedCount}</span>
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider">Mises à l'écart</span>
+          <div className="hidden sm:block bg-[#FAF9F6] px-3.5 py-2 rounded-xl border border-[#E8E5DF]">
+            <span className="block text-lg sm:text-xl font-black text-[#B84A2A]/70">{stats.sessionFlaggedCount}</span>
+            <span className="text-[10px] font-medium text-[#68645E] uppercase tracking-wider">Mises à l'écart</span>
           </div>
         </div>
 
         <button
           onClick={() => setShowSettings(!showSettings)}
-          className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center gap-2 text-xs font-semibold"
+          className="p-2.5 rounded-xl border border-[#E8E5DF] bg-[#FAF9F6] hover:bg-[#F0EEEA] text-[#141416] transition flex items-center gap-2 text-xs font-semibold shadow-2xs"
           title="Paramètres de session"
         >
-          <Settings className="w-4 h-4" />
+          <Sliders className="w-4 h-4 text-[#B84A2A]" />
           <span className="hidden lg:inline">Paramètres</span>
         </button>
       </div>
 
-      {/* Settings Drawer */}
+      {/* ─── Settings Drawer ─── */}
       {showSettings && (
-        <div className="bg-slate-900/95 border border-slate-800 rounded-2xl p-5 text-white flex flex-col gap-4 animate-in fade-in duration-200">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 className="font-bold text-slate-200 flex items-center gap-2">
-              <Settings className="w-4 h-4 text-amber-400" />
-              Paramètres du Profil Studio et Locuteur
+        <div className="bg-white border border-[#E8E5DF] rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col gap-4 animate-in fade-in duration-150">
+          <div className="flex items-center justify-between border-b border-[#E8E5DF] pb-3">
+            <h3 className="font-bold text-sm text-[#141416] flex items-center gap-2 font-display">
+              <Sliders className="w-4 h-4 text-[#B84A2A]" />
+              Configuration du Profil Studio et Locuteur
             </h3>
-            <button onClick={() => setShowSettings(false)} className="text-slate-400 hover:text-white">
+            <button onClick={() => setShowSettings(false)} className="text-[#68645E] hover:text-[#141416]">
               <X className="w-5 h-5" />
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">Nom ou ID Opérateur</label>
+              <label className="block text-xs font-semibold text-[#68645E] mb-1">Nom ou ID Opérateur</label>
               <input
                 type="text"
                 value={operatorName}
                 onChange={(e) => setOperatorName(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+                className="w-full bg-[#FAF9F6] border border-[#E8E5DF] rounded-xl px-3 py-2 text-[#141416] text-sm focus:outline-none focus:border-[#B84A2A]"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">Sexe du locuteur</label>
+              <label className="block text-xs font-semibold text-[#68645E] mb-1">Sexe du locuteur</label>
               <select
                 value={speakerGender}
                 onChange={(e) => setSpeakerGender(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+                className="w-full bg-[#FAF9F6] border border-[#E8E5DF] rounded-xl px-3 py-2 text-[#141416] text-sm focus:outline-none focus:border-[#B84A2A]"
               >
                 <option value="homme">Homme</option>
                 <option value="femme">Femme</option>
@@ -564,11 +566,11 @@ export function StudioClientPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">Variante Dialectale</label>
+              <label className="block text-xs font-semibold text-[#68645E] mb-1">Variante Dialectale</label>
               <select
                 value={dialectVariant}
                 onChange={(e) => setDialectVariant(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+                className="w-full bg-[#FAF9F6] border border-[#E8E5DF] rounded-xl px-3 py-2 text-[#141416] text-sm focus:outline-none focus:border-[#B84A2A]"
               >
                 <option value="ewe_lome">Éwé Standard / Lomé</option>
                 <option value="ewe_anlo">Éwé Anlo</option>
@@ -578,13 +580,13 @@ export function StudioClientPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">Type de Microphone</label>
+              <label className="block text-xs font-semibold text-[#68645E] mb-1">Type de Microphone</label>
               <select
                 value={micType}
                 onChange={(e) => setMicType(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+                className="w-full bg-[#FAF9F6] border border-[#E8E5DF] rounded-xl px-3 py-2 text-[#141416] text-sm focus:outline-none focus:border-[#B84A2A]"
               >
-                <option value="studio_xlr_usb">Micro Studio Professionnel (XLR ou USB)</option>
+                <option value="studio_xlr_usb">Micro Studio Pro (XLR ou USB)</option>
                 <option value="headset_pro">Casque micro avec bonnette</option>
                 <option value="integrated">Microphone intégré</option>
               </select>
@@ -593,7 +595,7 @@ export function StudioClientPage() {
           <div className="flex justify-end pt-2">
             <button
               onClick={saveSettings}
-              className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs"
+              className="px-4 py-2 rounded-xl bg-[#B84A2A] hover:bg-[#A03E22] text-white font-bold text-xs shadow-xs transition"
             >
               Enregistrer les préférences
             </button>
@@ -601,51 +603,55 @@ export function StudioClientPage() {
         </div>
       )}
 
-      {/* Main Recording Studio Card */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl flex flex-col gap-8 relative overflow-hidden">
+      {/* ─── Main Recording Studio Card (Corafric Authentic Design) ─── */}
+      <div className="bg-white border border-[#E8E5DF] rounded-3xl p-6 sm:p-12 shadow-sm flex flex-col gap-8 relative overflow-hidden">
+        {/* Subtle warm halo when recording */}
         {isRecording && (
-          <div className="absolute inset-0 bg-rose-500/5 pointer-events-none animate-pulse" />
+          <div className="absolute inset-0 bg-[#B84A2A]/5 pointer-events-none animate-pulse" />
         )}
 
         {errorMsg && (
-          <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-sm flex items-center justify-between">
-            <span>{errorMsg}</span>
-            <button onClick={() => setErrorMsg(null)} className="text-rose-500 hover:text-rose-700 font-bold ml-2">×</button>
+          <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+            <button onClick={() => setErrorMsg(null)} className="text-red-500 hover:text-red-700 font-bold ml-2">×</button>
           </div>
         )}
 
         {isLoading ? (
-          <div className="py-20 flex flex-col items-center justify-center gap-4 text-slate-400">
-            <div className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
-            <p className="font-semibold text-base">Chargement du corpus haute cadence...</p>
+          <div className="py-24 flex flex-col items-center justify-center gap-4 text-[#68645E]">
+            <div className="w-10 h-10 border-3 border-[#B84A2A] border-t-transparent rounded-full animate-spin" />
+            <p className="font-semibold text-sm">Chargement du corpus haute cadence...</p>
           </div>
         ) : !currentSentence ? (
-          <div className="py-16 text-center flex flex-col items-center gap-4">
-            <CheckCircle2 className="w-16 h-16 text-emerald-500" />
-            <h2 className="text-2xl font-black text-slate-900 dark:text-white">Toutes les phrases ont été traitées !</h2>
-            <p className="text-slate-500 max-w-md">
+          <div className="py-20 text-center flex flex-col items-center gap-4">
+            <CheckCircle2 className="w-14 h-14 text-[#B84A2A]" />
+            <h2 className="text-2xl font-bold font-display text-[#141416]">Toutes les phrases ont été traitées</h2>
+            <p className="text-[#68645E] text-sm max-w-md">
               Félicitations à l'équipe. Toutes les phrases disponibles dans cette session ont été enregistrées ou qualifiées.
             </p>
           </div>
         ) : (
           <>
-            {/* Sentence Header and Domain */}
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
-              <div className="flex items-center gap-2">
-                <span className="px-3 py-1 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800/50 uppercase tracking-wider">
-                  Langue : Éwé (ee)
+            {/* Sentence Header, Domain & Quick Action Tools */}
+            <div className="flex items-center justify-between border-b border-[#E8E5DF]/70 pb-4">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#F9EBE6] text-[#B84A2A] uppercase tracking-wider font-display">
+                  Éwé (ee)
                 </span>
-                <span className="px-3 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#FAF9F6] text-[#68645E] border border-[#E8E5DF]">
                   Domaine : {currentSentence.domain || "Général"}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setIsEditing(!isEditing)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition border ${
                     isEditing 
-                      ? "bg-amber-500 text-slate-950" 
-                      : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
+                      ? "bg-[#B84A2A] text-white border-[#B84A2A]" 
+                      : "bg-[#FAF9F6] text-[#68645E] hover:text-[#141416] border-[#E8E5DF] hover:bg-[#F0EEEA]"
                   }`}
                   title="Touche [E] pour éditer"
                 >
@@ -654,7 +660,7 @@ export function StudioClientPage() {
                 </button>
                 <button
                   onClick={() => { if (isRecording) stopRecording(); setShowFlagModal(true); }}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 border border-rose-200 dark:border-rose-900 flex items-center gap-1.5 transition"
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 flex items-center gap-1.5 transition"
                   title="Touche [F] pour signaler"
                 >
                   <Flag className="w-3.5 h-3.5" />
@@ -663,179 +669,181 @@ export function StudioClientPage() {
               </div>
             </div>
 
-            {/* Main Sentence Prompter View */}
-            <div className="flex flex-col gap-5 my-2">
+            {/* Main Sentence Prompter View in Corafric Typography */}
+            <div className="flex flex-col gap-6 my-2 text-center">
               {isEditing ? (
-                <div className="flex flex-col gap-3">
-                  <label className="text-xs font-bold text-amber-600 dark:text-amber-400">Texte Éwé à prononcer :</label>
+                <div className="flex flex-col gap-3 text-left">
+                  <label className="text-xs font-bold text-[#B84A2A]">Texte Éwé à prononcer :</label>
                   <textarea
                     value={editedText}
                     onChange={(e) => setEditedText(e.target.value)}
                     rows={3}
-                    className="w-full text-xl sm:text-2xl font-bold p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border-2 border-amber-500 text-slate-900 dark:text-white focus:outline-none"
+                    className="w-full text-xl sm:text-2xl font-bold font-display p-4 rounded-2xl bg-[#FAF9F6] border-2 border-[#B84A2A] text-[#141416] focus:outline-none"
                   />
-                  <label className="text-xs font-bold text-slate-500">Traduction française de référence :</label>
+                  <label className="text-xs font-bold text-[#68645E]">Traduction française de référence :</label>
                   <input
                     type="text"
                     value={editedTranslation}
                     onChange={(e) => setEditedTranslation(e.target.value)}
-                    className="w-full text-base p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200"
+                    className="w-full text-base p-3 rounded-xl bg-[#FAF9F6] border border-[#E8E5DF] text-[#141416]"
                   />
                 </div>
               ) : (
-                <div className="flex flex-col gap-4">
-                  <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white leading-relaxed tracking-wide select-all">
-                    {editedText || currentSentence.text}
+                <div className="flex flex-col items-center gap-4 py-4">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold font-display text-[#141416] leading-snug tracking-tight max-w-3xl select-all">
+                    « {editedText || currentSentence.text} »
                   </h1>
                   {(editedTranslation || currentSentence.translationFr) && (
-                    <div className="flex items-start gap-2 text-slate-500 dark:text-slate-400 text-base sm:text-lg italic font-normal bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
-                      <span className="text-xs font-bold uppercase tracking-wider text-slate-400 not-italic mr-2">Sens :</span>
-                      <span>« {editedTranslation || currentSentence.translationFr} »</span>
-                    </div>
+                    <p className="text-base sm:text-lg text-[#68645E] italic max-w-2xl">
+                      Sens : {editedTranslation || currentSentence.translationFr}
+                    </p>
                   )}
                 </div>
               )}
             </div>
 
-            {/* Audio VU-meter and Volume Waveform */}
+            {/* Audio Waveform Meter */}
             {isRecording && (
-              <div className="flex items-center gap-3 bg-slate-100 dark:bg-slate-800/80 p-3 rounded-2xl border border-slate-200 dark:border-slate-700/60">
-                <Volume2 className="w-5 h-5 text-rose-500 animate-bounce" />
-                <div className="flex-1 bg-slate-200 dark:bg-slate-700 h-3 rounded-full overflow-hidden">
+              <div className="flex items-center justify-center gap-3 bg-[#FAF9F6] p-3.5 rounded-2xl border border-[#E8E5DF] max-w-md mx-auto w-full">
+                <Volume2 className="w-5 h-5 text-[#B84A2A] animate-pulse" />
+                <div className="flex-1 bg-[#E8E5DF] h-3 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-500 transition-all duration-75"
-                    style={{ width: `${Math.max(5, audioVolume)}%` }}
+                    className="h-full bg-gradient-to-r from-[#C89211] to-[#B84A2A] transition-all duration-75"
+                    style={{ width: `${Math.max(8, audioVolume)}%` }}
                   />
                 </div>
-                <span className="text-xs font-mono font-bold text-rose-600 dark:text-rose-400 min-w-[50px] text-right">
+                <span className="text-xs font-mono font-bold text-[#B84A2A] min-w-[50px] text-right">
                   {formatTime(recordingDurationMs)}
                 </span>
               </div>
             )}
 
-            {/* Control Bar and Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+            {/* ─── Control Bar & Action Buttons (Aligned with Corafric Theme) ─── */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-[#E8E5DF]/70">
+              {/* Left : Replay & Skip */}
               <div className="flex items-center gap-2 w-full sm:w-auto">
                 <button
                   onClick={replayAudio}
                   disabled={!audioBlob || isRecording}
-                  className="flex-1 sm:flex-none px-4 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-sm disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center gap-2 transition"
+                  className="flex-1 sm:flex-none px-4 py-3 rounded-xl bg-[#FAF9F6] hover:bg-[#F0EEEA] border border-[#E8E5DF] text-[#141416] font-semibold text-xs disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center gap-2 transition"
                   title="Touche [R]"
                 >
-                  <Play className="w-4 h-4 text-emerald-500" />
+                  <Play className="w-3.5 h-3.5 text-[#B84A2A]" />
                   <span>Réécouter [R]</span>
                 </button>
                 <button
                   onClick={skipSentence}
                   disabled={isRecording}
-                  className="px-4 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 text-sm font-medium disabled:opacity-30 flex items-center justify-center gap-1.5 transition"
+                  className="px-4 py-3 rounded-xl bg-[#FAF9F6] hover:bg-[#F0EEEA] border border-[#E8E5DF] text-[#68645E] hover:text-[#141416] text-xs font-medium disabled:opacity-30 flex items-center justify-center gap-1.5 transition"
                   title="Touche [Échap] ou [Flèche droite]"
                 >
-                  <SkipForward className="w-4 h-4" />
+                  <SkipForward className="w-3.5 h-3.5" />
                   <span className="hidden md:inline">Passer</span>
                 </button>
               </div>
 
+              {/* Center : Big Record Button (Terracotta Corafric Primary) */}
               <button
                 onClick={toggleRecording}
-                className={`w-full sm:w-auto px-8 py-4 rounded-2xl font-black text-base sm:text-lg flex items-center justify-center gap-3 transition-all shadow-xl active:scale-95 ${
+                className={`w-full sm:w-auto px-8 py-3.5 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 transition-all shadow-md active:scale-95 ${
                   isRecording
-                    ? "bg-rose-600 hover:bg-rose-700 text-white animate-pulse"
+                    ? "bg-red-600 hover:bg-red-700 text-white animate-pulse"
                     : audioBlob
-                    ? "bg-amber-500 hover:bg-amber-400 text-slate-950"
-                    : "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950"
+                    ? "bg-[#141416] hover:bg-[#252528] text-white"
+                    : "bg-[#B84A2A] hover:bg-[#A03E22] text-white"
                 }`}
               >
                 {isRecording ? (
                   <>
-                    <Square className="w-6 h-6 fill-current" />
-                    <span>ARRÊTER [Espace]</span>
+                    <Square className="w-4 h-4 fill-current" />
+                    <span>Arrêter [Espace]</span>
                   </>
                 ) : audioBlob ? (
                   <>
-                    <RotateCcw className="w-6 h-6" />
-                    <span>RÉENREGISTRER [Espace]</span>
+                    <RotateCcw className="w-4 h-4" />
+                    <span>Réenregistrer [Espace]</span>
                   </>
                 ) : (
                   <>
-                    <Mic className="w-6 h-6" />
-                    <span>ENREGISTRER [Espace]</span>
+                    <Mic className="w-4 h-4" />
+                    <span>Enregistrer [Espace]</span>
                   </>
                 )}
               </button>
 
+              {/* Right : Save & Next (Enter) */}
               <button
                 onClick={submitAndNext}
                 disabled={!audioBlob || isRecording || isUploading}
-                className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg disabled:opacity-30 disabled:pointer-events-none transition active:scale-95"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm disabled:opacity-30 disabled:pointer-events-none transition active:scale-95"
                 title="Touche [Entrée]"
               >
-                <Send className="w-4 h-4" />
-                <span>VALIDER ET SUIVANTE [Entrée]</span>
+                <Send className="w-3.5 h-3.5" />
+                <span>Valider et Suivante [Entrée]</span>
               </button>
             </div>
           </>
         )}
       </div>
 
-      {/* Keyboard Shortcuts Reference Helper Footer */}
-      <div className="bg-slate-100 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-xs text-slate-600 dark:text-slate-400">
+      {/* ─── Keyboard Shortcuts Reference Helper Footer ─── */}
+      <div className="bg-white border border-[#E8E5DF] rounded-2xl p-3.5 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-[#68645E] shadow-2xs">
         <div className="flex items-center gap-1.5">
-          <kbd className="px-2 py-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm font-mono font-bold text-slate-800 dark:text-slate-200">Espace</kbd>
+          <kbd className="px-2 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md font-mono text-[11px] font-semibold text-[#141416]">Espace</kbd>
           <span>Enregistrer / Stop</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <kbd className="px-2 py-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm font-mono font-bold text-slate-800 dark:text-slate-200">Entrée</kbd>
+          <kbd className="px-2 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md font-mono text-[11px] font-semibold text-[#141416]">Entrée</kbd>
           <span>Valider et Suivante</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <kbd className="px-2 py-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm font-mono font-bold text-slate-800 dark:text-slate-200">R</kbd>
+          <kbd className="px-2 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md font-mono text-[11px] font-semibold text-[#141416]">R</kbd>
           <span>Réécouter</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <kbd className="px-2 py-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm font-mono font-bold text-slate-800 dark:text-slate-200">F</kbd>
+          <kbd className="px-2 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md font-mono text-[11px] font-semibold text-[#141416]">F</kbd>
           <span>Mettre de côté</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <kbd className="px-2 py-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm font-mono font-bold text-slate-800 dark:text-slate-200">E</kbd>
+          <kbd className="px-2 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md font-mono text-[11px] font-semibold text-[#141416]">E</kbd>
           <span>Corriger le texte</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <kbd className="px-2 py-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm font-mono font-bold text-slate-800 dark:text-slate-200">Échap / ➔</kbd>
+          <kbd className="px-2 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md font-mono text-[11px] font-semibold text-[#141416]">Échap / ➔</kbd>
           <span>Passer</span>
         </div>
       </div>
 
-      {/* Flag and Set Aside Modal */}
+      {/* ─── Flag & Set Aside Modal (Refined Corafric Theme) ─── */}
       {showFlagModal && currentSentence && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl flex flex-col gap-5">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400 font-bold text-lg">
-                <AlertTriangle className="w-5 h-5" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white border border-[#E8E5DF] rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-xl flex flex-col gap-5">
+            <div className="flex items-center justify-between border-b border-[#E8E5DF] pb-3">
+              <div className="flex items-center gap-2 text-[#B84A2A] font-bold text-base font-display">
+                <Flag className="w-4 h-4" />
                 <span>Mettre la phrase de côté</span>
               </div>
-              <button onClick={() => setShowFlagModal(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+              <button onClick={() => setShowFlagModal(false)} className="text-[#68645E] hover:text-[#141416]">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 text-sm">
-              <p className="font-bold text-slate-900 dark:text-white line-clamp-2">{currentSentence.text}</p>
+            <div className="bg-[#FAF9F6] p-3.5 rounded-xl border border-[#E8E5DF] text-sm">
+              <p className="font-bold font-display text-[#141416] line-clamp-2">« {currentSentence.text} »</p>
               {currentSentence.translationFr && (
-                <p className="text-xs text-slate-500 italic mt-1">{currentSentence.translationFr}</p>
+                <p className="text-xs text-[#68645E] italic mt-1">{currentSentence.translationFr}</p>
               )}
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+              <label className="text-xs font-bold text-[#68645E] uppercase tracking-wider font-display">
                 Motif du signalement (Touche 1, 2, 3 ou 4) :
               </label>
               <div className="grid grid-cols-1 gap-2 text-sm">
                 <label className={`p-3 rounded-xl border flex items-center gap-3 cursor-pointer transition ${
                   flagReason === "bad_translation" 
-                    ? "border-amber-500 bg-amber-50/50 dark:bg-amber-950/20 font-semibold text-amber-900 dark:text-amber-200" 
-                    : "border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300"
+                    ? "border-[#B84A2A] bg-[#F9EBE6] font-semibold text-[#B84A2A]" 
+                    : "border-[#E8E5DF] bg-[#FAF9F6] text-[#141416]"
                 }`}>
                   <input
                     type="radio"
@@ -843,15 +851,15 @@ export function StudioClientPage() {
                     value="bad_translation"
                     checked={flagReason === "bad_translation"}
                     onChange={() => setFlagReason("bad_translation")}
-                    className="accent-amber-500"
+                    className="accent-[#B84A2A]"
                   />
                   <span>[1] Traduction française incorrecte ou fausse</span>
                 </label>
 
                 <label className={`p-3 rounded-xl border flex items-center gap-3 cursor-pointer transition ${
                   flagReason === "unintelligible_text" 
-                    ? "border-amber-500 bg-amber-50/50 dark:bg-amber-950/20 font-semibold text-amber-900 dark:text-amber-200" 
-                    : "border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300"
+                    ? "border-[#B84A2A] bg-[#F9EBE6] font-semibold text-[#B84A2A]" 
+                    : "border-[#E8E5DF] bg-[#FAF9F6] text-[#141416]"
                 }`}>
                   <input
                     type="radio"
@@ -859,15 +867,15 @@ export function StudioClientPage() {
                     value="unintelligible_text"
                     checked={flagReason === "unintelligible_text"}
                     onChange={() => setFlagReason("unintelligible_text")}
-                    className="accent-amber-500"
+                    className="accent-[#B84A2A]"
                   />
                   <span>[2] Phrase éwé incompréhensible ou insensée</span>
                 </label>
 
                 <label className={`p-3 rounded-xl border flex items-center gap-3 cursor-pointer transition ${
                   flagReason === "spelling_error" 
-                    ? "border-amber-500 bg-amber-50/50 dark:bg-amber-950/20 font-semibold text-amber-900 dark:text-amber-200" 
-                    : "border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300"
+                    ? "border-[#B84A2A] bg-[#F9EBE6] font-semibold text-[#B84A2A]" 
+                    : "border-[#E8E5DF] bg-[#FAF9F6] text-[#141416]"
                 }`}>
                   <input
                     type="radio"
@@ -875,15 +883,15 @@ export function StudioClientPage() {
                     value="spelling_error"
                     checked={flagReason === "spelling_error"}
                     onChange={() => setFlagReason("spelling_error")}
-                    className="accent-amber-500"
+                    className="accent-[#B84A2A]"
                   />
                   <span>[3] Faute d'orthographe ou de ponctuation</span>
                 </label>
 
                 <label className={`p-3 rounded-xl border flex items-center gap-3 cursor-pointer transition ${
                   flagReason === "other" 
-                    ? "border-amber-500 bg-amber-50/50 dark:bg-amber-950/20 font-semibold text-amber-900 dark:text-amber-200" 
-                    : "border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300"
+                    ? "border-[#B84A2A] bg-[#F9EBE6] font-semibold text-[#B84A2A]" 
+                    : "border-[#E8E5DF] bg-[#FAF9F6] text-[#141416]"
                 }`}>
                   <input
                     type="radio"
@@ -891,7 +899,7 @@ export function StudioClientPage() {
                     value="other"
                     checked={flagReason === "other"}
                     onChange={() => setFlagReason("other")}
-                    className="accent-amber-500"
+                    className="accent-[#B84A2A]"
                   />
                   <span>[4] Autre raison</span>
                 </label>
@@ -899,7 +907,7 @@ export function StudioClientPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">
+              <label className="block text-xs font-semibold text-[#68645E] mb-1">
                 Correction suggérée (Optionnel) :
               </label>
               <input
@@ -907,21 +915,21 @@ export function StudioClientPage() {
                 value={flagFix}
                 onChange={(e) => setFlagFix(e.target.value)}
                 placeholder="Ex: Nouvelle traduction ou correction du mot..."
-                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-amber-500"
+                className="w-full bg-[#FAF9F6] border border-[#E8E5DF] rounded-xl px-3 py-2 text-sm text-[#141416] focus:outline-none focus:border-[#B84A2A]"
               />
             </div>
 
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 onClick={() => setShowFlagModal(false)}
-                className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold text-xs"
+                className="px-4 py-2 rounded-xl bg-[#FAF9F6] text-[#68645E] hover:text-[#141416] font-semibold text-xs border border-[#E8E5DF]"
               >
                 Annuler [Échap]
               </button>
               <button
                 onClick={submitFlag}
                 disabled={isFlagging}
-                className="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center gap-2"
+                className="px-5 py-2 rounded-xl bg-[#B84A2A] hover:bg-[#A03E22] text-white font-bold text-xs flex items-center gap-2 shadow-xs"
               >
                 {isFlagging ? "Mise de côté..." : "Confirmer et passer [Entrée]"}
               </button>
