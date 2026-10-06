@@ -12,6 +12,7 @@ const isProtectedRoute = createRouteMatcher([
   "/:locale/contribute(.*)",
   "/:locale/validate(.*)",
   "/:locale/admin(.*)",
+  "/:locale/studio(.*)",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

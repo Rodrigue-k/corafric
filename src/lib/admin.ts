@@ -67,11 +67,6 @@ export async function isCurrentUserAdmin(): Promise<boolean> {
       // Ignore if table/column not yet migrated
     }
 
-    // If no admins are explicitly set in env, allow logged in users in development mode for easier onboarding
-    if (process.env.NODE_ENV === "development" && adminIds.length === 0 && adminEmails.length === 0) {
-      return true;
-    }
-
     return false;
   } catch (error) {
     console.error("Error checking admin permission:", error);
