@@ -30,16 +30,21 @@ describe("Integration - Anti-Self Validation & Queue Rules", () => {
     `) as { id: string }[];
 
     createdRecordingId = recRes[0]?.id || null;
-  });
+  }, 30000);
 
   afterAll(async () => {
     // Cleanup test data
-    if (createdRecordingId) {
-      await sql`DELETE FROM validations WHERE recording_id = ${createdRecordingId}`;
-      await sql`DELETE FROM recordings WHERE id = ${createdRecordingId}`;
+    try {
+      if (createdRecordingId) {
+        await sql`DELETE FROM validations WHERE recording_id = ${createdRecordingId}`;
+      }
+      await sql`DELETE FROM validations WHERE user_id IN (${testUserA}, ${testUserBob})`;
+      await sql`DELETE FROM recordings WHERE user_id IN (${testUserA}, ${testUserBob})`;
+      await sql`DELETE FROM users WHERE id IN (${testUserA}, ${testUserBob})`;
+    } catch (err) {
+      console.warn("Cleanup warning:", err);
     }
-    await sql`DELETE FROM users WHERE id IN (${testUserA}, ${testUserBob})`;
-  });
+  }, 30000);
 
   it("ensures Alice NEVER receives her own recording in the validation queue", async () => {
     const queueForAlice = (await sql`

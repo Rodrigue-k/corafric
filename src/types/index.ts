@@ -71,5 +71,15 @@ export interface GlobalStats {
   totalSentences: number;
   goalRecordings?: number;
   leaderboard?: LeaderboardEntry[];
+  words?: {
+    total: number;
+    validated: number;
+    withAudio: number;
+  };
+  sentences?: {
+    total: number;
+    validated: number;
+    withAudio: number;
+  };
 }
 

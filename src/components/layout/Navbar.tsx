@@ -6,7 +6,7 @@ import { Link, usePathname } from "@/i18n/routing";
 import { useLocale, useTranslations } from "next-intl";
 import { UserButton, useAuth } from "@clerk/nextjs";
 import { Button } from "../ui/Button";
-import { Languages, X, User } from "lucide-react";
+import { X, User, Mic, Shield } from "lucide-react";
 
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
@@ -15,6 +15,7 @@ export const Navbar: React.FC = () => {
   const { isSignedIn } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const isHomePage = pathname === "/" || pathname === "" || pathname === "/fr" || pathname === "/en";
 
@@ -33,19 +34,32 @@ export const Navbar: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isHomePage]);
 
+  // Check admin privileges when signed in
+  useEffect(() => {
+    if (isSignedIn) {
+      fetch("/api/admin/check")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.isAdmin) {
+            setIsAdmin(true);
+          }
+        })
+        .catch(() => setIsAdmin(false));
+    } else {
+      setIsAdmin(false);
+    }
+  }, [isSignedIn]);
+
+  // Clean, focused showcase navigation links for the public
   const links = [
     { name: t("home"), href: "/" as const },
-    { name: t("contribute"), href: "/contribute" as const },
-    { name: t("validate"), href: "/validate" as const },
     { name: t("dictionary"), href: "/dictionary" as const },
-    { name: t("leaderboard"), href: "/leaderboard" as const },
-    { name: t("studio"), href: "/studio" as const },
-    { name: t("studioGrille"), href: "/studio/grille" as const },
+    { name: t("explore"), href: "/explore" as const },
+    { name: t("partnership"), href: "/contribuer" as const },
   ];
 
   const handleLanguageChange = (nextLocale: "en" | "fr") => {
     if (nextLocale === currentLocale) return;
-    // Instant locale switch: swap the locale prefix in the URL without a full server round-trip
     const currentPath = window.location.pathname;
     const newPath = currentPath.replace(/^\/(fr|en)(\/|$)/, `/${nextLocale}$2`);
     window.location.href = newPath + window.location.search;
@@ -60,7 +74,7 @@ export const Navbar: React.FC = () => {
           <div className="flex items-center bg-white/90 backdrop-blur-md border border-border rounded-full p-1 shadow-xs text-xs font-semibold">
             <button
               onClick={() => handleLanguageChange("fr")}
-              className={`px-2.5 py-1 rounded-full transition-colors ${
+              className={`px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
                 currentLocale === "fr"
                   ? "bg-primary text-white"
                   : "text-text-muted hover:text-foreground"
@@ -70,7 +84,7 @@ export const Navbar: React.FC = () => {
             </button>
             <button
               onClick={() => handleLanguageChange("en")}
-              className={`px-2.5 py-1 rounded-full transition-colors ${
+              className={`px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
                 currentLocale === "en"
                   ? "bg-primary text-white"
                   : "text-text-muted hover:text-foreground"
@@ -80,7 +94,7 @@ export const Navbar: React.FC = () => {
             </button>
           </div>
 
-          {/* Unique Acoustic Soundwave Menu Button */}
+          {/* Soundwave Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="flex items-center gap-2 px-3.5 py-2 bg-white/90 backdrop-blur-md border border-border rounded-full shadow-xs hover:border-primary/40 text-foreground transition-all group cursor-pointer"
@@ -157,7 +171,7 @@ export const Navbar: React.FC = () => {
             <div className="flex items-center bg-black/5 rounded-full p-0.5 border border-border text-xs font-semibold">
               <button
                 onClick={() => handleLanguageChange("fr")}
-                className={`px-2 py-0.5 rounded-full transition-colors ${
+                className={`px-2 py-0.5 rounded-full transition-colors cursor-pointer ${
                   currentLocale === "fr"
                     ? "bg-primary text-white"
                     : "text-text-muted hover:text-foreground"
@@ -167,7 +181,7 @@ export const Navbar: React.FC = () => {
               </button>
               <button
                 onClick={() => handleLanguageChange("en")}
-                className={`px-2 py-0.5 rounded-full transition-colors ${
+                className={`px-2 py-0.5 rounded-full transition-colors cursor-pointer ${
                   currentLocale === "en"
                     ? "bg-primary text-white"
                     : "text-text-muted hover:text-foreground"
@@ -193,6 +207,20 @@ export const Navbar: React.FC = () => {
                       href={`/${currentLocale}/profile`}
                       labelIcon={<User className="w-4 h-4" />}
                     />
+                    {isAdmin && (
+                      <UserButton.Link
+                        label={t("admin")}
+                        href={`/${currentLocale}/admin`}
+                        labelIcon={<Shield className="w-4 h-4 text-purple-600" />}
+                      />
+                    )}
+                    {isAdmin && (
+                      <UserButton.Link
+                        label={t("studio")}
+                        href={`/${currentLocale}/studio`}
+                        labelIcon={<Mic className="w-4 h-4 text-primary" />}
+                      />
+                    )}
                   </UserButton.MenuItems>
                 </UserButton>
               ) : (
@@ -202,15 +230,14 @@ export const Navbar: React.FC = () => {
                       {t("signIn")}
                     </Button>
                   </Link>
-                  <Link href="/sign-up">
+                  <Link href="/contribuer">
                     <Button variant="primary" size="sm">
-                      {t("join")}
+                      {t("support")}
                     </Button>
                   </Link>
                 </>
               )}
             </div>
-
 
             {/* Mobile Soundwave Menu Button */}
             <button
@@ -248,13 +275,13 @@ export const Navbar: React.FC = () => {
                 </Link>
                 <button
                   onClick={() => setIsMenuOpen(false)}
-                  className="p-1.5 rounded-md text-text-muted hover:text-foreground hover:bg-black/5 transition-colors"
+                  className="p-1.5 rounded-md text-text-muted hover:text-foreground hover:bg-black/5 transition-colors cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              {/* Navigation Links */}
+              {/* Public Navigation Links */}
               <nav className="flex flex-col space-y-1">
                 {links.map((link) => {
                   const isActive = pathname === link.href;
@@ -263,7 +290,7 @@ export const Navbar: React.FC = () => {
                       key={link.href}
                       href={link.href}
                       onClick={() => setIsMenuOpen(false)}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                         isActive
                           ? "bg-primary/10 text-primary font-semibold"
                           : "text-foreground hover:bg-[#FAF8F5]"
@@ -273,11 +300,12 @@ export const Navbar: React.FC = () => {
                     </Link>
                   );
                 })}
+
                 {isSignedIn && (
                   <Link
                     href="/profile"
                     onClick={() => setIsMenuOpen(false)}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                       pathname === "/profile"
                         ? "bg-primary/10 text-primary font-semibold"
                         : "text-foreground hover:bg-[#FAF8F5]"
@@ -288,6 +316,30 @@ export const Navbar: React.FC = () => {
                 )}
               </nav>
 
+              {/* Internal Team / Admin Links for Authorized Users */}
+              {isAdmin && (
+                <div className="pt-4 border-t border-border space-y-1">
+                  <span className="px-3 text-[10px] font-bold font-display uppercase tracking-wider text-primary">
+                    Administration
+                  </span>
+                  <Link
+                    href="/admin"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-foreground hover:bg-purple-50 hover:text-purple-900 transition-colors"
+                  >
+                    <Shield className="w-3.5 h-3.5 text-purple-600" />
+                    <span>Console Admin</span>
+                  </Link>
+                  <Link
+                    href="/studio"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-foreground hover:bg-primary/5 hover:text-primary transition-colors"
+                  >
+                    <Mic className="w-3.5 h-3.5 text-primary" />
+                    <span>Studio</span>
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* Drawer Bottom Actions */}
@@ -297,7 +349,7 @@ export const Navbar: React.FC = () => {
                 <div className="flex items-center bg-black/5 rounded-full p-0.5 border border-border">
                   <button
                     onClick={() => handleLanguageChange("fr")}
-                    className={`px-2 py-0.5 rounded-full transition-colors ${
+                    className={`px-2 py-0.5 rounded-full transition-colors cursor-pointer ${
                       currentLocale === "fr" ? "bg-primary text-white font-semibold" : "text-text-muted"
                     }`}
                   >
@@ -305,7 +357,7 @@ export const Navbar: React.FC = () => {
                   </button>
                   <button
                     onClick={() => handleLanguageChange("en")}
-                    className={`px-2 py-0.5 rounded-full transition-colors ${
+                    className={`px-2 py-0.5 rounded-full transition-colors cursor-pointer ${
                       currentLocale === "en" ? "bg-primary text-white font-semibold" : "text-text-muted"
                     }`}
                   >
@@ -321,9 +373,9 @@ export const Navbar: React.FC = () => {
                       {t("signIn")}
                     </Button>
                   </Link>
-                  <Link href="/sign-up" onClick={() => setIsMenuOpen(false)} className="block w-full">
+                  <Link href="/contribuer" onClick={() => setIsMenuOpen(false)} className="block w-full">
                     <Button variant="primary" size="sm" className="w-full justify-center">
-                      {t("join")}
+                      {t("support")}
                     </Button>
                   </Link>
                 </div>

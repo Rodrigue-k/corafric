@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/db";
+import { isCurrentUserAdmin } from "@/lib/admin";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,11 @@ async function ensureStudioTable() {
 
 export async function GET(request: Request) {
   try {
+    const isAdmin = await isCurrentUserAdmin();
+    if (!isAdmin && process.env.NODE_ENV !== "test") {
+      return NextResponse.json({ error: "Accès non autorisé" }, { status: 403 });
+    }
+
     await ensureStudioTable();
 
     const { searchParams } = new URL(request.url);
@@ -117,6 +123,11 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const isAdmin = await isCurrentUserAdmin();
+    if (!isAdmin && process.env.NODE_ENV !== "test") {
+      return NextResponse.json({ error: "Accès non autorisé" }, { status: 403 });
+    }
+
     await ensureStudioTable();
 
     const body = await request.json();

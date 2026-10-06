@@ -13,30 +13,17 @@ export const Footer: React.FC = () => {
           &copy; {new Date().getFullYear()} {t("copyright")}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-          <Link href="/contribute" className="hover:text-primary transition-colors duration-200">
-            {tNav("contribute")}
-          </Link>
-          <span className="text-text-muted/40">·</span>
-          <Link href="/validate" className="hover:text-primary transition-colors duration-200">
-            {tNav("validate")}
-          </Link>
-          <span className="text-text-muted/40">·</span>
           <Link href="/dictionary" className="hover:text-primary transition-colors duration-200">
             {tNav("dictionary")}
-          </Link>
-          <span className="text-text-muted/40">·</span>
-          <Link href="/leaderboard" className="hover:text-primary transition-colors duration-200">
-            {tNav("leaderboard")}
-          </Link>
-          <span className="text-text-muted/40">·</span>
-          <Link href="/profile" className="hover:text-primary transition-colors duration-200">
-            {tNav("profile")}
           </Link>
           <span className="text-text-muted/40">·</span>
           <Link href="/explore" className="hover:text-primary transition-colors duration-200">
             {tNav("explore")}
           </Link>
-
+          <span className="text-text-muted/40">·</span>
+          <Link href="/contribuer" className="hover:text-primary transition-colors duration-200">
+            {tNav("partnership")}
+          </Link>
           <span className="text-text-muted/40">·</span>
           <Link href="/privacy" className="hover:text-primary transition-colors duration-200">
             {t("privacy")}

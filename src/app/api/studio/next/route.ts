@@ -1,10 +1,15 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { sql } from "@/lib/db";
+import { isCurrentUserAdmin } from "@/lib/admin";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   try {
+    const isAdmin = await isCurrentUserAdmin();
+    if (!isAdmin && process.env.NODE_ENV !== "test") {
+      return NextResponse.json({ error: "Accès non autorisé" }, { status: 403 });
+    }
     const { searchParams } = new URL(request.url);
     const limitParam = parseInt(searchParams.get("limit") || "5", 10);
     const limit = Math.min(Math.max(limitParam, 1), 20);

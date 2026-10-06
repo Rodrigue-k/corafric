@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { GlobalStats } from "@/types";
 import { Button } from "../ui/Button";
-
-const MILESTONES = [2500, 5000, 7500, 10000];
 
 export function LiveStats() {
   const t = useTranslations("landing");
@@ -15,13 +13,20 @@ export function LiveStats() {
     approvedRecordings: 0,
     totalUsers: 0,
     totalHours: 0,
-    totalSentences: 0,
-    goalRecordings: 10000,
+    totalSentences: 1100,
+    words: {
+      total: 1350,
+      validated: 0,
+      withAudio: 0,
+    },
+    sentences: {
+      total: 1100,
+      validated: 0,
+      withAudio: 0,
+    },
   });
 
-  const [animatedCount, setAnimatedCount] = useState<number>(0);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const animationFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
     let ignore = false;
@@ -33,33 +38,10 @@ export function LiveStats() {
           setStats((prev) => ({
             ...prev,
             ...data,
+            words: data.words || prev.words,
+            sentences: data.sentences || prev.sentences,
           }));
           setIsLoaded(true);
-
-          // Smoothly count up from 0 to target
-          const target = Number(data.totalRecordings) || 0;
-          if (target > 0) {
-            const duration = 1200; // ms
-            const startTime = performance.now();
-
-            const animate = (currentTime: number) => {
-              const elapsed = currentTime - startTime;
-              const progress = Math.min(elapsed / duration, 1);
-              // Ease-out cubic
-              const easeOut = 1 - Math.pow(1 - progress, 3);
-              const current = Math.round(target * easeOut);
-
-              setAnimatedCount(current);
-
-              if (progress < 1) {
-                animationFrameRef.current = requestAnimationFrame(animate);
-              } else {
-                setAnimatedCount(target);
-              }
-            };
-
-            animationFrameRef.current = requestAnimationFrame(animate);
-          }
         }
       } catch (err) {
         console.error("Error fetching live stats:", err);
@@ -69,118 +51,217 @@ export function LiveStats() {
     void fetchLiveStats();
     return () => {
       ignore = true;
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
     };
   }, []);
 
-  const goal = stats.goalRecordings || 10000;
-  const currentCount = isLoaded ? animatedCount : 0;
-  const progressPercent = Math.min(100, Math.max(0, (currentCount / goal) * 100));
+  const wordTotal = stats.words?.total || 1350;
+  const wordValidated = stats.words?.validated || 0;
+  const wordAudio = stats.words?.withAudio || stats.approvedRecordings || 0;
+  const wordValidatedPercent = Math.min(100, Math.round((wordValidated / Math.max(1, wordTotal)) * 100));
+  const wordAudioPercent = Math.min(100, Math.round((wordAudio / Math.max(1, wordTotal)) * 100));
+
+  const sentenceTotal = stats.sentences?.total || stats.totalSentences || 1100;
+  const sentenceValidated = stats.sentences?.validated || 0;
+  const sentenceAudio = stats.sentences?.withAudio || 0;
+  const sentenceValidatedPercent = Math.min(100, Math.round((sentenceValidated / Math.max(1, sentenceTotal)) * 100));
+  const sentenceAudioPercent = Math.min(100, Math.round((sentenceAudio / Math.max(1, sentenceTotal)) * 100));
 
   return (
-    <section className="bg-[#FAF8F5] pb-20 pt-6">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="bg-[#FAF8F5] min-h-[calc(100dvh-64px)] flex flex-col justify-center py-10 sm:py-14 border-b border-border/70">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full flex flex-col justify-between space-y-10 lg:space-y-12">
         
-        {/* Main Editorial Block */}
-        <div className="py-10 border-b border-border/50">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end">
-            <div className="lg:col-span-7 space-y-2">
-              <span className="text-xs font-semibold uppercase tracking-widest text-primary block font-display">
-                {t("collectiveGoal")}
+        {/* Section Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-border/60">
+          <div className="space-y-1.5 max-w-2xl">
+            <span className="text-xs font-semibold uppercase tracking-widest text-primary block font-display">
+              {t("badge")}
+            </span>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-display text-foreground tracking-tight">
+              {t("pipelineTitle")}
+            </h2>
+          </div>
+          <Link href="/dictionary">
+            <Button variant="primary" size="md" className="rounded-full px-6 py-2.5 text-sm font-semibold shadow-xs whitespace-nowrap h-11">
+              {t("ctaPrimary")}
+            </Button>
+          </Link>
+        </div>
+
+        {/* Pure Editorial Split with Architectural Hatch-Pattern Gauges */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-border/60 gap-10 lg:gap-0">
+          
+          {/* Column 1 : Dictionnaire Lexical */}
+          <div className="lg:pr-12 space-y-6 pt-4 lg:pt-0">
+            <div className="space-y-2">
+              <span className="text-xs font-mono font-bold text-primary uppercase tracking-widest">
+                01 · {t("dictionaryPipeline")}
               </span>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-display text-foreground leading-tight tracking-tight">
-                {t("collectiveGoalTitle")}
-              </h2>
+              <div className="flex items-baseline gap-3">
+                <span className="text-3xl sm:text-4xl font-bold font-display text-foreground tracking-tight tabular-nums">
+                  {wordTotal.toLocaleString()}
+                </span>
+                <span className="text-sm sm:text-base text-text-muted font-display">
+                  {t("wordsUnit")} indexés au total
+                </span>
+              </div>
             </div>
-            <div className="lg:col-span-5 flex flex-col lg:flex-row gap-4 lg:items-center justify-start lg:justify-end">
-              <Link href="/contribute">
-                <Button variant="primary" size="lg" className="rounded-full px-8">
-                  {t("ctaPrimary")}
-                </Button>
+
+            {/* Architectural Gauges */}
+            <div className="space-y-5">
+              {/* Gauge 1: Validation Sémantique */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs font-medium">
+                  <span className="text-foreground font-semibold">
+                    1. Mots validés & certifiés
+                  </span>
+                  <span className="font-mono text-text-muted">
+                    {wordValidated.toLocaleString()} / {wordTotal.toLocaleString()} ({wordValidatedPercent}%)
+                  </span>
+                </div>
+                <div className="h-10 sm:h-11 w-full bg-[#EFE9E1] border border-[#DACDC0] rounded-[2px] overflow-hidden p-1 relative flex items-center">
+                  <div
+                    className="h-full hatch-emerald rounded-[1px] transition-all duration-300"
+                    style={{ width: `${wordValidatedPercent}%` }}
+                  />
+                  {wordValidatedPercent === 0 && (
+                    <span className="absolute left-3 text-[11px] font-mono text-text-muted/70 italic">
+                      En cours de validation
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Gauge 2: Audio Studio */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs font-medium">
+                  <span className="text-foreground font-semibold">
+                    2. Enregistrement audio studio
+                  </span>
+                  <span className="font-mono text-primary font-bold">
+                    {wordAudio.toLocaleString()} / {wordTotal.toLocaleString()} ({wordAudioPercent}%)
+                  </span>
+                </div>
+                <div className="h-10 sm:h-11 w-full bg-[#EFE9E1] border border-[#DACDC0] rounded-[2px] overflow-hidden p-1 relative flex items-center">
+                  <div
+                    className="h-full hatch-primary rounded-[1px] transition-all duration-300"
+                    style={{ width: `${wordAudioPercent}%` }}
+                  />
+                  {wordAudioPercent === 0 && (
+                    <span className="absolute left-3 text-[11px] font-mono text-primary/70 italic">
+                      Enregistrements en cours
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <Link href="/dictionary" className="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1">
+                <span>Consulter le dictionnaire</span>
+                <span>→</span>
               </Link>
             </div>
           </div>
 
-          {/* Minimalist Milestone Progress Bar — Clean, no text overload */}
-          <div className="mt-10 lg:mt-12 space-y-3">
-            {/* Header numbers */}
-            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 pb-1">
-              <div className="flex items-baseline gap-2">
-                <span className="text-4xl sm:text-5xl font-display font-bold text-foreground tracking-tight tabular-nums">
-                  {currentCount.toLocaleString()}
+          {/* Column 2 : Corpus Textuel */}
+          <div className="lg:pl-12 space-y-6 pt-6 lg:pt-0">
+            <div className="space-y-2">
+              <span className="text-xs font-mono font-bold text-primary uppercase tracking-widest">
+                02 · {t("sentencesPipeline")}
+              </span>
+              <div className="flex items-baseline gap-3">
+                <span className="text-3xl sm:text-4xl font-bold font-display text-foreground tracking-tight tabular-nums">
+                  {sentenceTotal.toLocaleString()}
                 </span>
-                <span className="text-text-muted text-lg sm:text-xl font-display">
-                  / {goal.toLocaleString()} {t("audiosUnit")}
-                </span>
-              </div>
-              <div className="text-left sm:text-right">
-                <span className="text-primary font-bold font-display text-2xl sm:text-3xl tabular-nums">
-                  {progressPercent.toFixed(1)}%
+                <span className="text-sm sm:text-base text-text-muted font-display">
+                  {t("sentencesUnit")} collectées au total
                 </span>
               </div>
             </div>
 
-            {/* Segmented Milestone Bar Track */}
-            <div className="grid grid-cols-4 gap-2 sm:gap-3 w-full">
-              {MILESTONES.map((target, idx) => {
-                const prevTarget = idx === 0 ? 0 : MILESTONES[idx - 1];
-                const segmentRange = target - prevTarget;
-                const segmentProgress = Math.max(
-                  0,
-                  Math.min(1, (currentCount - prevTarget) / segmentRange)
-                );
+            {/* Architectural Gauges */}
+            <div className="space-y-5">
+              {/* Gauge 1: Nettoyage & Validation */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs font-medium">
+                  <span className="text-foreground font-semibold">
+                    1. Phrases validées & nettoyées
+                  </span>
+                  <span className="font-mono text-text-muted">
+                    {sentenceValidated.toLocaleString()} / {sentenceTotal.toLocaleString()} ({sentenceValidatedPercent}%)
+                  </span>
+                </div>
+                <div className="h-10 sm:h-11 w-full bg-[#EFE9E1] border border-[#DACDC0] rounded-[2px] overflow-hidden p-1 relative flex items-center">
+                  <div
+                    className="h-full hatch-emerald rounded-[1px] transition-all duration-300"
+                    style={{ width: `${sentenceValidatedPercent}%` }}
+                  />
+                  {sentenceValidatedPercent === 0 && (
+                    <span className="absolute left-3 text-[11px] font-mono text-text-muted/70 italic">
+                      En cours de révision
+                    </span>
+                  )}
+                </div>
+              </div>
 
-                return (
-                  <div key={target} className="space-y-1.5">
-                    {/* Segment track */}
-                    <div className="h-2 sm:h-2.5 w-full bg-[#EADCC9]/50 rounded-full overflow-hidden relative">
-                      <div
-                        className="h-full bg-primary rounded-full transition-all duration-150 ease-out"
-                        style={{ width: `${segmentProgress * 100}%` }}
-                      />
-                    </div>
+              {/* Gauge 2: Audio Studio */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs font-medium">
+                  <span className="text-foreground font-semibold">
+                    2. Enregistrement audio studio
+                  </span>
+                  <span className="font-mono text-[#A67809] font-bold">
+                    {sentenceAudio.toLocaleString()} / {sentenceTotal.toLocaleString()} ({sentenceAudioPercent}%)
+                  </span>
+                </div>
+                <div className="h-10 sm:h-11 w-full bg-[#EFE9E1] border border-[#DACDC0] rounded-[2px] overflow-hidden p-1 relative flex items-center">
+                  <div
+                    className="h-full hatch-gold rounded-[1px] transition-all duration-300"
+                    style={{ width: `${sentenceAudioPercent}%` }}
+                  />
+                  {sentenceAudioPercent === 0 && (
+                    <span className="absolute left-3 text-[11px] font-mono text-[#A67809]/80 italic">
+                      Enregistrements en cours
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
 
-                    {/* Clean milestone number only */}
-                    <div className="text-right text-[11px] font-mono text-text-muted/70">
-                      {target.toLocaleString()}
-                    </div>
-                  </div>
-                );
-              })}
+            <div>
+              <Link href="/explore" className="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1">
+                <span>Explorer le corpus</span>
+                <span>→</span>
+              </Link>
             </div>
           </div>
+
         </div>
 
-        {/* Minimalist Stats Grid - Instant display, zero jumping animation */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-8 py-10">
-          {/* Stat 1 */}
-          <div className="border-l-2 border-primary/40 pl-4 sm:pl-5">
-            <p className="text-text-muted text-xs uppercase tracking-widest font-medium mb-1">{t("validatedStat")}</p>
-            <p className="text-2xl sm:text-4xl font-display font-bold text-foreground tracking-tight tabular-nums">
-              {isLoaded ? stats.approvedRecordings.toLocaleString() : "—"}
+        {/* Global Editorial Metric Line */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-6 border-t border-border/60">
+          <div className="border-l-2 border-primary/60 pl-4">
+            <p className="text-[11px] text-text-muted uppercase tracking-wider font-medium">Mots du Lexique</p>
+            <p className="text-xl sm:text-2xl font-display font-bold text-foreground tabular-nums">
+              {wordTotal.toLocaleString()}+
             </p>
           </div>
-          {/* Stat 2 */}
-          <div className="border-l-2 border-border/60 pl-4 sm:pl-5">
-            <p className="text-text-muted text-xs uppercase tracking-widest font-medium mb-1">{t("hoursStat")}</p>
-            <p className="text-2xl sm:text-4xl font-display font-bold text-foreground tracking-tight tabular-nums">
-              {isLoaded ? `${stats.totalHours.toFixed(1)}h` : "—"}
+          <div className="border-l-2 border-border/80 pl-4">
+            <p className="text-[11px] text-text-muted uppercase tracking-wider font-medium">Phrases Complètes</p>
+            <p className="text-xl sm:text-2xl font-display font-bold text-foreground tabular-nums">
+              {sentenceTotal.toLocaleString()}+
             </p>
           </div>
-          {/* Stat 3 */}
-          <div className="border-l-2 border-border/60 pl-4 sm:pl-5">
-            <p className="text-text-muted text-xs uppercase tracking-widest font-medium mb-1">{t("sentencesStat")}</p>
-            <p className="text-2xl sm:text-4xl font-display font-bold text-foreground tracking-tight tabular-nums">
-              {isLoaded ? stats.totalSentences.toLocaleString() : "—"}
+          <div className="border-l-2 border-border/80 pl-4">
+            <p className="text-[11px] text-text-muted uppercase tracking-wider font-medium">Tonalités Éwé</p>
+            <p className="text-xl sm:text-2xl font-display font-bold text-foreground tabular-nums">
+              100%
             </p>
           </div>
-          {/* Stat 4 */}
-          <div className="border-l-2 border-border/60 pl-4 sm:pl-5">
-            <p className="text-text-muted text-xs uppercase tracking-widest font-medium mb-1">{t("contributorsStat")}</p>
-            <p className="text-2xl sm:text-4xl font-display font-bold text-foreground tracking-tight tabular-nums">
-              {isLoaded ? stats.totalUsers.toLocaleString() : "—"}
+          <div className="border-l-2 border-border/80 pl-4">
+            <p className="text-[11px] text-text-muted uppercase tracking-wider font-medium">Format Audio</p>
+            <p className="text-xl sm:text-2xl font-display font-bold text-foreground tabular-nums">
+              48 kHz
             </p>
           </div>
         </div>

@@ -1,11 +1,16 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { sql } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
+import { isCurrentUserAdmin } from "@/lib/admin";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
+    const isAdmin = await isCurrentUserAdmin();
+    if (!isAdmin && process.env.NODE_ENV !== "test") {
+      return NextResponse.json({ error: "Accès non autorisé" }, { status: 403 });
+    }
     let userId: string | null = null;
     try {
       const authResult = await auth();

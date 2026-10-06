@@ -58,19 +58,74 @@ export async function GET() {
       best_count: Number(entry.best_count || 0),
     }));
 
+    // Auto-migrate validation and rejection columns if needed
+    try {
+      await sql`ALTER TABLE dictionary_words ADD COLUMN IF NOT EXISTS validation_status TEXT DEFAULT 'pending'`;
+      await sql`ALTER TABLE dictionary_words ADD COLUMN IF NOT EXISTS is_validated BOOLEAN DEFAULT FALSE`;
+      await sql`ALTER TABLE dictionary_words ADD COLUMN IF NOT EXISTS validated_by TEXT`;
+      await sql`ALTER TABLE dictionary_words ADD COLUMN IF NOT EXISTS validated_at TIMESTAMPTZ`;
+      await sql`ALTER TABLE dictionary_words ADD COLUMN IF NOT EXISTS is_rejected BOOLEAN DEFAULT FALSE`;
+      await sql`ALTER TABLE dictionary_words ADD COLUMN IF NOT EXISTS rejection_reason TEXT`;
+      await sql`ALTER TABLE dictionary_words ADD COLUMN IF NOT EXISTS rejected_by TEXT`;
+      await sql`ALTER TABLE dictionary_words ADD COLUMN IF NOT EXISTS rejected_at TIMESTAMPTZ`;
+
+      await sql`ALTER TABLE sentences ADD COLUMN IF NOT EXISTS validation_status TEXT DEFAULT 'pending'`;
+      await sql`ALTER TABLE sentences ADD COLUMN IF NOT EXISTS is_validated BOOLEAN DEFAULT FALSE`;
+      await sql`ALTER TABLE sentences ADD COLUMN IF NOT EXISTS validated_by TEXT`;
+      await sql`ALTER TABLE sentences ADD COLUMN IF NOT EXISTS validated_at TIMESTAMPTZ`;
+      await sql`ALTER TABLE sentences ADD COLUMN IF NOT EXISTS is_rejected BOOLEAN DEFAULT FALSE`;
+      await sql`ALTER TABLE sentences ADD COLUMN IF NOT EXISTS rejection_reason TEXT`;
+      await sql`ALTER TABLE sentences ADD COLUMN IF NOT EXISTS rejected_by TEXT`;
+      await sql`ALTER TABLE sentences ADD COLUMN IF NOT EXISTS rejected_at TIMESTAMPTZ`;
+    } catch {
+      // Ignore migration errors if already present
+    }
+
+    // Word metrics (excluding rejected words from total baseline)
+    const wordsStatsResult = (await sql`
+      SELECT 
+        COUNT(CASE WHEN is_rejected IS NULL OR is_rejected = FALSE THEN 1 END)::int as total_words,
+        COUNT(CASE WHEN is_validated = TRUE AND (is_rejected IS NULL OR is_rejected = FALSE) THEN 1 END)::int as validated_words,
+        COUNT(CASE WHEN is_rejected = TRUE THEN 1 END)::int as rejected_words,
+        COUNT(CASE WHEN audio_url IS NOT NULL AND audio_url != '' THEN 1 END)::int as audio_words
+      FROM dictionary_words
+    `) as { total_words: number; validated_words: number; rejected_words: number; audio_words: number }[];
+
+    // Sentence metrics (excluding rejected sentences from total baseline)
+    const sentenceStatsResult = (await sql`
+      SELECT 
+        COUNT(CASE WHEN is_rejected IS NULL OR is_rejected = FALSE THEN 1 END)::int as total_sentences,
+        COUNT(CASE WHEN is_validated = TRUE AND (is_rejected IS NULL OR is_rejected = FALSE) THEN 1 END)::int as validated_sentences,
+        COUNT(CASE WHEN is_rejected = TRUE THEN 1 END)::int as rejected_sentences,
+        COUNT(CASE WHEN recording_status = 'recorded' THEN 1 END)::int as recorded_sentences
+      FROM sentences
+    `) as { total_sentences: number; validated_sentences: number; rejected_sentences: number; recorded_sentences: number }[];
+
     const totalRecordings = recordingsResult[0]?.count || 0;
     const approvedRecordings = approvedResult[0]?.count || 0;
     const totalUsers = usersResult[0]?.count || 0;
     const totalMs = Number(durationResult[0]?.total_ms || 0);
     const totalHours = parseFloat((totalMs / 1000 / 3600).toFixed(2));
-    const totalSentences = sentencesResult[0]?.count || 0;
+    
+    const wordsStats = wordsStatsResult[0] || { total_words: 1350, validated_words: 0, audio_words: 0 };
+    const sentencesStats = sentenceStatsResult[0] || { total_sentences: 1100, validated_sentences: 0, recorded_sentences: 0 };
 
     return NextResponse.json({
       totalRecordings,
       approvedRecordings,
       totalUsers,
       totalHours,
-      totalSentences,
+      totalSentences: sentencesStats.total_sentences,
+      words: {
+        total: wordsStats.total_words,
+        validated: wordsStats.validated_words,
+        withAudio: wordsStats.audio_words,
+      },
+      sentences: {
+        total: sentencesStats.total_sentences,
+        validated: sentencesStats.validated_sentences,
+        withAudio: sentencesStats.recorded_sentences,
+      },
       goalRecordings: 10000,
       leaderboard: rankedLeaderboard,
     });

@@ -24,7 +24,7 @@
   --color-card: var(--card);
 
   --font-sans: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display: var(--font-playfair), "Georgia", "Times New Roman", "Segoe UI", serif;
+  --font-display: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
   --animate-waveform: waveform 1.2s ease-in-out infinite alternate;
 
@@ -46,17 +46,19 @@ body {
 
 /* Typography Utility Classes */
 .text-display {
-  font-family: var(--font-playfair), serif;
+  font-family: var(--font-inter), sans-serif;
   font-size: 3rem; /* 48px */
   font-weight: 700;
   line-height: 1.15;
+  letter-spacing: -0.025em;
 }
 
 .text-h1 {
-  font-family: var(--font-playfair), serif;
+  font-family: var(--font-inter), sans-serif;
   font-size: 2.25rem; /* 36px */
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 .text-h2 {
@@ -94,4 +96,45 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   line-height: 1.5;
+}
+
+/* Architectural Hatch Patterns for Technical Gauges */
+.hatch-primary {
+  background: repeating-linear-gradient(
+    -45deg,
+    #B84A2A,
+    #B84A2A 10px,
+    #9E3C1F 10px,
+    #9E3C1F 20px
+  );
+}
+
+.hatch-emerald {
+  background: repeating-linear-gradient(
+    -45deg,
+    #059669,
+    #059669 10px,
+    #047857 10px,
+    #047857 20px
+  );
+}
+
+.hatch-gold {
+  background: repeating-linear-gradient(
+    -45deg,
+    #C89211,
+    #C89211 10px,
+    #A67809 10px,
+    #A67809 20px
+  );
+}
+
+.hatch-track {
+  background: repeating-linear-gradient(
+    -45deg,
+    #EFE9E1,
+    #EFE9E1 8px,
+    #E8E0D5 8px,
+    #E8E0D5 16px
+  );
 }

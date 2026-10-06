@@ -89,7 +89,7 @@ export default function ContribuerPage() {
                 <div className="flex items-center justify-between py-3 border-b border-[#EADCC9]/40 hover:border-primary/50 transition-colors duration-200 group">
                   <span className="text-sm font-semibold text-text-muted">{t("ways.way1.text")}</span>
                   <Link
-                    href="/contribute"
+                    href="/explore"
                     className="inline-flex items-center text-sm font-semibold text-primary hover:underline"
                   >
                     <span>{t("ways.way1.action")}</span>

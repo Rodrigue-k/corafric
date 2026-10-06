@@ -82,13 +82,13 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
                 {t("subtitle")}
               </p>
               <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-3 pt-2">
-                <Link href="/contribute">
-                  <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-md shadow-primary/20">
+                <Link href="/dictionary">
+                  <Button variant="primary" size="md" className="w-full sm:w-auto px-7 py-3 text-sm sm:text-base font-semibold rounded-full shadow-xs whitespace-nowrap h-12">
                     {t("ctaPrimary")}
                   </Button>
                 </Link>
-                <Link href="/dictionary">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                <Link href="/explore">
+                  <Button variant="outline" size="md" className="w-full sm:w-auto px-7 py-3 text-sm sm:text-base font-semibold rounded-full whitespace-nowrap h-12">
                     {t("ctaSecondary")}
                   </Button>
                 </Link>

@@ -1,10 +1,15 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { sql } from "@/lib/db";
+import { isCurrentUserAdmin } from "@/lib/admin";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    const isAdmin = await isCurrentUserAdmin();
+    if (!isAdmin && process.env.NODE_ENV !== "test") {
+      return NextResponse.json({ error: "Accès non autorisé" }, { status: 403 });
+    }
     const [stats] = (await sql`
       SELECT 
         COUNT(CASE WHEN r.is_studio = TRUE THEN 1 END)::int AS studio_recordings,

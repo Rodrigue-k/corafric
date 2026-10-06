@@ -59,4 +59,4 @@ ewe_dataset_raw.json
 # database backups
 /backups/
 *.json.bak
-
+*.zip

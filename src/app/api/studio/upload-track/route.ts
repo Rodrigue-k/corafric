@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/db";
+import { isCurrentUserAdmin } from "@/lib/admin";
 import { r2Client, R2_BUCKET_NAME, R2_PUBLIC_URL } from "@/lib/r2";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import crypto from "crypto";
@@ -8,6 +9,11 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
+    const isAdmin = await isCurrentUserAdmin();
+    if (!isAdmin && process.env.NODE_ENV !== "test") {
+      return NextResponse.json({ error: "Accès non autorisé au Studio" }, { status: 403 });
+    }
+
     const formData = await request.formData();
     const audioFile = formData.get("audio") as Blob | null;
     const wordId = formData.get("wordId") as string | null;

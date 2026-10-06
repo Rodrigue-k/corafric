@@ -97,10 +97,30 @@ ALTER TABLE recordings ADD COLUMN IF NOT EXISTS average_score FLOAT DEFAULT 0;
 ALTER TABLE recordings ADD COLUMN IF NOT EXISTS rejected_count INTEGER DEFAULT 0;
 
 -- Marque si cet audio est le meilleur validé pour son mot
-ALTER TABLE recordings ADD COLUMN IF NOT EXISTS is_best_for_word BOOLEAN DEFAULT FALSE;
+-- =====================================================
+-- MIGRATIONS : Système de validation et rejet des données
+-- =====================================================
 
--- Index pour accélérer la recherche du meilleur audio par mot
-CREATE INDEX IF NOT EXISTS idx_recordings_best_word ON recordings(word_id, is_best_for_word) WHERE word_id IS NOT NULL;
-CREATE INDEX IF NOT EXISTS idx_recordings_avg_score ON recordings(average_score DESC) WHERE status = 'approved';
+-- Cycle de vie et modération lexicale (Validé / Rejeté / En attente)
+ALTER TABLE dictionary_words ADD COLUMN IF NOT EXISTS validation_status TEXT DEFAULT 'pending';
+ALTER TABLE dictionary_words ADD COLUMN IF NOT EXISTS is_validated BOOLEAN DEFAULT FALSE;
+ALTER TABLE dictionary_words ADD COLUMN IF NOT EXISTS validated_by TEXT;
+ALTER TABLE dictionary_words ADD COLUMN IF NOT EXISTS validated_at TIMESTAMPTZ;
+ALTER TABLE dictionary_words ADD COLUMN IF NOT EXISTS is_rejected BOOLEAN DEFAULT FALSE;
+ALTER TABLE dictionary_words ADD COLUMN IF NOT EXISTS rejection_reason TEXT;
+ALTER TABLE dictionary_words ADD COLUMN IF NOT EXISTS rejected_by TEXT;
+ALTER TABLE dictionary_words ADD COLUMN IF NOT EXISTS rejected_at TIMESTAMPTZ;
+CREATE INDEX IF NOT EXISTS idx_dict_words_status ON dictionary_words(validation_status, is_validated, is_rejected);
+
+-- Modération des phrases du corpus (Validé / Rejeté / En attente)
+ALTER TABLE sentences ADD COLUMN IF NOT EXISTS validation_status TEXT DEFAULT 'pending';
+ALTER TABLE sentences ADD COLUMN IF NOT EXISTS is_validated BOOLEAN DEFAULT FALSE;
+ALTER TABLE sentences ADD COLUMN IF NOT EXISTS validated_by TEXT;
+ALTER TABLE sentences ADD COLUMN IF NOT EXISTS validated_at TIMESTAMPTZ;
+ALTER TABLE sentences ADD COLUMN IF NOT EXISTS is_rejected BOOLEAN DEFAULT FALSE;
+ALTER TABLE sentences ADD COLUMN IF NOT EXISTS rejection_reason TEXT;
+ALTER TABLE sentences ADD COLUMN IF NOT EXISTS rejected_by TEXT;
+ALTER TABLE sentences ADD COLUMN IF NOT EXISTS rejected_at TIMESTAMPTZ;
+CREATE INDEX IF NOT EXISTS idx_sentences_validation_status ON sentences(validation_status, is_validated, is_rejected);
 
 
