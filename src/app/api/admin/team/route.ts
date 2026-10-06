@@ -54,23 +54,50 @@ export async function GET() {
     // 4. Combine and normalize users list
     const combinedMap = new Map<string, any>();
 
-    // Add Clerk users
+    // Add Clerk users (Primary source of truth for auth & emails)
     for (const cUser of clerkUsers) {
       const dbUser = dbUserMap.get(cUser.id);
-      const email = cUser.emailAddresses?.[0]?.emailAddress || dbUser?.email || null;
+      const email =
+        cUser.emailAddresses?.find((e: any) => e.id === cUser.primaryEmailAddressId)?.emailAddress ||
+        cUser.emailAddresses?.[0]?.emailAddress ||
+        dbUser?.email ||
+        null;
       const firstName = cUser.firstName || dbUser?.first_name || "";
       const lastName = cUser.lastName || dbUser?.last_name || "";
+      const username =
+        cUser.username ||
+        [firstName, lastName].filter(Boolean).join(" ") ||
+        dbUser?.username ||
+        "Utilisateur";
       const isSuperAdminEmail = email && SUPER_ADMIN_EMAILS.includes(email.toLowerCase());
       
       const role = isSuperAdminEmail 
         ? "super_admin" 
         : ((cUser.publicMetadata?.role as string) || dbUser?.role || "contributor");
 
+      // Auto-sync back to PostgreSQL users table if missing info
+      if (!dbUser || !dbUser.email || !dbUser.first_name) {
+        try {
+          await sql`
+            INSERT INTO users (id, username, email, first_name, last_name, role, country, native_language)
+            VALUES (${cUser.id}, ${username}, ${email}, ${firstName}, ${lastName}, ${role}, 'Togo', 'ewe')
+            ON CONFLICT (id) DO UPDATE SET
+              email = COALESCE(EXCLUDED.email, users.email),
+              first_name = COALESCE(EXCLUDED.first_name, users.first_name),
+              last_name = COALESCE(EXCLUDED.last_name, users.last_name),
+              username = COALESCE(EXCLUDED.username, users.username),
+              role = EXCLUDED.role
+          `;
+        } catch {
+          // ignore auto-sync errors
+        }
+      }
+
       combinedMap.set(cUser.id, {
         id: cUser.id,
         firstName,
         lastName,
-        username: cUser.username || [firstName, lastName].filter(Boolean).join(" ") || dbUser?.username || "Utilisateur",
+        username,
         email,
         role,
         country: dbUser?.country || "Togo",
@@ -79,10 +106,10 @@ export async function GET() {
       });
     }
 
-    // Add DB users that were not in Clerk list
+    // Add DB users only if they have a real email and are not test users
     for (const dbUser of dbUsers) {
-      if (!combinedMap.has(dbUser.id)) {
-        const email = dbUser.email || null;
+      if (!combinedMap.has(dbUser.id) && !dbUser.id.startsWith("test_") && dbUser.email) {
+        const email = dbUser.email;
         const isSuperAdminEmail = email && SUPER_ADMIN_EMAILS.includes(email.toLowerCase());
         const role = isSuperAdminEmail ? "super_admin" : (dbUser.role || "contributor");
 
@@ -100,7 +127,16 @@ export async function GET() {
       }
     }
 
-    const users = Array.from(combinedMap.values());
+    // Sort users: Super Admin first, then Operators, then Admins, then Contributors
+    const users = Array.from(combinedMap.values()).sort((a, b) => {
+      const roleWeight = (role: string) => {
+        if (role === "super_admin") return 4;
+        if (role === "admin") return 3;
+        if (role === "operator") return 2;
+        return 1;
+      };
+      return roleWeight(b.role) - roleWeight(a.role);
+    });
 
     return NextResponse.json({ users });
   } catch (error) {
