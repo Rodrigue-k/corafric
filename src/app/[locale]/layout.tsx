@@ -4,7 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import { Analytics } from "@vercel/analytics/react";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "../globals.css";
@@ -78,16 +78,20 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  // Load locale messages
-  const messages = await getMessages();
+  // Enable static rendering
+  setRequestLocale(locale);
+
+  // Load locale messages explicitly for current locale
+  const messages = await getMessages({ locale });
 
   return (
     <ClerkProvider>
       <html
         lang={locale}
         className={`${inter.variable} ${playfair.variable} h-full antialiased`}
+        suppressHydrationWarning
       >
-        <body className="min-h-full flex flex-col bg-background text-foreground">
+        <body className="min-h-full flex flex-col bg-background text-foreground" suppressHydrationWarning>
           <NextIntlClientProvider messages={messages}>
             <Navbar />
             <main className="flex-grow">

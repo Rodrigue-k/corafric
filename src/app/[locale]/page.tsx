@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { BrandShowcase } from "@/components/sections/BrandShowcase";
 import { Button } from "@/components/ui/Button";
 import { AfricaMap } from "@/components/ui/AfricaMap";
@@ -26,6 +26,7 @@ const VOICE_BUBBLES = [
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "landing" });
 
   return (
