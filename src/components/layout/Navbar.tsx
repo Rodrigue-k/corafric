@@ -138,6 +138,7 @@ export const Navbar: React.FC = () => {
                 alt="Corafric Logo"
                 width={22}
                 height={22}
+                priority
                 className="object-contain"
                 style={{ width: "22px", height: "22px" }}
               />
@@ -224,18 +225,11 @@ export const Navbar: React.FC = () => {
                   </UserButton.MenuItems>
                 </UserButton>
               ) : (
-                <>
-                  <Link href="/sign-in">
-                    <Button variant="ghost" size="sm">
-                      {t("signIn")}
-                    </Button>
-                  </Link>
-                  <Link href="/contribuer">
-                    <Button variant="primary" size="sm">
-                      {t("support")}
-                    </Button>
-                  </Link>
-                </>
+                <Link href="/sign-in">
+                  <Button variant="outline" size="sm" className="rounded-full px-4 text-xs font-semibold">
+                    {t("signIn")}
+                  </Button>
+                </Link>
               )}
             </div>
 
@@ -367,15 +361,10 @@ export const Navbar: React.FC = () => {
               </div>
 
               {!isSignedIn ? (
-                <div className="space-y-2">
+                <div>
                   <Link href="/sign-in" onClick={() => setIsMenuOpen(false)} className="block w-full">
-                    <Button variant="outline" size="sm" className="w-full justify-center">
+                    <Button variant="outline" size="sm" className="w-full justify-center rounded-full font-semibold">
                       {t("signIn")}
-                    </Button>
-                  </Link>
-                  <Link href="/contribuer" onClick={() => setIsMenuOpen(false)} className="block w-full">
-                    <Button variant="primary" size="sm" className="w-full justify-center">
-                      {t("support")}
                     </Button>
                   </Link>
                 </div>

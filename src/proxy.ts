@@ -19,8 +19,14 @@ export default clerkMiddleware(async (auth, req) => {
     await auth.protect();
   }
 
-  // Bypass next-intl locale redirects/rewrites for API endpoints so Clerk can run on them
-  if (req.nextUrl.pathname.startsWith("/api")) {
+  // Bypass next-intl locale redirects/rewrites for API endpoints and static metadata files
+  if (
+    req.nextUrl.pathname.startsWith("/api") ||
+    req.nextUrl.pathname === "/manifest.json" ||
+    req.nextUrl.pathname === "/robots.txt" ||
+    req.nextUrl.pathname === "/sitemap.xml" ||
+    req.nextUrl.pathname === "/favicon.ico"
+  ) {
     return;
   }
 
@@ -30,7 +36,7 @@ export default clerkMiddleware(async (auth, req) => {
 export const config = {
   matcher: [
     // Match dynamic page segment routes, excluding static assets
-    "/((?!_next|[^?]*\\.(?:html|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest|mp4|mp3|wav|ogg|m4a|webm|flac|aac)).*)",
+    "/((?!_next|[^?]*\\.(?:html|css|js|json|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest|mp4|mp3|wav|ogg|m4a|webm|flac|aac)).*)",
     // Always trigger Clerk auth on API routes
     "/(api|trpc)(.*)",
   ],
