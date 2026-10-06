@@ -16,6 +16,7 @@ export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
 
   const isHomePage = pathname === "/" || pathname === "" || pathname === "/fr" || pathname === "/en";
 
@@ -34,19 +35,22 @@ export const Navbar: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isHomePage]);
 
-  // Check admin privileges when signed in
+  // Check admin & super admin privileges when signed in
   useEffect(() => {
     if (isSignedIn) {
       fetch("/api/admin/check")
         .then((res) => res.json())
         .then((data) => {
-          if (data?.isAdmin) {
-            setIsAdmin(true);
-          }
+          setIsAdmin(!!data?.isAdmin);
+          setIsSuperAdmin(!!data?.isSuperAdmin);
         })
-        .catch(() => setIsAdmin(false));
+        .catch(() => {
+          setIsAdmin(false);
+          setIsSuperAdmin(false);
+        });
     } else {
       setIsAdmin(false);
+      setIsSuperAdmin(false);
     }
   }, [isSignedIn]);
 
@@ -208,7 +212,7 @@ export const Navbar: React.FC = () => {
                       href={`/${currentLocale}/profile`}
                       labelIcon={<User className="w-4 h-4" />}
                     />
-                    {isAdmin && (
+                    {isSuperAdmin && (
                       <UserButton.Link
                         label={t("admin")}
                         href={`/${currentLocale}/admin`}
@@ -311,27 +315,31 @@ export const Navbar: React.FC = () => {
               </nav>
 
               {/* Internal Team / Admin Links for Authorized Users */}
-              {isAdmin && (
+              {(isAdmin || isSuperAdmin) && (
                 <div className="pt-4 border-t border-border space-y-1">
                   <span className="px-3 text-[10px] font-bold font-display uppercase tracking-wider text-primary">
-                    Administration
+                    Espace Équipe
                   </span>
-                  <Link
-                    href="/admin"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-foreground hover:bg-purple-50 hover:text-purple-900 transition-colors"
-                  >
-                    <Shield className="w-3.5 h-3.5 text-purple-600" />
-                    <span>Console Admin</span>
-                  </Link>
-                  <Link
-                    href="/studio"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-foreground hover:bg-primary/5 hover:text-primary transition-colors"
-                  >
-                    <Mic className="w-3.5 h-3.5 text-primary" />
-                    <span>Studio</span>
-                  </Link>
+                  {isSuperAdmin && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-foreground hover:bg-purple-50 hover:text-purple-900 transition-colors"
+                    >
+                      <Shield className="w-3.5 h-3.5 text-purple-600" />
+                      <span>Console Admin</span>
+                    </Link>
+                  )}
+                  {isAdmin && (
+                    <Link
+                      href="/studio"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-foreground hover:bg-primary/5 hover:text-primary transition-colors"
+                    >
+                      <Mic className="w-3.5 h-3.5 text-primary" />
+                      <span>Studio</span>
+                    </Link>
+                  )}
                 </div>
               )}
             </div>

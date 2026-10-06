@@ -1,5 +1,5 @@
 import React from "react";
-import { isCurrentUserAdmin } from "@/lib/admin";
+import { isCurrentUserSuperAdmin } from "@/lib/admin";
 import { redirect } from "next/navigation";
 import { AdminDashboardClient } from "./AdminDashboardClient";
 
@@ -9,8 +9,8 @@ export const metadata = {
 };
 
 export default async function AdminPage() {
-  const isAdmin = await isCurrentUserAdmin();
-  if (!isAdmin) {
+  const isSuperAdmin = await isCurrentUserSuperAdmin();
+  if (!isSuperAdmin) {
     redirect("/");
   }
 
