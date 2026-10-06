@@ -98,6 +98,30 @@ export const Navbar: React.FC = () => {
             </button>
           </div>
 
+          {/* Direct Studio / Admin shortcuts for logged-in team members on floating header */}
+          {isSignedIn && isAdmin && (
+            <Link href="/studio">
+              <button
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-white backdrop-blur-md rounded-full shadow-xs hover:bg-primary/90 text-xs font-semibold transition-all cursor-pointer"
+                title="Accéder au Studio"
+              >
+                <Mic className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Studio</span>
+              </button>
+            </Link>
+          )}
+          {isSignedIn && isSuperAdmin && (
+            <Link href="/admin">
+              <button
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-100 border border-purple-200 text-purple-900 rounded-full shadow-xs hover:bg-purple-200 text-xs font-semibold transition-all cursor-pointer"
+                title="Console Admin"
+              >
+                <Shield className="w-3.5 h-3.5 text-purple-700" />
+                <span className="hidden sm:inline">Admin</span>
+              </button>
+            </Link>
+          )}
+
           {/* Soundwave Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -111,7 +135,7 @@ export const Navbar: React.FC = () => {
                 <span className="w-0.5 h-2.5 bg-foreground group-hover:bg-primary transition-colors rounded-full" />
                 <span className="w-0.5 h-4 bg-primary rounded-full" />
                 <span className="w-0.5 h-2 bg-foreground group-hover:bg-primary transition-colors rounded-full" />
-                <span className="w-0.5 h-3.5 bg-primary rounded-full" />
+                <span className="w-0.5 h-3 bg-primary rounded-full" />
               </div>
             )}
             <span className="text-xs font-semibold hidden sm:inline text-foreground">
@@ -197,37 +221,63 @@ export const Navbar: React.FC = () => {
             </div>
 
             {/* Desktop Auth */}
-            <div className="hidden md:flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-2.5">
               {isSignedIn ? (
-                <UserButton
-                  appearance={{
-                    elements: {
-                      avatarBox: "h-8 w-8 rounded-full border border-primary/20",
-                    },
-                  }}
-                >
-                  <UserButton.MenuItems>
-                    <UserButton.Link
-                      label={t("myProfile")}
-                      href={`/${currentLocale}/profile`}
-                      labelIcon={<User className="w-4 h-4" />}
-                    />
-                    {isSuperAdmin && (
+                <>
+                  {isAdmin && (
+                    <Link href="/studio">
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        className="rounded-full px-3.5 text-xs font-semibold gap-1.5 h-8.5 shadow-xs"
+                      >
+                        <Mic className="w-3.5 h-3.5" />
+                        <span>Studio</span>
+                      </Button>
+                    </Link>
+                  )}
+                  {isSuperAdmin && (
+                    <Link href="/admin">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="rounded-full px-3.5 text-xs font-semibold gap-1.5 h-8.5 border-purple-200 text-purple-800 bg-purple-50/60 hover:bg-purple-100"
+                      >
+                        <Shield className="w-3.5 h-3.5 text-purple-600" />
+                        <span>Admin</span>
+                      </Button>
+                    </Link>
+                  )}
+                  <UserButton
+                    appearance={{
+                      elements: {
+                        avatarBox: "h-8.5 w-8.5 rounded-full border border-primary/20",
+                      },
+                    }}
+                  >
+                    <UserButton.MenuItems>
                       <UserButton.Link
-                        label={t("admin")}
-                        href={`/${currentLocale}/admin`}
-                        labelIcon={<Shield className="w-4 h-4 text-purple-600" />}
+                        label={t("myProfile")}
+                        href={`/${currentLocale}/profile`}
+                        labelIcon={<User className="w-4 h-4" />}
                       />
-                    )}
-                    {isAdmin && (
-                      <UserButton.Link
-                        label={t("studio")}
-                        href={`/${currentLocale}/studio`}
-                        labelIcon={<Mic className="w-4 h-4 text-primary" />}
-                      />
-                    )}
-                  </UserButton.MenuItems>
-                </UserButton>
+                      {isSuperAdmin && (
+                        <UserButton.Link
+                          label={t("admin")}
+                          href={`/${currentLocale}/admin`}
+                          labelIcon={<Shield className="w-4 h-4 text-purple-600" />}
+                        />
+                      )}
+                      {isAdmin && (
+                        <UserButton.Link
+                          label={t("studio")}
+                          href={`/${currentLocale}/studio`}
+                          labelIcon={<Mic className="w-4 h-4 text-primary" />}
+                        />
+                      )}
+                    </UserButton.MenuItems>
+                  </UserButton>
+                </>
               ) : (
                 <Link href="/sign-in">
                   <Button variant="outline" size="sm" className="rounded-full px-4 text-xs font-semibold">
