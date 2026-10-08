@@ -1,256 +1,474 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Link } from "@/i18n/routing";
 import { 
+  Check, 
+  X, 
+  Play, 
+  Pause, 
   Mic, 
   Square, 
-  Play, 
   RotateCcw, 
-  Send, 
-  SkipForward, 
-  Flag, 
-  CheckCircle2, 
-  AlertCircle, 
-  Settings, 
   Volume2, 
-  Zap, 
-  Edit3,
-  X,
+  Search, 
+  Music, 
+  FileSpreadsheet, 
+  ChevronLeft, 
+  ChevronRight, 
+  RotateCw,
+  Loader2,
   Sparkles,
-  Sliders,
-  ListOrdered
+  Info,
+  Radio
 } from "lucide-react";
 
-interface Sentence {
+interface WordItem {
   id: string;
-  text: string;
-  language: string;
-  translationFr: string;
-  domain: string;
-  lengthCategory: string;
+  trackNumber: number;
+  trackLabel: string;
+  wordEwe: string;
+  wordFr: string;
+  definition: string;
+  partOfSpeech: string;
+  hasAudio: boolean;
+  audioUrl: string | null;
+  status: "pending" | "validated" | "rejected";
+  operatorName?: string | null;
 }
 
 interface StudioStats {
-  sessionCount: number;
-  sessionDurationMs: number;
-  sessionFlaggedCount: number;
-  sessionStartTime: number;
+  total: number;
+  validated: number;
+  rejected: number;
+  pending: number;
+  withAudio: number;
+}
+
+interface UnassignedStem {
+  filename: string;
+  url: string;
+  isAssigned: boolean;
+}
+
+// Audio provenance analyzer
+function getAudioBadge(url: string | null): { label: string; badgeClass: string; isLegacyVowel: boolean } | null {
+  if (!url) return null;
+  if (url.includes("/Stems/")) {
+    return { 
+      label: "Stem Studio HQ", 
+      badgeClass: "text-[#B84A2A] bg-[#F9EBE6] border-[#F2D7CE]", 
+      isLegacyVowel: false 
+    };
+  }
+  if (url.endsWith(".mp4") && url.includes("/audios/")) {
+    return { 
+      label: "Voyelle Initiale", 
+      badgeClass: "text-blue-800 bg-blue-50 border-blue-200", 
+      isLegacyVowel: true 
+    };
+  }
+  if (url.includes("/recordings/") || url.includes("/api/audio/")) {
+    return { 
+      label: "Prise Directe", 
+      badgeClass: "text-purple-800 bg-purple-50 border-purple-200", 
+      isLegacyVowel: false 
+    };
+  }
+  return { 
+    label: "Audio lié", 
+    badgeClass: "text-[#68645E] bg-[#FAF9F6] border-[#E8E5DF]", 
+    isLegacyVowel: false 
+  };
 }
 
 export function StudioClientPage() {
-  // Queue and current item
-  const [sentences, setSentences] = useState<Sentence[]>([]);
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  // Main Navigation Mode
+  const [activeTab, setActiveTab] = useState<"sheet" | "stems">("sheet");
+
+  // Sheet State: Pagination & Filters
+  const [words, setWords] = useState<WordItem[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [pageSize] = useState<number>(50);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [filteredTotal, setFilteredTotal] = useState<number>(0);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [filterMode, setFilterMode] = useState<"all" | "pending" | "validated" | "rejected" | "with_audio" | "without_audio">("all");
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isUpdatingWordId, setIsUpdatingWordId] = useState<string | null>(null);
 
-  // Audio recording state
-  const [isRecording, setIsRecording] = useState<boolean>(false);
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [recordingDurationMs, setRecordingDurationMs] = useState<number>(0);
-  const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [audioVolume, setAudioVolume] = useState<number>(0);
-
-  // Studio metadata and settings
-  const [operatorName, setOperatorName] = useState<string>("Studio Opérateur");
-  const [speakerGender, setSpeakerGender] = useState<string>("homme");
-  const [speakerAgeGroup, setSpeakerAgeGroup] = useState<string>("30-49");
-  const [dialectVariant, setDialectVariant] = useState<string>("ewe_lome");
-  const [micType, setMicType] = useState<string>("studio_xlr_usb");
-  const [showSettings, setShowSettings] = useState<boolean>(false);
-
-  // Inline editing
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [editedText, setEditedText] = useState<string>("");
-  const [editedTranslation, setEditedTranslation] = useState<string>("");
-
-  // Flag modal
-  const [showFlagModal, setShowFlagModal] = useState<boolean>(false);
-  const [flagReason, setFlagReason] = useState<string>("bad_translation");
-  const [flagFix, setFlagFix] = useState<string>("");
-  const [flagNotes, setFlagNotes] = useState<string>("");
-  const [isFlagging, setIsFlagging] = useState<boolean>(false);
-
-  // Session stats
+  // Global Stats
   const [stats, setStats] = useState<StudioStats>({
-    sessionCount: 0,
-    sessionDurationMs: 0,
-    sessionFlaggedCount: 0,
-    sessionStartTime: Date.now(),
+    total: 0,
+    validated: 0,
+    rejected: 0,
+    pending: 0,
+    withAudio: 0,
   });
 
-  // Audio player and recording refs
+  // Optimized Audio Playback Engine
+  const [playingAudioUrl, setPlayingAudioUrl] = useState<string | null>(null);
+  const [playbackProgress, setPlaybackProgress] = useState<{ currentTime: number; duration: number }>({ currentTime: 0, duration: 0 });
+  const audioCacheRef = useRef<Map<string, HTMLAudioElement>>(new Map());
+  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Direct In-line Recording Modal
+  const [recordingWord, setRecordingWord] = useState<WordItem | null>(null);
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
+  const [recordedAudioUrl, setRecordedAudioUrl] = useState<string | null>(null);
+  const [isSavingAudio, setIsSavingAudio] = useState<boolean>(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
-  const streamRef = useRef<MediaStream | null>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const animationFrameRef = useRef<number | null>(null);
-  const startTimeRef = useRef<number>(0);
-  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
 
-  // Load saved operator preferences from localStorage
+  // Stems Matcher State
+  const [stems, setStems] = useState<UnassignedStem[]>([]);
+  const [currentStemIndex, setCurrentStemIndex] = useState<number>(0);
+  const [isLoadingStems, setIsLoadingStems] = useState<boolean>(false);
+  const [stemSearchQuery, setStemSearchQuery] = useState<string>("");
+  const [stemWordSuggestions, setStemWordSuggestions] = useState<WordItem[]>([]);
+  const [selectedWordForStem, setSelectedWordForStem] = useState<WordItem | null>(null);
+  const [isMappingStem, setIsMappingStem] = useState<boolean>(false);
+
+  // Clean up audio on unmount
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedOp = localStorage.getItem("corafric_studio_operator");
-      if (savedOp) setOperatorName(savedOp);
-      const savedGender = localStorage.getItem("corafric_studio_gender");
-      if (savedGender) setSpeakerGender(savedGender);
-      const savedAge = localStorage.getItem("corafric_studio_age");
-      if (savedAge) setSpeakerAgeGroup(savedAge);
-      const savedDialect = localStorage.getItem("corafric_studio_dialect");
-      if (savedDialect) setDialectVariant(savedDialect);
-      const savedMic = localStorage.getItem("corafric_studio_mic");
-      if (savedMic) setMicType(savedMic);
-    }
+    return () => {
+      if (currentAudioRef.current) {
+        currentAudioRef.current.pause();
+        currentAudioRef.current = null;
+      }
+      audioCacheRef.current.clear();
+    };
   }, []);
 
-  const saveSettings = () => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("corafric_studio_operator", operatorName);
-      localStorage.setItem("corafric_studio_gender", speakerGender);
-      localStorage.setItem("corafric_studio_age", speakerAgeGroup);
-      localStorage.setItem("corafric_studio_dialect", dialectVariant);
-      localStorage.setItem("corafric_studio_mic", micType);
+  // Preload and retrieve cached audio instance
+  const getOrCreateAudio = useCallback((url: string): HTMLAudioElement => {
+    const cleanUrl = encodeURI(url);
+    let audio = audioCacheRef.current.get(cleanUrl);
+    if (!audio) {
+      audio = new Audio(cleanUrl);
+      audio.preload = "auto";
+      audioCacheRef.current.set(cleanUrl, audio);
     }
-    setShowSettings(false);
+    return audio;
+  }, []);
+
+  // Optimized Play / Pause with time tracking and zero latency
+  const handleTogglePlay = useCallback((url: string) => {
+    const cleanUrl = encodeURI(url);
+
+    if (playingAudioUrl === cleanUrl) {
+      // Pause
+      if (currentAudioRef.current) {
+        currentAudioRef.current.pause();
+      }
+      setPlayingAudioUrl(null);
+      setPlaybackProgress({ currentTime: 0, duration: 0 });
+    } else {
+      // Stop previously playing instance
+      if (currentAudioRef.current) {
+        currentAudioRef.current.pause();
+        currentAudioRef.current.currentTime = 0;
+      }
+
+      const audio = getOrCreateAudio(url);
+      currentAudioRef.current = audio;
+      setPlayingAudioUrl(cleanUrl);
+
+      audio.currentTime = 0;
+      audio.ontimeupdate = () => {
+        setPlaybackProgress({
+          currentTime: audio.currentTime || 0,
+          duration: audio.duration || 0,
+        });
+      };
+
+      audio.onended = () => {
+        setPlayingAudioUrl(null);
+        setPlaybackProgress({ currentTime: 0, duration: 0 });
+      };
+
+      audio.onerror = () => {
+        console.warn("Audio playback error for:", cleanUrl);
+        setPlayingAudioUrl(null);
+        setPlaybackProgress({ currentTime: 0, duration: 0 });
+      };
+
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.warn("Play interrupted or failed:", err);
+          setPlayingAudioUrl(null);
+          setPlaybackProgress({ currentTime: 0, duration: 0 });
+        });
+      }
+    }
+  }, [playingAudioUrl, getOrCreateAudio]);
+
+  // 1. Fetch Words from API with strict pagination
+  const fetchWords = useCallback(async (targetPage = page, query = searchQuery, filter = filterMode) => {
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: targetPage.toString(),
+        limit: pageSize.toString(),
+        filter,
+      });
+      if (query.trim()) {
+        params.set("q", query.trim());
+      }
+
+      const res = await fetch(`/api/studio/words?${params.toString()}`);
+      if (!res.ok) throw new Error("Erreur de chargement");
+      const data = await res.json();
+
+      setWords(data.words || []);
+      setTotalPages(data.totalPages || 1);
+      setFilteredTotal(data.filteredTotal || 0);
+      if (data.stats) {
+        setStats(data.stats);
+      }
+
+      // Preload the first few audios in background for instant playback
+      if (data.words && Array.isArray(data.words)) {
+        data.words.slice(0, 8).forEach((w: WordItem) => {
+          if (w.audioUrl) {
+            getOrCreateAudio(w.audioUrl);
+          }
+        });
+      }
+    } catch (err) {
+      console.error("Failed to load studio words:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [page, pageSize, searchQuery, filterMode, getOrCreateAudio]);
+
+  // Initial and param change trigger
+  useEffect(() => {
+    fetchWords(page, searchQuery, filterMode);
+  }, [page, filterMode]);
+
+  // Debounced search trigger
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPage(1);
+      fetchWords(1, searchQuery, filterMode);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // 2. Fast Status Update (Validated / Rejected / Pending)
+  const handleUpdateStatus = async (word: WordItem, newStatus: "validated" | "rejected" | "pending") => {
+    setIsUpdatingWordId(word.id);
+    const prevStatus = word.status;
+
+    // Optimistic UI update
+    setWords((prev) =>
+      prev.map((w) => (w.id === word.id ? { ...w, status: newStatus } : w))
+    );
+
+    // Update global stats optimistically
+    setStats((prev) => {
+      const next = { ...prev };
+      if (prevStatus === "validated") next.validated--;
+      if (prevStatus === "rejected") next.rejected--;
+      if (prevStatus === "pending") next.pending--;
+
+      if (newStatus === "validated") next.validated++;
+      if (newStatus === "rejected") next.rejected++;
+      if (newStatus === "pending") next.pending++;
+      return next;
+    });
+
+    try {
+      const operatorName = typeof window !== "undefined" ? localStorage.getItem("corafric_studio_operator") || "Studio" : "Studio";
+      const res = await fetch("/api/studio/words", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          wordId: word.id,
+          trackNumber: word.trackNumber,
+          status: newStatus,
+          operatorName,
+        }),
+      });
+
+      if (!res.ok) {
+        // Rollback on error
+        setWords((prev) =>
+          prev.map((w) => (w.id === word.id ? { ...w, status: prevStatus } : w))
+        );
+      }
+    } catch (err) {
+      console.error("Failed to update status:", err);
+      setWords((prev) =>
+        prev.map((w) => (w.id === word.id ? { ...w, status: prevStatus } : w))
+      );
+    } finally {
+      setIsUpdatingWordId(null);
+    }
   };
 
-  // Fetch sentence batch from API
-  const fetchSentences = useCallback(async (limit = 10) => {
+  // 3. Stems Matcher Loader & Adjacent Preloading
+  const fetchStems = useCallback(async () => {
+    setIsLoadingStems(true);
     try {
-      const res = await fetch(`/api/studio/next?limit=${limit}`);
-      if (!res.ok) throw new Error("Erreur de chargement des phrases");
+      const res = await fetch("/api/studio/unassigned-audios");
+      if (!res.ok) throw new Error("Erreur de chargement des pistes stems");
       const data = await res.json();
-      return (data.sentences as Sentence[]) || [];
+      const list = (data.audios || []) as UnassignedStem[];
+      setStems(list);
+      setCurrentStemIndex(0);
+
+      // Preload current and next stems immediately
+      if (list[0]) getOrCreateAudio(list[0].url);
+      if (list[1]) getOrCreateAudio(list[1].url);
     } catch (err) {
-      console.error("Fetch error:", err);
-      return [];
+      console.error("Failed to load stems:", err);
+    } finally {
+      setIsLoadingStems(false);
     }
-  }, []);
+  }, [getOrCreateAudio]);
 
-  // Initial load
   useEffect(() => {
-    let isMounted = true;
-    (async () => {
-      setIsLoading(true);
-      const initial = await fetchSentences(10);
-      if (isMounted) {
-        setSentences(initial);
-        setCurrentIndex(0);
-        setIsLoading(false);
-      }
-    })();
-    return () => { isMounted = false; };
-  }, [fetchSentences]);
-
-  const currentSentence = sentences[currentIndex] || null;
-
-  // Initialize edited values when sentence changes
-  useEffect(() => {
-    if (currentSentence) {
-      setEditedText(currentSentence.text);
-      setEditedTranslation(currentSentence.translationFr);
-      setIsEditing(false);
+    if (activeTab === "stems" && stems.length === 0) {
+      fetchStems();
     }
-  }, [currentSentence]);
+  }, [activeTab, fetchStems, stems.length]);
 
-  // Prefetch when reaching near end of local queue
+  // Current Stem Item
+  const currentStem = stems[currentStemIndex] || null;
+
+  // Preload next stem on index change
   useEffect(() => {
-    if (sentences.length > 0 && currentIndex >= sentences.length - 3) {
-      (async () => {
-        const more = await fetchSentences(10);
-        if (more.length > 0) {
-          setSentences((prev) => {
-            const existingIds = new Set(prev.map((s) => s.id));
-            const newUnique = more.filter((s) => !existingIds.has(s.id));
-            return [...prev, ...newUnique];
-          });
-        }
-      })();
+    if (stems[currentStemIndex + 1]) {
+      getOrCreateAudio(stems[currentStemIndex + 1].url);
     }
-  }, [currentIndex, sentences, fetchSentences]);
+  }, [currentStemIndex, stems, getOrCreateAudio]);
 
-  // Clean up audio URL
-  useEffect(() => {
-    return () => {
-      if (audioUrl) URL.revokeObjectURL(audioUrl);
-    };
-  }, [audioUrl]);
-
-  // Clean up stream and audio context
-  useEffect(() => {
-    return () => {
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach((t) => t.stop());
-      }
-      if (audioContextRef.current && audioContextRef.current.state !== "closed") {
-        audioContextRef.current.close();
-      }
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, []);
-
-  // Start recording
-  const startRecording = async () => {
+  // Search words for current stem match
+  const fetchStemWordSuggestions = useCallback(async (query: string) => {
     try {
-      setErrorMsg(null);
-      if (audioUrl) {
-        URL.revokeObjectURL(audioUrl);
-        setAudioUrl(null);
-      }
-      setAudioBlob(null);
-      audioChunksRef.current = [];
+      const res = await fetch(`/api/studio/pending-words?q=${encodeURIComponent(query)}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      setStemWordSuggestions(data.words || []);
+    } catch (err) {
+      console.error("Error fetching suggestions:", err);
+    }
+  }, []);
 
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: false,
-          autoGainControl: false,
-          channelCount: 1,
-          sampleRate: 48000,
-        },
+  useEffect(() => {
+    if (activeTab === "stems") {
+      fetchStemWordSuggestions(stemSearchQuery);
+    }
+  }, [activeTab, stemSearchQuery, fetchStemWordSuggestions]);
+
+  // Auto-pick default word for stem track number
+  useEffect(() => {
+    if (currentStem) {
+      const match = currentStem.filename.match(/\d+/);
+      const trackNum = match ? parseInt(match[0], 10) : null;
+      if (trackNum && words.length > 0) {
+        const found = words.find((w) => w.trackNumber === trackNum);
+        if (found) {
+          setSelectedWordForStem(found);
+          return;
+        }
+      }
+    }
+    setSelectedWordForStem(null);
+  }, [currentStemIndex, currentStem, words]);
+
+  // Map Stem to Word & Validate
+  const handleMapStem = async () => {
+    if (!currentStem || !selectedWordForStem || isMappingStem) return;
+    setIsMappingStem(true);
+    try {
+      const res = await fetch("/api/studio/map-audio", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          wordId: selectedWordForStem.id,
+          audioUrl: currentStem.url,
+        }),
       });
-      streamRef.current = stream;
 
-      const AudioCtxClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      const audioCtx = new AudioCtxClass();
-      audioContextRef.current = audioCtx;
-      const analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 256;
-      analyserRef.current = analyser;
-      const source = audioCtx.createMediaStreamSource(stream);
-      source.connect(analyser);
+      if (res.ok) {
+        // Update local word status
+        setWords((prev) =>
+          prev.map((w) =>
+            w.id === selectedWordForStem.id
+              ? { ...w, hasAudio: true, audioUrl: currentStem.url, status: "validated" }
+              : w
+          )
+        );
+        setStats((prev) => ({
+          ...prev,
+          validated: prev.validated + 1,
+          withAudio: prev.withAudio + 1,
+          pending: Math.max(0, prev.pending - 1),
+        }));
 
-      const dataArray = new Uint8Array(analyser.frequencyBinCount);
-      const updateVolume = () => {
-        if (analyserRef.current) {
-          analyserRef.current.getByteFrequencyData(dataArray);
-          const sum = dataArray.reduce((a, b) => a + b, 0);
-          const avg = sum / dataArray.length;
-          setAudioVolume(Math.min(100, Math.round((avg / 128) * 100)));
-          animationFrameRef.current = requestAnimationFrame(updateVolume);
+        // Stop current audio if playing
+        if (currentAudioRef.current) {
+          currentAudioRef.current.pause();
         }
-      };
-      updateVolume();
+        setPlayingAudioUrl(null);
 
-      let mimeType = "audio/webm;codecs=opus";
-      if (!MediaRecorder.isTypeSupported(mimeType)) {
-        if (MediaRecorder.isTypeSupported("audio/webm")) {
-          mimeType = "audio/webm";
-        } else if (MediaRecorder.isTypeSupported("audio/mp4")) {
-          mimeType = "audio/mp4";
-        } else {
-          mimeType = "";
+        // Advance stem
+        setStems((prev) => prev.filter((_, idx) => idx !== currentStemIndex));
+        setSelectedWordForStem(null);
+      }
+    } catch (err) {
+      console.error("Mapping error:", err);
+    } finally {
+      setIsMappingStem(false);
+    }
+  };
+
+  // Keyboard Shortcuts for Stems Mode & Quick Listening
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") return;
+
+      if (activeTab === "stems" && currentStem) {
+        if (e.code === "Space") {
+          e.preventDefault();
+          handleTogglePlay(currentStem.url);
+        } else if (e.key === "Enter" && selectedWordForStem && !isMappingStem) {
+          e.preventDefault();
+          handleMapStem();
+        } else if (e.key === "ArrowRight") {
+          e.preventDefault();
+          setCurrentStemIndex((prev) => Math.min(stems.length - 1, prev + 1));
+        } else if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          setCurrentStemIndex((prev) => Math.max(0, prev - 1));
         }
       }
+    };
 
-      const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeTab, currentStem, selectedWordForStem, isMappingStem, stems.length, handleTogglePlay]);
+
+  // 4. In-line Voice Recording Handlers
+  const startRecordingForWord = async (word: WordItem) => {
+    setRecordingWord(word);
+    setRecordedBlob(null);
+    setRecordedAudioUrl(null);
+    audioChunksRef.current = [];
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: false },
+      });
+      mediaStreamRef.current = stream;
+
+      const recorder = new MediaRecorder(stream);
       mediaRecorderRef.current = recorder;
 
       recorder.ondataavailable = (e) => {
@@ -260,692 +478,747 @@ export function StudioClientPage() {
       };
 
       recorder.onstop = () => {
-        const finalBlob = new Blob(audioChunksRef.current, { type: mimeType || "audio/webm" });
-        setAudioBlob(finalBlob);
-        const url = URL.createObjectURL(finalBlob);
-        setAudioUrl(url);
-
-        if (animationFrameRef.current) {
-          cancelAnimationFrame(animationFrameRef.current);
-          setAudioVolume(0);
-        }
+        const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        setRecordedBlob(blob);
+        setRecordedAudioUrl(URL.createObjectURL(blob));
       };
 
-      recorder.start(100);
+      recorder.start();
       setIsRecording(true);
-      startTimeRef.current = Date.now();
-      setRecordingDurationMs(0);
-
-      timerIntervalRef.current = setInterval(() => {
-        setRecordingDurationMs(Date.now() - startTimeRef.current);
-      }, 50);
-
     } catch (err) {
-      console.error("Failed to start recording:", err);
-      setErrorMsg("Impossible d'accéder au microphone. Vérifiez les autorisations de votre navigateur.");
+      console.error("Microphone error:", err);
+      alert("Impossible d'accéder au microphone.");
     }
   };
 
-  // Stop recording
-  const stopRecording = () => {
+  const stopRecordingForWord = () => {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
-      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => track.stop());
-        streamRef.current = null;
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach((t) => t.stop());
+        mediaStreamRef.current = null;
       }
     }
   };
 
-  // Toggle recording
-  const toggleRecording = () => {
-    if (isRecording) {
-      stopRecording();
-    } else {
-      startRecording();
-    }
-  };
+  const saveRecordedAudio = async () => {
+    if (!recordingWord || !recordedBlob || isSavingAudio) return;
+    setIsSavingAudio(true);
 
-  // Replay audio
-  const replayAudio = () => {
-    if (audioUrl) {
-      if (audioPlayerRef.current) {
-        audioPlayerRef.current.currentTime = 0;
-        audioPlayerRef.current.play();
-      } else {
-        const audio = new Audio(audioUrl);
-        audioPlayerRef.current = audio;
-        audio.play();
-      }
-    }
-  };
-
-  // Submit audio and advance to next
-  const submitAndNext = async () => {
-    if (!audioBlob || !currentSentence || isUploading) return;
-
-    const recordedDuration = recordingDurationMs;
-    const blobToUpload = audioBlob;
-    const sentenceToRecord = currentSentence;
-
-    setAudioBlob(null);
-    setAudioUrl(null);
-    setRecordingDurationMs(0);
-    setCurrentIndex((prev) => prev + 1);
-
-    setStats((prev) => ({
-      ...prev,
-      sessionCount: prev.sessionCount + 1,
-      sessionDurationMs: prev.sessionDurationMs + recordedDuration,
-    }));
-
-    setIsUploading(true);
     try {
       const formData = new FormData();
-      formData.append("audio", blobToUpload, `studio_${sentenceToRecord.id}.webm`);
-      formData.append("sentenceId", sentenceToRecord.id);
-      formData.append("durationMs", recordedDuration.toString());
-      formData.append("speakerGender", speakerGender);
-      formData.append("speakerAgeGroup", speakerAgeGroup);
-      formData.append("dialectVariant", dialectVariant);
-      formData.append("micType", micType);
-      formData.append("isStudio", "true");
+      formData.append("audio", recordedBlob);
+      formData.append("wordId", recordingWord.id);
+      formData.append("trackNumber", recordingWord.trackNumber.toString());
 
-      const res = await fetch("/api/recordings/upload", {
+      const res = await fetch("/api/studio/upload-track", {
         method: "POST",
         body: formData,
       });
 
-      if (!res.ok) {
-        console.error("Background upload failed for sentence:", sentenceToRecord.id);
-      }
-    } catch (err) {
-      console.error("Background upload error:", err);
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  // Skip current sentence
-  const skipSentence = () => {
-    if (isRecording) stopRecording();
-    setAudioBlob(null);
-    setAudioUrl(null);
-    setRecordingDurationMs(0);
-    setCurrentIndex((prev) => prev + 1);
-  };
-
-  // Submit flag
-  const submitFlag = async () => {
-    if (!currentSentence || isFlagging) return;
-
-    setIsFlagging(true);
-    try {
-      const res = await fetch("/api/studio/flag", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sentenceId: currentSentence.id,
-          reason: flagReason,
-          suggestedFix: flagFix,
-          notes: flagNotes,
-          operatorName,
-        }),
-      });
-
       if (res.ok) {
+        const data = await res.json();
+        setWords((prev) =>
+          prev.map((w) =>
+            w.id === recordingWord.id
+              ? { ...w, hasAudio: true, audioUrl: data.audioUrl, status: "validated" }
+              : w
+          )
+        );
         setStats((prev) => ({
           ...prev,
-          sessionFlaggedCount: prev.sessionFlaggedCount + 1,
+          validated: prev.validated + 1,
+          withAudio: prev.withAudio + 1,
+          pending: Math.max(0, prev.pending - 1),
         }));
-        setShowFlagModal(false);
-        setFlagFix("");
-        setFlagNotes("");
-        skipSentence();
+        setRecordingWord(null);
+        setRecordedBlob(null);
+        setRecordedAudioUrl(null);
       } else {
-        const data = await res.json();
-        setErrorMsg(data.error || "Erreur lors du signalement.");
+        alert("Erreur lors de la sauvegarde du fichier audio.");
       }
     } catch (err) {
-      console.error("Flag error:", err);
-      setErrorMsg("Erreur réseau lors du signalement.");
+      console.error("Save error:", err);
+      alert("Erreur réseau lors de la sauvegarde.");
     } finally {
-      setIsFlagging(false);
+      setIsSavingAudio(false);
     }
   };
 
-  // Keyboard Shortcuts Handler
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
-        if (e.key === "Escape") {
-          setShowFlagModal(false);
-          setIsEditing(false);
-          setShowSettings(false);
-        }
-        return;
-      }
-
-      if (showFlagModal) {
-        if (e.key === "1") setFlagReason("bad_translation");
-        if (e.key === "2") setFlagReason("unintelligible_text");
-        if (e.key === "3") setFlagReason("spelling_error");
-        if (e.key === "4") setFlagReason("other");
-        if (e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault();
-          submitFlag();
-        }
-        if (e.key === "Escape") {
-          setShowFlagModal(false);
-        }
-        return;
-      }
-
-      if (e.code === "Space") {
-        e.preventDefault();
-        toggleRecording();
-      } else if (e.key === "Enter") {
-        e.preventDefault();
-        if (audioBlob && !isRecording) {
-          submitAndNext();
-        }
-      } else if (e.key === "r" || e.key === "R") {
-        e.preventDefault();
-        replayAudio();
-      } else if (e.key === "f" || e.key === "F") {
-        e.preventDefault();
-        if (isRecording) stopRecording();
-        setShowFlagModal(true);
-      } else if (e.key === "e" || e.key === "E") {
-        e.preventDefault();
-        setIsEditing((prev) => !prev);
-      } else if (e.key === "Escape" || e.key === "ArrowRight") {
-        e.preventDefault();
-        skipSentence();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  });
-
-  const sessionElapsedMinutes = Math.max(1, (Date.now() - stats.sessionStartTime) / 60000);
-  const hourlyRate = Math.round((stats.sessionCount / sessionElapsedMinutes) * 60);
-
-  const formatTime = (ms: number) => {
-    const totalSec = Math.floor(ms / 1000);
-    const m = Math.floor(totalSec / 60);
-    const s = totalSec % 60;
-    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+  const closeRecordingModal = () => {
+    if (isRecording) stopRecordingForWord();
+    setRecordingWord(null);
+    setRecordedBlob(null);
+    if (recordedAudioUrl) URL.revokeObjectURL(recordedAudioUrl);
+    setRecordedAudioUrl(null);
   };
 
   return (
-    <div className="flex flex-col gap-5 w-full max-w-5xl mx-auto px-2 sm:px-4 py-2 pb-12">
-      {/* ─── Top Brand HUD & Performance Bar ─── */}
-      <div className="bg-white border border-[#E8E5DF] rounded-2xl p-3.5 sm:p-5 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4 shadow-xs">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#F9EBE6] text-[#B84A2A] flex items-center justify-center font-bold shadow-xs shrink-0">
-            <Zap className="w-5 h-5" />
+    <div className="w-full flex flex-col gap-6 py-2 pb-24">
+      {/* ─── 1. STUDIO EDITORIAL HEADER & METRICS (Flat, No Cards) ─── */}
+      <div className="border-b border-[#E8E5DF] pb-5 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-xl sm:text-2xl font-bold font-display text-[#141416] tracking-tight">
+              Studio Corafric
+            </h1>
+            <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-[#FAF9F6] text-[#B84A2A] border border-[#E8E5DF]">
+              Vocabulaire Éwé
+            </span>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-sm sm:text-base text-[#141416] tracking-tight">Studio Opérateur Pro</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-[#F9EBE6] text-[#B84A2A] border border-[#F2D7CE]">
-                Cadence
-              </span>
-            </div>
-            <p className="text-xs text-[#68645E] mt-0.5">
-              Opérateur : <span className="text-[#141416] font-medium">{operatorName}</span>
-            </p>
-          </div>
+          <p className="text-xs text-[#68645E] mt-1 max-w-xl">
+            Atelier de qualification du lexique, validation des traductions et synchronisation des pistes audio.
+          </p>
         </div>
 
-        {/* Real-time Session Metrics with Warm Brand Badges */}
-        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 w-full md:w-auto text-center">
-          <div className="bg-[#FAF9F6] px-2.5 sm:px-3.5 py-2 rounded-xl border border-[#E8E5DF]">
-            <span className="block text-base sm:text-xl font-black text-[#B84A2A]">{stats.sessionCount}</span>
-            <span className="text-[9px] sm:text-[10px] font-medium text-[#68645E] uppercase tracking-wider">Enregistrées</span>
-          </div>
-          <div className="bg-[#FAF9F6] px-2.5 sm:px-3.5 py-2 rounded-xl border border-[#E8E5DF]">
-            <span className="block text-base sm:text-xl font-black text-[#141416]">{formatTime(stats.sessionDurationMs)}</span>
-            <span className="text-[9px] sm:text-[10px] font-medium text-[#68645E] uppercase tracking-wider">Audio Net</span>
-          </div>
-          <div className="bg-[#FAF9F6] px-2.5 sm:px-3.5 py-2 rounded-xl border border-[#E8E5DF]">
-            <span className="block text-base sm:text-xl font-black text-[#C89211]">{hourlyRate}/h</span>
-            <span className="text-[9px] sm:text-[10px] font-medium text-[#68645E] uppercase tracking-wider">Cadence</span>
-          </div>
-          <div className="hidden sm:block bg-[#FAF9F6] px-3.5 py-2 rounded-xl border border-[#E8E5DF]">
-            <span className="block text-lg sm:text-xl font-black text-[#B84A2A]/70">{stats.sessionFlaggedCount}</span>
-            <span className="text-[10px] font-medium text-[#68645E] uppercase tracking-wider">Mises à l'écart</span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 justify-between md:justify-end">
-          <Link
-            href="/studio/grille"
-            className="flex-1 md:flex-initial px-3.5 py-2 rounded-xl border border-[#F2D7CE] bg-[#F9EBE6] hover:bg-[#F2D7CE] text-[#B84A2A] transition flex items-center justify-center gap-1.5 text-xs font-bold shadow-2xs"
-            title="Basculer vers la feuille de pistes du dictionnaire"
-          >
-            <ListOrdered className="w-4 h-4 text-[#B84A2A]" />
-            <span>Pistes Dico</span>
-          </Link>
-
+        {/* Flat Segmented Mode Switcher */}
+        <div className="flex items-center bg-[#FAF9F6] border border-[#E8E5DF] rounded-lg p-1 self-start md:self-auto">
           <button
-            onClick={() => setShowSettings(!showSettings)}
-            className="p-2 rounded-xl border border-[#E8E5DF] bg-[#FAF9F6] hover:bg-[#F0EEEA] text-[#141416] transition flex items-center gap-1.5 text-xs font-semibold shadow-2xs"
-            title="Paramètres de session"
+            onClick={() => setActiveTab("sheet")}
+            className={`px-3.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-2 transition ${
+              activeTab === "sheet"
+                ? "bg-white text-[#B84A2A] font-bold border border-[#E8E5DF]/70"
+                : "text-[#68645E] hover:text-[#141416]"
+            }`}
           >
-            <Sliders className="w-4 h-4 text-[#B84A2A]" />
-            <span className="hidden sm:inline">Paramètres</span>
+            <FileSpreadsheet className="w-3.5 h-3.5" />
+            <span>Feuille de pistes ({stats.total})</span>
+          </button>
+          <button
+            onClick={() => setActiveTab("stems")}
+            className={`px-3.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-2 transition ${
+              activeTab === "stems"
+                ? "bg-white text-[#B84A2A] font-bold border border-[#E8E5DF]/70"
+                : "text-[#68645E] hover:text-[#141416]"
+            }`}
+          >
+            <Music className="w-3.5 h-3.5" />
+            <span>Liaison Stems Studio ({stems.length > 0 ? stems.length : "141"})</span>
           </button>
         </div>
       </div>
 
-      {/* ─── Settings Drawer ─── */}
-      {showSettings && (
-        <div className="bg-white border border-[#E8E5DF] rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col gap-4 animate-in fade-in duration-150">
-          <div className="flex items-center justify-between border-b border-[#E8E5DF] pb-3">
-            <h3 className="font-bold text-sm text-[#141416] flex items-center gap-2 font-display">
-              <Sliders className="w-4 h-4 text-[#B84A2A]" />
-              Configuration du Profil Studio et Locuteur
-            </h3>
-            <button onClick={() => setShowSettings(false)} className="text-[#68645E] hover:text-[#141416]">
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-            <div>
-              <label className="block text-xs font-semibold text-[#68645E] mb-1">Nom ou ID Opérateur</label>
+      {/* ─── 2. FLAT HORIZONTAL METRICS STRIP (Zero Elevated Cards) ─── */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 border border-[#E8E5DF] rounded-lg bg-[#FAF9F6] divide-y sm:divide-y-0 sm:divide-x divide-[#E8E5DF] text-center">
+        <div className="py-2.5 px-3">
+          <span className="block text-lg font-bold font-mono text-[#141416]">{stats.total}</span>
+          <span className="text-[10px] uppercase font-semibold tracking-wider text-[#68645E]">Mots au total</span>
+        </div>
+        <div className="py-2.5 px-3">
+          <span className="block text-lg font-bold font-mono text-emerald-800">{stats.validated}</span>
+          <span className="text-[10px] uppercase font-semibold tracking-wider text-[#68645E]">Validés</span>
+        </div>
+        <div className="py-2.5 px-3">
+          <span className="block text-lg font-bold font-mono text-amber-800">{stats.pending}</span>
+          <span className="text-[10px] uppercase font-semibold tracking-wider text-[#68645E]">En attente</span>
+        </div>
+        <div className="py-2.5 px-3">
+          <span className="block text-lg font-bold font-mono text-rose-800">{stats.rejected}</span>
+          <span className="text-[10px] uppercase font-semibold tracking-wider text-[#68645E]">Rejetés</span>
+        </div>
+        <div className="col-span-2 sm:col-span-1 py-2.5 px-3">
+          <span className="block text-lg font-bold font-mono text-[#B84A2A]">{stats.withAudio}</span>
+          <span className="text-[10px] uppercase font-semibold tracking-wider text-[#68645E]">Avec Audio</span>
+        </div>
+      </div>
+
+      {/* ─── TAB 1: FEUILLE DE PISTES & VALIDATION (Tableau Épuré) ─── */}
+      {activeTab === "sheet" && (
+        <div className="flex flex-col gap-4">
+          {/* Controls: Search and Filters */}
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+            {/* Search Input */}
+            <div className="relative w-full md:w-80">
+              <Search className="w-3.5 h-3.5 text-[#68645E] absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                value={operatorName}
-                onChange={(e) => setOperatorName(e.target.value)}
-                className="w-full bg-[#FAF9F6] border border-[#E8E5DF] rounded-xl px-3 py-2 text-[#141416] text-sm focus:outline-none focus:border-[#B84A2A]"
+                placeholder="Rechercher mot éwé ou français..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-white border border-[#E8E5DF] rounded-md pl-8 pr-3 py-1.5 text-xs text-[#141416] placeholder:text-[#68645E]/70 focus:outline-none focus:border-[#B84A2A]"
               />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#68645E] hover:text-[#141416]"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              )}
             </div>
-            <div>
-              <label className="block text-xs font-semibold text-[#68645E] mb-1">Sexe du locuteur</label>
-              <select
-                value={speakerGender}
-                onChange={(e) => setSpeakerGender(e.target.value)}
-                className="w-full bg-[#FAF9F6] border border-[#E8E5DF] rounded-xl px-3 py-2 text-[#141416] text-sm focus:outline-none focus:border-[#B84A2A]"
+
+            {/* Filter Pills (Flat, crisp) */}
+            <div className="flex items-center gap-1 overflow-x-auto text-xs">
+              <button
+                onClick={() => { setFilterMode("all"); setPage(1); }}
+                className={`px-3 py-1 rounded-md transition font-medium whitespace-nowrap ${
+                  filterMode === "all"
+                    ? "bg-[#141416] text-white font-semibold"
+                    : "bg-[#FAF9F6] border border-[#E8E5DF] text-[#68645E] hover:text-[#141416]"
+                }`}
               >
-                <option value="homme">Homme</option>
-                <option value="femme">Femme</option>
-                <option value="non_precise">Non précisé</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-[#68645E] mb-1">Variante Dialectale</label>
-              <select
-                value={dialectVariant}
-                onChange={(e) => setDialectVariant(e.target.value)}
-                className="w-full bg-[#FAF9F6] border border-[#E8E5DF] rounded-xl px-3 py-2 text-[#141416] text-sm focus:outline-none focus:border-[#B84A2A]"
+                Tous ({stats.total})
+              </button>
+              <button
+                onClick={() => { setFilterMode("pending"); setPage(1); }}
+                className={`px-3 py-1 rounded-md transition font-medium whitespace-nowrap ${
+                  filterMode === "pending"
+                    ? "bg-amber-800 text-white font-semibold"
+                    : "bg-[#FAF9F6] border border-[#E8E5DF] text-[#68645E] hover:text-[#141416]"
+                }`}
               >
-                <option value="ewe_lome">Éwé Standard / Lomé</option>
-                <option value="ewe_anlo">Éwé Anlo</option>
-                <option value="ewe_kpando">Éwé Kpando</option>
-                <option value="ewe_kpalime">Éwé Kpalimé</option>
-                <option value="ewe_autre">Autre variante</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-[#68645E] mb-1">Type de Microphone</label>
-              <select
-                value={micType}
-                onChange={(e) => setMicType(e.target.value)}
-                className="w-full bg-[#FAF9F6] border border-[#E8E5DF] rounded-xl px-3 py-2 text-[#141416] text-sm focus:outline-none focus:border-[#B84A2A]"
+                En attente ({stats.pending})
+              </button>
+              <button
+                onClick={() => { setFilterMode("validated"); setPage(1); }}
+                className={`px-3 py-1 rounded-md transition font-medium whitespace-nowrap ${
+                  filterMode === "validated"
+                    ? "bg-emerald-800 text-white font-semibold"
+                    : "bg-[#FAF9F6] border border-[#E8E5DF] text-[#68645E] hover:text-[#141416]"
+                }`}
               >
-                <option value="studio_xlr_usb">Micro Studio Pro (XLR ou USB)</option>
-                <option value="headset_pro">Casque micro avec bonnette</option>
-                <option value="integrated">Microphone intégré</option>
-              </select>
+                Validés ({stats.validated})
+              </button>
+              <button
+                onClick={() => { setFilterMode("rejected"); setPage(1); }}
+                className={`px-3 py-1 rounded-md transition font-medium whitespace-nowrap ${
+                  filterMode === "rejected"
+                    ? "bg-rose-800 text-white font-semibold"
+                    : "bg-[#FAF9F6] border border-[#E8E5DF] text-[#68645E] hover:text-[#141416]"
+                }`}
+              >
+                Rejetés ({stats.rejected})
+              </button>
+              <button
+                onClick={() => { setFilterMode("with_audio"); setPage(1); }}
+                className={`px-3 py-1 rounded-md transition font-medium whitespace-nowrap ${
+                  filterMode === "with_audio"
+                    ? "bg-[#B84A2A] text-white font-semibold"
+                    : "bg-[#FAF9F6] border border-[#E8E5DF] text-[#68645E] hover:text-[#141416]"
+                }`}
+              >
+                Avec audio ({stats.withAudio})
+              </button>
+              <button
+                onClick={() => { setFilterMode("without_audio"); setPage(1); }}
+                className={`px-3 py-1 rounded-md transition font-medium whitespace-nowrap ${
+                  filterMode === "without_audio"
+                    ? "bg-[#68645E] text-white font-semibold"
+                    : "bg-[#FAF9F6] border border-[#E8E5DF] text-[#68645E] hover:text-[#141416]"
+                }`}
+              >
+                Sans audio
+              </button>
             </div>
           </div>
-          <div className="flex justify-end pt-2">
-            <button
-              onClick={saveSettings}
-              className="px-4 py-2 rounded-xl bg-[#B84A2A] hover:bg-[#A03E22] text-white font-bold text-xs shadow-xs transition"
-            >
-              Enregistrer les préférences
-            </button>
+
+          {/* Table Container (Flat borders, Zero Card Elevation) */}
+          <div className="border border-[#E8E5DF] rounded-lg bg-white overflow-hidden">
+            {isLoading ? (
+              <div className="py-20 flex flex-col items-center justify-center gap-3 text-[#68645E]">
+                <Loader2 className="w-5 h-5 animate-spin text-[#B84A2A]" />
+                <span className="text-xs">Chargement instantané...</span>
+              </div>
+            ) : words.length === 0 ? (
+              <div className="py-16 text-center text-xs text-[#68645E]">
+                Aucun mot ne correspond aux filtres appliqués.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-[#E8E5DF] bg-[#FAF9F6] text-[#68645E] text-[11px] font-semibold">
+                      <th className="py-2.5 px-3 w-16">Piste</th>
+                      <th className="py-2.5 px-3 min-w-[140px]">Mot Éwé</th>
+                      <th className="py-2.5 px-3 min-w-[200px]">Français & Définition</th>
+                      <th className="py-2.5 px-3 min-w-[170px]">Audio & Provenance</th>
+                      <th className="py-2.5 px-3 min-w-[180px] text-right">Décision Opérateur</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#E8E5DF]">
+                    {words.map((word) => {
+                      const cleanWordAudioUrl = word.audioUrl ? encodeURI(word.audioUrl) : null;
+                      const isPlayingThis = playingAudioUrl === cleanWordAudioUrl;
+                      const isUpdating = isUpdatingWordId === word.id;
+                      const badgeInfo = getAudioBadge(word.audioUrl);
+
+                      return (
+                        <tr
+                          key={word.id}
+                          className={`hover:bg-[#FAF9F6]/60 transition-colors ${
+                            word.status === "validated"
+                              ? "bg-emerald-50/20"
+                              : word.status === "rejected"
+                              ? "bg-rose-50/20 opacity-70"
+                              : ""
+                          }`}
+                        >
+                          {/* Track Number */}
+                          <td className="py-2.5 px-3 font-mono font-semibold text-[#68645E]">
+                            <span className="px-1.5 py-0.5 rounded bg-[#FAF9F6] border border-[#E8E5DF] text-[10px]">
+                              {word.trackNumber.toString().padStart(3, "0")}
+                            </span>
+                          </td>
+
+                          {/* Word Ewe */}
+                          <td className="py-2.5 px-3">
+                            <span className="font-display font-bold text-sm text-[#141416]">
+                              {word.wordEwe}
+                            </span>
+                            {word.partOfSpeech && (
+                              <span className="block text-[10px] text-[#68645E] italic">
+                                {word.partOfSpeech}
+                              </span>
+                            )}
+                          </td>
+
+                          {/* French Translation & Definition */}
+                          <td className="py-2.5 px-3">
+                            <span className="font-medium text-[#141416]">
+                              {word.wordFr || <span className="text-[#68645E]/60 italic">Sans traduction</span>}
+                            </span>
+                            {word.definition && (
+                              <p className="text-[11px] text-[#68645E] line-clamp-1 mt-0.5">
+                                {word.definition}
+                              </p>
+                            )}
+                          </td>
+
+                          {/* Audio Column: Optimized Player with Provenance Badge */}
+                          <td className="py-2.5 px-3">
+                            {word.hasAudio && word.audioUrl ? (
+                              <div className="flex flex-col gap-1 items-start">
+                                <button
+                                  onClick={() => handleTogglePlay(word.audioUrl!)}
+                                  className={`px-2.5 py-1 rounded-md border text-[11px] font-semibold flex items-center gap-1.5 transition ${
+                                    isPlayingThis
+                                      ? "bg-[#B84A2A] text-white border-[#B84A2A]"
+                                      : "bg-white border-[#E8E5DF] text-[#141416] hover:border-[#B84A2A]"
+                                  }`}
+                                >
+                                  {isPlayingThis ? (
+                                    <>
+                                      <Pause className="w-3 h-3 fill-current" />
+                                      <span>Pause</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Play className="w-3 h-3 fill-current text-[#B84A2A]" />
+                                      <span>Écouter</span>
+                                    </>
+                                  )}
+                                </button>
+                                {badgeInfo && (
+                                  <span className={`text-[9px] font-semibold px-1.5 py-0.2 rounded border ${badgeInfo.badgeClass}`}>
+                                    {badgeInfo.label}
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => startRecordingForWord(word)}
+                                className="px-2.5 py-1 rounded-md border border-dashed border-[#E8E5DF] hover:border-[#B84A2A] text-[11px] text-[#68645E] hover:text-[#B84A2A] flex items-center gap-1 transition bg-white"
+                                title="Enregistrer directement au micro"
+                              >
+                                <Mic className="w-3 h-3" />
+                                <span>Enregistrer</span>
+                              </button>
+                            )}
+                          </td>
+
+                          {/* Status & Decision Actions */}
+                          <td className="py-2.5 px-3 text-right">
+                            <div className="flex items-center justify-end gap-1.5">
+                              {/* Validate button */}
+                              <button
+                                disabled={isUpdating}
+                                onClick={() => handleUpdateStatus(word, word.status === "validated" ? "pending" : "validated")}
+                                className={`px-2.5 py-1 rounded-md text-[11px] font-semibold flex items-center gap-1 transition border ${
+                                  word.status === "validated"
+                                    ? "bg-emerald-800 text-white border-emerald-800"
+                                    : "bg-white border-[#E8E5DF] text-[#141416] hover:border-emerald-600 hover:text-emerald-800"
+                                }`}
+                                title={word.status === "validated" ? "Cliquer pour annuler la validation" : "Valider ce mot"}
+                              >
+                                <Check className="w-3 h-3" />
+                                <span>{word.status === "validated" ? "Validé" : "Valider"}</span>
+                              </button>
+
+                              {/* Reject button */}
+                              <button
+                                disabled={isUpdating}
+                                onClick={() => handleUpdateStatus(word, word.status === "rejected" ? "pending" : "rejected")}
+                                className={`px-2 py-1 rounded-md text-[11px] font-semibold flex items-center gap-1 transition border ${
+                                  word.status === "rejected"
+                                    ? "bg-rose-800 text-white border-rose-800"
+                                    : "bg-white border-[#E8E5DF] text-[#68645E] hover:border-rose-600 hover:text-rose-800"
+                                }`}
+                                title={word.status === "rejected" ? "Cliquer pour annuler le rejet" : "Rejeter ce mot"}
+                              >
+                                <X className="w-3 h-3" />
+                                <span>{word.status === "rejected" ? "Rejeté" : "Rejeter"}</span>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* Clean Pagination Footer */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#68645E] pt-1">
+            <span>
+              Affichage de {filteredTotal > 0 ? (page - 1) * pageSize + 1 : 0} à {Math.min(page * pageSize, filteredTotal)} sur {filteredTotal} mots
+            </span>
+
+            <div className="flex items-center gap-2">
+              <button
+                disabled={page <= 1 || isLoading}
+                onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+                className="px-2.5 py-1 rounded-md border border-[#E8E5DF] bg-white text-[#141416] hover:bg-[#FAF9F6] disabled:opacity-40 flex items-center gap-1 transition"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+                <span>Précédent</span>
+              </button>
+
+              <span className="font-semibold text-[#141416]">
+                Page {page} / {totalPages}
+              </span>
+
+              <button
+                disabled={page >= totalPages || isLoading}
+                onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+                className="px-2.5 py-1 rounded-md border border-[#E8E5DF] bg-white text-[#141416] hover:bg-[#FAF9F6] disabled:opacity-40 flex items-center gap-1 transition"
+              >
+                <span>Suivant</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* ─── Main Recording Studio Card (Corafric Authentic Design) ─── */}
-      <div className="bg-white border border-[#E8E5DF] rounded-3xl p-6 sm:p-12 shadow-sm flex flex-col gap-8 relative overflow-hidden">
-        {/* Subtle warm halo when recording */}
-        {isRecording && (
-          <div className="absolute inset-0 bg-[#B84A2A]/5 pointer-events-none animate-pulse" />
-        )}
-
-        {errorMsg && (
-          <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
-              <span>{errorMsg}</span>
-            </div>
-            <button onClick={() => setErrorMsg(null)} className="text-red-500 hover:text-red-700 font-bold ml-2">×</button>
-          </div>
-        )}
-
-        {isLoading ? (
-          <div className="py-24 flex flex-col items-center justify-center gap-4 text-[#68645E]">
-            <div className="w-10 h-10 border-3 border-[#B84A2A] border-t-transparent rounded-full animate-spin" />
-            <p className="font-semibold text-sm">Chargement du corpus haute cadence...</p>
-          </div>
-        ) : !currentSentence ? (
-          <div className="py-20 text-center flex flex-col items-center gap-4">
-            <CheckCircle2 className="w-14 h-14 text-[#B84A2A]" />
-            <h2 className="text-2xl font-bold font-display text-[#141416]">Toutes les phrases ont été traitées</h2>
-            <p className="text-[#68645E] text-sm max-w-md">
-              Félicitations à l'équipe. Toutes les phrases disponibles dans cette session ont été enregistrées ou qualifiées.
-            </p>
-          </div>
-        ) : (
-          <>
-            {/* Sentence Header, Domain & Quick Action Tools */}
-            <div className="flex items-center justify-between border-b border-[#E8E5DF]/70 pb-4">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#F9EBE6] text-[#B84A2A] uppercase tracking-wider font-display">
-                  Éwé (ee)
-                </span>
-                <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#FAF9F6] text-[#68645E] border border-[#E8E5DF]">
-                  Domaine : {currentSentence.domain || "Général"}
-                </span>
+      {/* ─── TAB 2: LIAISON DES PISTES STEMS (141 Fichiers Audios Studio) ─── */}
+      {activeTab === "stems" && (
+        <div className="flex flex-col gap-5">
+          <div className="border border-[#E8E5DF] rounded-lg bg-white p-4 sm:p-6 flex flex-col gap-4">
+            <div className="border-b border-[#E8E5DF] pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h2 className="text-sm font-bold font-display text-[#141416]">
+                  Association Rapide des Pistes Studio ({stems.length} fichiers restants)
+                </h2>
+                <p className="text-xs text-[#68645E] mt-0.5">
+                  Écoutez la prise du studio, vérifiez le mot correspondant et validez en un clic.
+                </p>
               </div>
-              <div className="flex items-center gap-2">
+
+              <div className="flex items-center gap-2 self-start sm:self-auto">
+                <span className="text-[11px] text-[#68645E] hidden md:inline">
+                  Raccourcis : <kbd className="px-1.5 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded font-mono text-[10px]">Espace</kbd> Écouter • <kbd className="px-1.5 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded font-mono text-[10px]">Entrée</kbd> Valider • <kbd className="px-1.5 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded font-mono text-[10px]">➔</kbd> Passer
+                </span>
                 <button
-                  onClick={() => setIsEditing(!isEditing)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition border ${
-                    isEditing 
-                      ? "bg-[#B84A2A] text-white border-[#B84A2A]" 
-                      : "bg-[#FAF9F6] text-[#68645E] hover:text-[#141416] border-[#E8E5DF] hover:bg-[#F0EEEA]"
-                  }`}
-                  title="Touche [E] pour éditer"
+                  onClick={fetchStems}
+                  className="px-2.5 py-1 rounded-md border border-[#E8E5DF] bg-[#FAF9F6] text-[#68645E] hover:text-[#141416] text-xs flex items-center gap-1.5 transition"
                 >
-                  <Edit3 className="w-3.5 h-3.5" />
-                  <span>{isEditing ? "Mode Édition" : "Corriger le texte [E]"}</span>
-                </button>
-                <button
-                  onClick={() => { if (isRecording) stopRecording(); setShowFlagModal(true); }}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 flex items-center gap-1.5 transition"
-                  title="Touche [F] pour signaler"
-                >
-                  <Flag className="w-3.5 h-3.5" />
-                  <span>Mettre de côté [F]</span>
+                  <RotateCw className="w-3 h-3" />
+                  <span>Rafraîchir</span>
                 </button>
               </div>
             </div>
 
-            {/* Main Sentence Prompter View in Corafric Typography */}
-            <div className="flex flex-col gap-6 my-2 text-center">
-              {isEditing ? (
-                <div className="flex flex-col gap-3 text-left">
-                  <label className="text-xs font-bold text-[#B84A2A]">Texte Éwé à prononcer :</label>
-                  <textarea
-                    value={editedText}
-                    onChange={(e) => setEditedText(e.target.value)}
-                    rows={3}
-                    className="w-full text-xl sm:text-2xl font-bold font-display p-4 rounded-2xl bg-[#FAF9F6] border-2 border-[#B84A2A] text-[#141416] focus:outline-none"
-                  />
-                  <label className="text-xs font-bold text-[#68645E]">Traduction française de référence :</label>
-                  <input
-                    type="text"
-                    value={editedTranslation}
-                    onChange={(e) => setEditedTranslation(e.target.value)}
-                    className="w-full text-base p-3 rounded-xl bg-[#FAF9F6] border border-[#E8E5DF] text-[#141416]"
-                  />
+            {isLoadingStems ? (
+              <div className="py-16 flex flex-col items-center justify-center gap-2 text-[#68645E]">
+                <Loader2 className="w-5 h-5 animate-spin text-[#B84A2A]" />
+                <span className="text-xs">Chargement et mise en mémoire tampon des fichiers studio...</span>
+              </div>
+            ) : stems.length === 0 ? (
+              <div className="py-16 text-center text-xs text-emerald-800">
+                🎉 Toutes les pistes audio du studio ont été associées et validées !
+              </div>
+            ) : !currentStem ? null : (
+              <div className="flex flex-col gap-5">
+                {/* Current Stem Player & Navigation */}
+                <div className="border border-[#E8E5DF] rounded-lg bg-[#FAF9F6] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-md bg-[#F9EBE6] text-[#B84A2A] flex items-center justify-center shrink-0">
+                      <Volume2 className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-mono font-bold text-[#141416] block">
+                        {currentStem.filename}
+                      </span>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[11px] text-[#68645E]">
+                          Piste {currentStemIndex + 1} sur {stems.length}
+                        </span>
+                        {playingAudioUrl === encodeURI(currentStem.url) && (
+                          <span className="flex items-center gap-1 text-[10px] text-[#B84A2A] font-semibold animate-pulse">
+                            <Radio className="w-3 h-3" />
+                            <span>En lecture</span>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleTogglePlay(currentStem.url)}
+                      className="px-4 py-2 rounded-md bg-[#B84A2A] hover:bg-[#A03E22] text-white text-xs font-bold flex items-center gap-2 transition"
+                    >
+                      {playingAudioUrl === encodeURI(currentStem.url) ? (
+                        <>
+                          <Pause className="w-3.5 h-3.5 fill-current" />
+                          <span>Pause [Espace]</span>
+                        </>
+                      ) : (
+                        <>
+                          <Play className="w-3.5 h-3.5 fill-current" />
+                          <span>Écouter [Espace]</span>
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      disabled={currentStemIndex >= stems.length - 1}
+                      onClick={() => setCurrentStemIndex((prev) => Math.min(stems.length - 1, prev + 1))}
+                      className="px-3 py-2 rounded-md border border-[#E8E5DF] bg-white text-[#68645E] hover:text-[#141416] text-xs font-semibold disabled:opacity-40 transition"
+                      title="Passer à la piste suivante [Flèche droite]"
+                    >
+                      Passer ➔
+                    </button>
+                  </div>
                 </div>
-              ) : (
-                <div className="flex flex-col items-center gap-4 py-4">
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold font-display text-[#141416] leading-snug tracking-tight max-w-3xl select-all">
-                    « {editedText || currentSentence.text} »
-                  </h1>
-                  {(editedTranslation || currentSentence.translationFr) && (
-                    <p className="text-base sm:text-lg text-[#68645E] italic max-w-2xl">
-                      Sens : {editedTranslation || currentSentence.translationFr}
-                    </p>
+
+                {/* Word Matcher Box */}
+                <div className="flex flex-col gap-3">
+                  <label className="text-xs font-semibold text-[#141416]">
+                    Mot ciblé pour cette piste studio :
+                  </label>
+
+                  {/* Pre-selected or chosen word */}
+                  {selectedWordForStem ? (
+                    <div className="border border-emerald-300 bg-emerald-50/40 rounded-lg p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-display font-bold text-base text-[#141416]">
+                            « {selectedWordForStem.wordEwe} »
+                          </span>
+                          <span className="text-xs text-[#68645E]">
+                            — {selectedWordForStem.wordFr}
+                          </span>
+                          {/* Provenance note if vowel */}
+                          {selectedWordForStem.hasAudio && (
+                            <span className="text-[10px] text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 font-semibold">
+                              Note : Ce mot a déjà un audio ({selectedWordForStem.audioUrl?.includes(".mp4") ? "Voyelle initiale" : "Audio existant"}). La liaison remplacera par cette nouvelle prise Studio HQ.
+                            </span>
+                          )}
+                        </div>
+                        {selectedWordForStem.definition && (
+                          <p className="text-[11px] text-[#68645E] mt-0.5">
+                            {selectedWordForStem.definition}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+                        <button
+                          onClick={() => setSelectedWordForStem(null)}
+                          className="text-xs text-[#68645E] hover:text-rose-700 underline px-2 py-1"
+                        >
+                          Changer de mot
+                        </button>
+                        <button
+                          disabled={isMappingStem}
+                          onClick={handleMapStem}
+                          className="px-4 py-1.5 rounded-md bg-emerald-800 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 transition"
+                        >
+                          {isMappingStem ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
+                          <span>Lier & Valider [Entrée]</span>
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-2">
+                      <div className="relative">
+                        <Search className="w-3.5 h-3.5 text-[#68645E] absolute left-3 top-1/2 -translate-y-1/2" />
+                        <input
+                          type="text"
+                          placeholder="Rechercher le mot prononcé dans cet audio..."
+                          value={stemSearchQuery}
+                          onChange={(e) => setStemSearchQuery(e.target.value)}
+                          className="w-full bg-[#FAF9F6] border border-[#E8E5DF] rounded-md pl-8 pr-3 py-2 text-xs text-[#141416] focus:outline-none focus:border-[#B84A2A]"
+                        />
+                      </div>
+
+                      {/* Suggestions list */}
+                      <div className="border border-[#E8E5DF] rounded-lg max-h-48 overflow-y-auto divide-y divide-[#E8E5DF] bg-white">
+                        {stemWordSuggestions.length === 0 ? (
+                          <div className="py-4 text-center text-xs text-[#68645E]">
+                            Tapez le mot éwé prononcé pour l'associer à la piste.
+                          </div>
+                        ) : (
+                          stemWordSuggestions.map((sug) => (
+                            <button
+                              key={sug.id}
+                              onClick={() => setSelectedWordForStem(sug)}
+                              className="w-full text-left p-2.5 hover:bg-[#FAF9F6] flex items-center justify-between text-xs transition"
+                            >
+                              <div>
+                                <span className="font-display font-bold text-[#141416]">
+                                  {sug.wordEwe}
+                                </span>
+                                <span className="text-[#68645E] ml-2">
+                                  — {sug.wordFr}
+                                </span>
+                              </div>
+                              <span className="text-[11px] font-semibold text-[#B84A2A]">
+                                Sélectionner
+                              </span>
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    </div>
                   )}
                 </div>
-              )}
-            </div>
-
-            {/* Audio Waveform Meter */}
-            {isRecording && (
-              <div className="flex items-center justify-center gap-3 bg-[#FAF9F6] p-3.5 rounded-2xl border border-[#E8E5DF] max-w-md mx-auto w-full">
-                <Volume2 className="w-5 h-5 text-[#B84A2A] animate-pulse" />
-                <div className="flex-1 bg-[#E8E5DF] h-3 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-[#C89211] to-[#B84A2A] transition-all duration-75"
-                    style={{ width: `${Math.max(8, audioVolume)}%` }}
-                  />
-                </div>
-                <span className="text-xs font-mono font-bold text-[#B84A2A] min-w-[50px] text-right">
-                  {formatTime(recordingDurationMs)}
-                </span>
               </div>
             )}
-
-            {/* ─── Control Bar & Action Buttons (Aligned with Corafric Theme) ─── */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-[#E8E5DF]/70">
-              {/* Left : Replay & Skip */}
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <button
-                  onClick={replayAudio}
-                  disabled={!audioBlob || isRecording}
-                  className="flex-1 sm:flex-none px-4 py-3 rounded-xl bg-[#FAF9F6] hover:bg-[#F0EEEA] border border-[#E8E5DF] text-[#141416] font-semibold text-xs disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center gap-2 transition"
-                  title="Touche [R]"
-                >
-                  <Play className="w-3.5 h-3.5 text-[#B84A2A]" />
-                  <span>Réécouter [R]</span>
-                </button>
-                <button
-                  onClick={skipSentence}
-                  disabled={isRecording}
-                  className="px-4 py-3 rounded-xl bg-[#FAF9F6] hover:bg-[#F0EEEA] border border-[#E8E5DF] text-[#68645E] hover:text-[#141416] text-xs font-medium disabled:opacity-30 flex items-center justify-center gap-1.5 transition"
-                  title="Touche [Échap] ou [Flèche droite]"
-                >
-                  <SkipForward className="w-3.5 h-3.5" />
-                  <span className="hidden md:inline">Passer</span>
-                </button>
-              </div>
-
-              {/* Center : Big Record Button (Terracotta Corafric Primary) */}
-              <button
-                onClick={toggleRecording}
-                className={`w-full sm:w-auto px-8 py-3.5 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 transition-all shadow-md active:scale-95 ${
-                  isRecording
-                    ? "bg-red-600 hover:bg-red-700 text-white animate-pulse"
-                    : audioBlob
-                    ? "bg-[#141416] hover:bg-[#252528] text-white"
-                    : "bg-[#B84A2A] hover:bg-[#A03E22] text-white"
-                }`}
-              >
-                {isRecording ? (
-                  <>
-                    <Square className="w-4 h-4 fill-current" />
-                    <span>Arrêter [Espace]</span>
-                  </>
-                ) : audioBlob ? (
-                  <>
-                    <RotateCcw className="w-4 h-4" />
-                    <span>Réenregistrer [Espace]</span>
-                  </>
-                ) : (
-                  <>
-                    <Mic className="w-4 h-4" />
-                    <span>Enregistrer [Espace]</span>
-                  </>
-                )}
-              </button>
-
-              {/* Right : Save & Next (Enter) */}
-              <button
-                onClick={submitAndNext}
-                disabled={!audioBlob || isRecording || isUploading}
-                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm disabled:opacity-30 disabled:pointer-events-none transition active:scale-95"
-                title="Touche [Entrée]"
-              >
-                <Send className="w-3.5 h-3.5" />
-                <span>Valider et Suivante [Entrée]</span>
-              </button>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* ─── Keyboard Shortcuts Reference Helper Footer ─── */}
-      <div className="bg-white border border-[#E8E5DF] rounded-2xl p-3.5 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-[#68645E] shadow-2xs">
-        <div className="flex items-center gap-1.5">
-          <kbd className="px-2 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md font-mono text-[11px] font-semibold text-[#141416]">Espace</kbd>
-          <span>Enregistrer / Stop</span>
+          </div>
         </div>
-        <div className="flex items-center gap-1.5">
-          <kbd className="px-2 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md font-mono text-[11px] font-semibold text-[#141416]">Entrée</kbd>
-          <span>Valider et Suivante</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <kbd className="px-2 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md font-mono text-[11px] font-semibold text-[#141416]">R</kbd>
-          <span>Réécouter</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <kbd className="px-2 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md font-mono text-[11px] font-semibold text-[#141416]">F</kbd>
-          <span>Mettre de côté</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <kbd className="px-2 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md font-mono text-[11px] font-semibold text-[#141416]">E</kbd>
-          <span>Corriger le texte</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <kbd className="px-2 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md font-mono text-[11px] font-semibold text-[#141416]">Échap / ➔</kbd>
-          <span>Passer</span>
-        </div>
-      </div>
+      )}
 
-      {/* ─── Flag & Set Aside Modal (Refined Corafric Theme) ─── */}
-      {showFlagModal && currentSentence && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white border border-[#E8E5DF] rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-xl flex flex-col gap-5">
-            <div className="flex items-center justify-between border-b border-[#E8E5DF] pb-3">
-              <div className="flex items-center gap-2 text-[#B84A2A] font-bold text-base font-display">
-                <Flag className="w-4 h-4" />
-                <span>Mettre la phrase de côté</span>
-              </div>
-              <button onClick={() => setShowFlagModal(false)} className="text-[#68645E] hover:text-[#141416]">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="bg-[#FAF9F6] p-3.5 rounded-xl border border-[#E8E5DF] text-sm">
-              <p className="font-bold font-display text-[#141416] line-clamp-2">« {currentSentence.text} »</p>
-              {currentSentence.translationFr && (
-                <p className="text-xs text-[#68645E] italic mt-1">{currentSentence.translationFr}</p>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-xs font-bold text-[#68645E] uppercase tracking-wider font-display">
-                Motif du signalement (Touche 1, 2, 3 ou 4) :
-              </label>
-              <div className="grid grid-cols-1 gap-2 text-sm">
-                <label className={`p-3 rounded-xl border flex items-center gap-3 cursor-pointer transition ${
-                  flagReason === "bad_translation" 
-                    ? "border-[#B84A2A] bg-[#F9EBE6] font-semibold text-[#B84A2A]" 
-                    : "border-[#E8E5DF] bg-[#FAF9F6] text-[#141416]"
-                }`}>
-                  <input
-                    type="radio"
-                    name="flagReason"
-                    value="bad_translation"
-                    checked={flagReason === "bad_translation"}
-                    onChange={() => setFlagReason("bad_translation")}
-                    className="accent-[#B84A2A]"
-                  />
-                  <span>[1] Traduction française incorrecte ou fausse</span>
-                </label>
-
-                <label className={`p-3 rounded-xl border flex items-center gap-3 cursor-pointer transition ${
-                  flagReason === "unintelligible_text" 
-                    ? "border-[#B84A2A] bg-[#F9EBE6] font-semibold text-[#B84A2A]" 
-                    : "border-[#E8E5DF] bg-[#FAF9F6] text-[#141416]"
-                }`}>
-                  <input
-                    type="radio"
-                    name="flagReason"
-                    value="unintelligible_text"
-                    checked={flagReason === "unintelligible_text"}
-                    onChange={() => setFlagReason("unintelligible_text")}
-                    className="accent-[#B84A2A]"
-                  />
-                  <span>[2] Phrase éwé incompréhensible ou insensée</span>
-                </label>
-
-                <label className={`p-3 rounded-xl border flex items-center gap-3 cursor-pointer transition ${
-                  flagReason === "spelling_error" 
-                    ? "border-[#B84A2A] bg-[#F9EBE6] font-semibold text-[#B84A2A]" 
-                    : "border-[#E8E5DF] bg-[#FAF9F6] text-[#141416]"
-                }`}>
-                  <input
-                    type="radio"
-                    name="flagReason"
-                    value="spelling_error"
-                    checked={flagReason === "spelling_error"}
-                    onChange={() => setFlagReason("spelling_error")}
-                    className="accent-[#B84A2A]"
-                  />
-                  <span>[3] Faute d'orthographe ou de ponctuation</span>
-                </label>
-
-                <label className={`p-3 rounded-xl border flex items-center gap-3 cursor-pointer transition ${
-                  flagReason === "other" 
-                    ? "border-[#B84A2A] bg-[#F9EBE6] font-semibold text-[#B84A2A]" 
-                    : "border-[#E8E5DF] bg-[#FAF9F6] text-[#141416]"
-                }`}>
-                  <input
-                    type="radio"
-                    name="flagReason"
-                    value="other"
-                    checked={flagReason === "other"}
-                    onChange={() => setFlagReason("other")}
-                    className="accent-[#B84A2A]"
-                  />
-                  <span>[4] Autre raison</span>
-                </label>
-              </div>
-            </div>
-
+      {/* ─── FLOATING DISCRETE ACTIVE AUDIO PLAYER BAR (Zero elevated cards) ─── */}
+      {playingAudioUrl && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#E8E5DF] py-2.5 px-4 sm:px-8 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                if (currentAudioRef.current) currentAudioRef.current.pause();
+                setPlayingAudioUrl(null);
+              }}
+              className="w-8 h-8 rounded-md bg-[#FAF9F6] border border-[#E8E5DF] hover:border-[#B84A2A] text-[#141416] flex items-center justify-center transition"
+              title="Arrêter"
+            >
+              <Pause className="w-3.5 h-3.5 fill-current text-[#B84A2A]" />
+            </button>
             <div>
-              <label className="block text-xs font-semibold text-[#68645E] mb-1">
-                Correction suggérée (Optionnel) :
-              </label>
-              <input
-                type="text"
-                value={flagFix}
-                onChange={(e) => setFlagFix(e.target.value)}
-                placeholder="Ex: Nouvelle traduction ou correction du mot..."
-                className="w-full bg-[#FAF9F6] border border-[#E8E5DF] rounded-xl px-3 py-2 text-sm text-[#141416] focus:outline-none focus:border-[#B84A2A]"
-              />
+              <span className="text-xs font-mono font-bold text-[#141416] block max-w-xs truncate">
+                Lecture en cours
+              </span>
+              <span className="text-[10px] text-[#68645E]">
+                {playbackProgress.currentTime.toFixed(1)}s / {playbackProgress.duration > 0 ? playbackProgress.duration.toFixed(1) + "s" : "--"}
+              </span>
+            </div>
+          </div>
+
+          {/* Scrubber Progress Line */}
+          <div className="hidden sm:block flex-1 max-w-md bg-[#FAF9F6] border border-[#E8E5DF] h-2 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-[#B84A2A] transition-all duration-100"
+              style={{
+                width: playbackProgress.duration > 0 
+                  ? `${Math.min(100, (playbackProgress.currentTime / playbackProgress.duration) * 100)}%` 
+                  : "0%"
+              }}
+            />
+          </div>
+
+          <button
+            onClick={() => {
+              if (currentAudioRef.current) currentAudioRef.current.pause();
+              setPlayingAudioUrl(null);
+            }}
+            className="text-xs font-semibold text-[#68645E] hover:text-[#141416]"
+          >
+            Fermer
+          </button>
+        </div>
+      )}
+
+      {/* ─── DIRECT IN-LINE RECORDING MODAL (Flat, No Elevated Cards) ─── */}
+      {recordingWord && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
+          <div className="bg-white border border-[#E8E5DF] rounded-lg p-5 sm:p-6 max-w-md w-full flex flex-col gap-4">
+            <div className="flex items-center justify-between border-b border-[#E8E5DF] pb-3">
+              <div>
+                <span className="text-[10px] font-mono font-semibold text-[#68645E]">
+                  PISTE {recordingWord.trackNumber.toString().padStart(3, "0")}
+                </span>
+                <h3 className="font-bold text-base font-display text-[#141416]">
+                  Enregistrement Vocal
+                </h3>
+              </div>
+              <button onClick={closeRecordingModal} className="text-[#68645E] hover:text-[#141416]">
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <button
-                onClick={() => setShowFlagModal(false)}
-                className="px-4 py-2 rounded-xl bg-[#FAF9F6] text-[#68645E] hover:text-[#141416] font-semibold text-xs border border-[#E8E5DF]"
-              >
-                Annuler [Échap]
-              </button>
-              <button
-                onClick={submitFlag}
-                disabled={isFlagging}
-                className="px-5 py-2 rounded-xl bg-[#B84A2A] hover:bg-[#A03E22] text-white font-bold text-xs flex items-center gap-2 shadow-xs"
-              >
-                {isFlagging ? "Mise de côté..." : "Confirmer et passer [Entrée]"}
-              </button>
+            {/* Target Word */}
+            <div className="text-center py-2">
+              <span className="text-2xl sm:text-3xl font-bold font-display text-[#141416] block">
+                « {recordingWord.wordEwe} »
+              </span>
+              <span className="text-xs text-[#68645E] italic mt-1 block">
+                {recordingWord.wordFr}
+              </span>
+            </div>
+
+            {/* Recording Controls */}
+            <div className="flex flex-col items-center gap-3 pt-2">
+              {isRecording ? (
+                <button
+                  onClick={stopRecordingForWord}
+                  className="px-6 py-2.5 rounded-md bg-rose-700 hover:bg-rose-800 text-white font-bold text-xs flex items-center gap-2 animate-pulse transition"
+                >
+                  <Square className="w-3.5 h-3.5 fill-current" />
+                  <span>Arrêter l'enregistrement</span>
+                </button>
+              ) : recordedAudioUrl ? (
+                <div className="flex flex-col items-center gap-3 w-full">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        const a = new Audio(recordedAudioUrl);
+                        a.play();
+                      }}
+                      className="px-3 py-1.5 rounded-md border border-[#E8E5DF] bg-[#FAF9F6] text-[#141416] hover:bg-[#F0EEEA] text-xs font-semibold flex items-center gap-1.5"
+                    >
+                      <Play className="w-3 h-3 text-[#B84A2A] fill-current" />
+                      <span>Réécouter</span>
+                    </button>
+                    <button
+                      onClick={() => startRecordingForWord(recordingWord)}
+                      className="px-3 py-1.5 rounded-md border border-[#E8E5DF] bg-[#FAF9F6] text-[#68645E] hover:text-[#141416] text-xs font-medium flex items-center gap-1.5"
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                      <span>Recommencer</span>
+                    </button>
+                  </div>
+
+                  <button
+                    disabled={isSavingAudio}
+                    onClick={saveRecordedAudio}
+                    className="w-full py-2 rounded-md bg-emerald-800 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition"
+                  >
+                    {isSavingAudio ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                    <span>Valider et Enregistrer l'audio</span>
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => startRecordingForWord(recordingWord)}
+                  className="px-6 py-2.5 rounded-md bg-[#B84A2A] hover:bg-[#A03E22] text-white font-bold text-xs flex items-center gap-2 transition"
+                >
+                  <Mic className="w-3.5 h-3.5" />
+                  <span>Commencer l'enregistrement</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

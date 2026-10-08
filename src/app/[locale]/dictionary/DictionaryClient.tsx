@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Search, Volume2, Loader2, ChevronLeft, ChevronRight, Edit3 } from "lucide-react";
+import { Search, Volume2, Loader2, ChevronLeft, ChevronRight, Edit3, Check } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { SuggestTranslationModal } from "@/components/dictionary/SuggestTranslationModal";
 
@@ -18,6 +18,7 @@ interface DictionaryWord {
   official_voice_username?: string | null;
   confidence_score: number;
   sources: string[];
+  is_validated?: boolean;
 }
 
 const EWE_ALPHABET = [
@@ -234,6 +235,12 @@ export default function DictionaryClient() {
                 {word.official_voice_username && word.audio_url && (
                   <span className="sm:hidden inline-flex items-center text-[10px] font-display uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 border border-amber-500/20 font-medium w-fit mt-1">
                     {t("voiceBy", { username: word.official_voice_username })}
+                  </span>
+                )}
+                {word.is_validated && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 w-fit mt-1">
+                    <Check className="w-2.5 h-2.5" />
+                    <span>Validé Studio</span>
                   </span>
                 )}
                 {word.part_of_speech && (

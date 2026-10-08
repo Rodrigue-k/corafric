@@ -43,7 +43,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https: https://img.clerk.com https://*.google-analytics.com https://www.googletagmanager.com https://www.google.com https://*.google.com",
               "font-src 'self' data:",
-              "connect-src 'self' https://*.clerk.accounts.dev https://clerk.corafric.com https://challenges.cloudflare.com https://*.google-analytics.com https://www.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://www.google.com https://*.google.com https://*.r2.cloudflarestorage.com https://va.vercel-scripts.com https://unpkg.com https://cdn.jsdelivr.net",
+              "connect-src 'self' https://*.clerk.accounts.dev https://clerk.corafric.com https://clerk-telemetry.com https://challenges.cloudflare.com https://*.google-analytics.com https://www.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://www.google.com https://*.google.com https://*.r2.cloudflarestorage.com https://va.vercel-scripts.com https://unpkg.com https://cdn.jsdelivr.net",
               "media-src 'self' blob: data: https: https://*.r2.cloudflarestorage.com",
               "worker-src 'self' blob: https://challenges.cloudflare.com",
               "frame-src 'self' https://*.clerk.accounts.dev https://clerk.corafric.com https://challenges.cloudflare.com",

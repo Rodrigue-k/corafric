@@ -20,8 +20,12 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get("limit") || "30", 10);
     const offset = (page - 1) * limit;
 
-    // Get total count of words in dictionary
-    const countResult = (await sql`SELECT COUNT(*)::int as count FROM dictionary_words`) as { count: number }[];
+    // Get total count of active words in dictionary (excluding rejected)
+    const countResult = (await sql`
+      SELECT COUNT(*)::int as count 
+      FROM dictionary_words 
+      WHERE (is_rejected IS NOT TRUE OR is_rejected IS NULL)
+    `) as { count: number }[];
     const totalCount = countResult[0]?.count || 0;
 
     // Search Mode
@@ -34,9 +38,12 @@ export async function GET(request: Request) {
         FROM dictionary_words w
         LEFT JOIN recordings r ON r.word_id = w.id AND r.is_best_for_word = TRUE AND r.status = 'approved'
         LEFT JOIN users u ON u.id = r.user_id
-        WHERE LOWER(w.word_ewe) LIKE ${searchTerm}
-           OR LOWER(w.word_fr) LIKE ${searchTerm}
-           OR LOWER(w.word_en) LIKE ${searchTerm}
+        WHERE (w.is_rejected IS NOT TRUE OR w.is_rejected IS NULL)
+          AND (
+            LOWER(w.word_ewe) LIKE ${searchTerm}
+            OR LOWER(w.word_fr) LIKE ${searchTerm}
+            OR LOWER(w.word_en) LIKE ${searchTerm}
+          )
         ORDER BY 
           CASE 
             WHEN LOWER(w.word_ewe) = ${query.toLowerCase()} THEN 1
@@ -44,6 +51,8 @@ export async function GET(request: Request) {
             WHEN LOWER(w.word_en) = ${query.toLowerCase()} THEN 3
             ELSE 4
           END,
+          w.is_validated IS TRUE DESC,
+          w.audio_url IS NOT NULL DESC,
           w.word_fr IS NOT NULL DESC,
           LOWER(w.word_ewe) ASC
         LIMIT ${limit} OFFSET ${offset}
@@ -61,15 +70,21 @@ export async function GET(request: Request) {
         FROM dictionary_words w
         LEFT JOIN recordings r ON r.word_id = w.id AND r.is_best_for_word = TRUE AND r.status = 'approved'
         LEFT JOIN users u ON u.id = r.user_id
-        WHERE LOWER(w.word_ewe) LIKE ${letterPattern}
+        WHERE (w.is_rejected IS NOT TRUE OR w.is_rejected IS NULL)
+          AND LOWER(w.word_ewe) LIKE ${letterPattern}
         ORDER BY 
+          w.is_validated IS TRUE DESC,
+          w.audio_url IS NOT NULL DESC,
           w.word_fr IS NOT NULL DESC,
           LOWER(w.word_ewe) ASC
         LIMIT ${limit} OFFSET ${offset}
       `;
 
       const letterCountResult = (await sql`
-        SELECT COUNT(*)::int as count FROM dictionary_words WHERE LOWER(word_ewe) LIKE ${letterPattern}
+        SELECT COUNT(*)::int as count 
+        FROM dictionary_words 
+        WHERE (is_rejected IS NOT TRUE OR is_rejected IS NULL)
+          AND LOWER(word_ewe) LIKE ${letterPattern}
       `) as { count: number }[];
 
       return NextResponse.json({ 
@@ -81,7 +96,7 @@ export async function GET(request: Request) {
       });
     }
 
-    // Default Alphabetical Mode: Prioritize words with translations first, then alphabetical A-Z
+    // Default Alphabetical Mode: Prioritize validated words, then words with audio, then translations first, then alphabetical A-Z
     const words = await sql`
       SELECT 
         w.*,
@@ -89,7 +104,10 @@ export async function GET(request: Request) {
       FROM dictionary_words w
       LEFT JOIN recordings r ON r.word_id = w.id AND r.is_best_for_word = TRUE AND r.status = 'approved'
       LEFT JOIN users u ON u.id = r.user_id
+      WHERE (w.is_rejected IS NOT TRUE OR w.is_rejected IS NULL)
       ORDER BY 
+        w.is_validated IS TRUE DESC,
+        w.audio_url IS NOT NULL DESC,
         w.word_fr IS NOT NULL DESC,
         LOWER(w.word_ewe) ASC
       LIMIT ${limit} OFFSET ${offset}

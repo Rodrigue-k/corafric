@@ -20,7 +20,8 @@ import {
   Play,
   Layers,
   Sparkles,
-  Mic
+  Mic,
+  Music
 } from "lucide-react";
 
 interface WordTrack {
@@ -329,6 +330,15 @@ export function StudioGrilleClient() {
           </div>
 
           <div className="flex items-center gap-2">
+            <Link
+              href="/studio/matcher"
+              className="px-3 py-2 rounded-xl bg-[#FAF9F6] hover:bg-[#F0EEEA] border border-[#E8E5DF] text-[#141416] text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition"
+              title="Associer manuellement les fichiers audios aux mots"
+            >
+              <Music className="w-3.5 h-3.5 text-[#B84A2A]" />
+              <span className="hidden sm:inline">Lier Audios</span>
+            </Link>
+
             <Link
               href="/studio"
               className="px-3 py-2 rounded-xl bg-[#FAF9F6] hover:bg-[#F0EEEA] border border-[#E8E5DF] text-[#141416] text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition"

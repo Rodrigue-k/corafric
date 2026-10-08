@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default function StudioGrillePage() {
+export default function StudioMatcherPage() {
   redirect("/studio");
 }
