@@ -19,7 +19,6 @@
     "@clerk/nextjs": "^7.5.7",
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
-    "@neondatabase/serverless": "^1.1.0",
     "@next/third-parties": "^16.3.4",
     "@vercel/analytics": "^2.0.1",
     "@vitalets/google-translate-api": "^9.2.1",
