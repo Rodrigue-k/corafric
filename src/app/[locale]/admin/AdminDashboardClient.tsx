@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import {
   ShieldAlert,
-  Search,
   RefreshCw,
   CheckCircle2,
   AlertCircle,
@@ -13,9 +12,10 @@ import {
   Shield,
   Headphones,
   User,
-  SearchX
+  SearchX,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { SearchInput } from "@/components/ui/SearchInput";
 
 interface TeamUser {
   id: string;
@@ -182,12 +182,12 @@ export function AdminDashboardClient() {
   // Loading skeleton
   if (!isLoaded || (isLoading && teamUsers.length === 0 && !fetchError)) {
     return (
-      <div className="space-y-4 max-w-5xl mx-auto py-4 animate-pulse">
-        <div className="h-8 w-48 bg-border/60 rounded-xl" />
-        <div className="h-10 bg-white border border-border rounded-xl" />
-        <div className="bg-white border border-border rounded-xl p-4 space-y-3">
+      <div className="flex flex-col gap-4 w-full max-w-7xl mx-auto px-2 sm:px-4 py-4 animate-pulse">
+        <div className="h-16 bg-white border border-[#E8E5DF] rounded-xl" />
+        <div className="h-12 bg-white border border-[#E8E5DF] rounded-xl" />
+        <div className="bg-white border border-[#E8E5DF] rounded-xl p-4 space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-12 bg-border/30 rounded-lg" />
+            <div key={i} className="h-11 bg-[#FAF9F6] rounded-lg" />
           ))}
         </div>
       </div>
@@ -198,17 +198,17 @@ export function AdminDashboardClient() {
   if (isSuperAdmin === false) {
     return (
       <div className="min-h-[50vh] flex flex-col items-center justify-center max-w-sm mx-auto text-center px-4">
-        <div className="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center mb-3">
-          <ShieldAlert className="w-6 h-6" />
+        <div className="w-11 h-11 rounded-xl bg-red-50 text-red-600 flex items-center justify-center mb-3 border border-red-200">
+          <ShieldAlert className="w-5 h-5" />
         </div>
-        <h1 className="text-lg font-bold font-display text-foreground mb-1">
+        <h1 className="text-base font-bold font-display text-[#141416] mb-1">
           Accès Restreint
         </h1>
-        <p className="text-text-muted text-xs mb-4">
-          Réservé aux administrateurs de la plateforme.
+        <p className="text-[#68645E] text-xs mb-4">
+          Réservé aux administrateurs de la plateforme Corafric.
         </p>
         <Link href="/">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" className="rounded-lg text-xs">
             Accueil
           </Button>
         </Link>
@@ -221,10 +221,10 @@ export function AdminDashboardClient() {
     return (
       <div className="min-h-[40vh] flex flex-col items-center justify-center max-w-sm mx-auto text-center px-4">
         <AlertCircle className="w-8 h-8 text-amber-600 mb-2" />
-        <p className="text-xs text-text-muted mb-4">{fetchError}</p>
+        <p className="text-xs text-[#68645E] mb-4">{fetchError}</p>
         <button
           onClick={fetchAdminData}
-          className="px-3 py-1.5 text-xs font-semibold text-white bg-primary rounded-xl cursor-pointer"
+          className="px-3 py-1.5 text-xs font-semibold text-white bg-[#B84A2A] hover:bg-[#A03E22] rounded-lg cursor-pointer transition"
         >
           Réessayer
         </button>
@@ -233,36 +233,46 @@ export function AdminDashboardClient() {
   }
 
   return (
-    <div className="space-y-4 max-w-5xl mx-auto py-2">
-      {/* En-tête épuré */}
-      <div className="flex items-center justify-between pb-3 border-b border-border">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold font-display text-foreground">
-            Gestion des Rôles
-          </h1>
-          <p className="text-xs text-text-muted">
-            Affectation des permissions et accès au studio.
-          </p>
+    <div className="flex flex-col gap-4 w-full max-w-7xl mx-auto px-2 sm:px-4 pb-12">
+      {/* ─── Top Admin Bar (Matching Studio Identity) ─── */}
+      <div className="bg-white border border-[#E8E5DF] rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#F9EBE6] text-[#B84A2A] flex items-center justify-center font-bold shrink-0 border border-[#F2D7CE]">
+            <Shield className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="font-bold text-base sm:text-lg text-[#141416] tracking-tight font-display">
+                Gestion des Rôles & Accès Studio
+              </h1>
+              <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-[#F9EBE6] text-[#B84A2A] border border-[#F2D7CE]">
+                {teamUsers.length} Membres
+              </span>
+            </div>
+            <p className="text-xs text-[#68645E] mt-0.5">
+              Affectation des rôles et contrôle des permissions pour la plateforme et le studio.
+            </p>
+          </div>
         </div>
 
         <button
           onClick={() => fetchAdminData()}
           disabled={isLoading}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-text-muted hover:text-foreground bg-white border border-border rounded-xl transition cursor-pointer disabled:opacity-50"
-          title="Actualiser la liste"
+          className="px-3 py-2 rounded-lg bg-[#FAF9F6] hover:bg-[#F0EEEA] border border-[#E8E5DF] text-[#141416] text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer disabled:opacity-50"
+          title="Actualiser la liste des membres"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
+          <RefreshCw className={`w-3.5 h-3.5 text-[#B84A2A] ${isLoading ? "animate-spin" : ""}`} />
           <span>Actualiser</span>
         </button>
       </div>
 
-      {/* Notification de statut */}
+      {/* ─── Status Notification Banner ─── */}
       {statusMessage && (
         <div
-          className={`p-3 rounded-xl text-xs flex items-center justify-between ${
+          className={`p-3 rounded-lg text-xs flex items-center justify-between border ${
             statusMessage.type === "success"
-              ? "bg-emerald-50 text-emerald-900 border border-emerald-200"
-              : "bg-red-50 text-red-900 border border-red-200"
+              ? "bg-emerald-50 text-emerald-900 border-emerald-200"
+              : "bg-red-50 text-red-900 border-red-200"
           }`}
         >
           <div className="flex items-center gap-2">
@@ -276,138 +286,142 @@ export function AdminDashboardClient() {
           <button
             onClick={() => setStatusMessage(null)}
             className="text-xs opacity-60 hover:opacity-100 p-1 cursor-pointer"
+            aria-label="Fermer la notification"
           >
             <X className="w-3.5 h-3.5" />
           </button>
         </div>
       )}
 
-      {/* Barre de filtrage & recherche unifiée */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 bg-white p-2.5 rounded-xl border border-border">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-muted" />
-          <input
-            type="text"
+      {/* ─── Modular Controls Bar (Search + Segmented Tabs) ─── */}
+      <div className="bg-white border border-[#E8E5DF] rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        {/* Reusable Studio Search Bar */}
+        <div className="w-full sm:w-80">
+          <SearchInput
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Filtrer par nom ou email..."
-            className="w-full pl-8 pr-7 py-1.5 text-xs bg-[#FAF9F6] border border-border rounded-lg text-foreground focus:outline-none focus:border-primary transition"
+            onChange={setSearchQuery}
+            placeholder="Rechercher nom, username, email..."
           />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-foreground cursor-pointer"
-            >
-              <X className="w-3 h-3" />
-            </button>
-          )}
         </div>
 
-        <div className="flex items-center gap-1 text-xs overflow-x-auto">
-          {[
-            { id: "all", label: "Tous" },
-            { id: "operator", label: "Opérateurs" },
-            { id: "admin", label: "Admins" },
-            { id: "contributor", label: "Contributeurs" },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setRoleFilter(tab.id)}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                roleFilter === tab.id
-                  ? "bg-foreground text-background"
-                  : "bg-transparent text-text-muted hover:text-foreground"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        {/* Filter Pills Matching Studio Segmented Tabs */}
+        <div className="flex items-center gap-1.5 overflow-x-auto">
+          <div className="flex bg-[#FAF9F6] p-1 rounded-lg border border-[#E8E5DF] text-xs w-full sm:w-auto">
+            {[
+              { id: "all", label: `Tous (${teamUsers.length})` },
+              { id: "operator", label: "Opérateurs" },
+              { id: "admin", label: "Admins" },
+              { id: "contributor", label: "Contributeurs" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setRoleFilter(tab.id)}
+                className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-md font-semibold transition text-center whitespace-nowrap cursor-pointer ${
+                  roleFilter === tab.id
+                    ? "bg-white text-[#B84A2A] font-bold shadow-2xs border border-[#E8E5DF]/70"
+                    : "text-[#68645E] hover:text-[#141416]"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Tableau épuré des utilisateurs */}
-      <div className="bg-white border border-border rounded-xl overflow-hidden shadow-2xs">
+      {/* ─── Main Members Table (Studio Table Identity & Mobile Ergonomics) ─── */}
+      <div className="bg-white border border-[#E8E5DF] rounded-xl overflow-hidden shadow-2xs">
         {filteredUsers.length === 0 ? (
-          <div className="py-12 px-4 text-center max-w-sm mx-auto flex flex-col items-center">
-            <SearchX className="w-6 h-6 text-text-muted mb-2" />
-            <p className="text-xs font-semibold text-foreground">Aucun membre trouvé</p>
+          <div className="py-14 px-4 text-center max-w-sm mx-auto flex flex-col items-center">
+            <SearchX className="w-6 h-6 text-[#68645E] mb-2" />
+            <p className="text-xs font-semibold text-[#141416]">Aucun membre trouvé</p>
             {(searchQuery || roleFilter !== "all") && (
               <button
                 onClick={() => {
                   setSearchQuery("");
                   setRoleFilter("all");
                 }}
-                className="mt-3 px-3 py-1.5 text-xs font-semibold text-text-muted hover:text-foreground border border-border rounded-lg"
+                className="mt-3 px-3 py-1.5 text-xs font-semibold text-[#68645E] hover:text-[#141416] border border-[#E8E5DF] rounded-lg bg-[#FAF9F6] hover:bg-[#F0EEEA] transition"
               >
-                Réinitialiser
+                Réinitialiser les filtres
               </button>
             )}
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+            <table className="w-full text-left text-xs border-collapse min-w-full">
               <thead>
-                <tr className="bg-[#FAF9F6] border-b border-border text-text-muted uppercase tracking-wider text-[10px]">
-                  <th className="py-2.5 px-4 font-semibold">Membre</th>
-                  <th className="py-2.5 px-4 font-semibold">Email</th>
-                  <th className="py-2.5 px-4 font-semibold">Rôle</th>
-                  <th className="py-2.5 px-4 font-semibold text-right">Modifier le Rôle</th>
+                <tr className="bg-[#FAF9F6] border-b border-[#E8E5DF] text-[#68645E] uppercase tracking-wider font-semibold text-[10px]">
+                  <th className="py-3 px-4">Membre</th>
+                  <th className="py-3 px-4 hidden sm:table-cell">Email</th>
+                  <th className="py-3 px-4">Rôle</th>
+                  <th className="py-3 px-4 text-right">Modifier le Rôle</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border/60">
+              <tbody className="divide-y divide-[#E8E5DF]/60">
                 {filteredUsers.map((u) => {
-                  const isSuperAdmin =
+                  const isUserSuperAdmin =
                     u.role === "super_admin" ||
                     u.email === "koudakporodrigue03@gmail.com" ||
                     u.email === "gabirusamaa@gmail.com";
-                  const role = isSuperAdmin ? "super_admin" : (u.role || "contributor");
+                  const role = isUserSuperAdmin ? "super_admin" : (u.role || "contributor");
                   const fullName = [u.firstName, u.lastName].filter(Boolean).join(" ");
                   const displayName = fullName || u.username || "Utilisateur";
                   const isRowUpdating = updatingUserId === u.id;
 
                   return (
-                    <tr key={u.id} className="hover:bg-[#FAF9F6]/50 transition-colors">
-                      {/* Nom */}
-                      <td className="py-3 px-4 font-medium text-foreground">
+                    <tr
+                      key={u.id}
+                      className="hover:bg-[#FAF9F6]/60 transition-colors"
+                    >
+                      {/* Membre + Email contextuel sur mobile */}
+                      <td className="py-3.5 px-4 font-medium text-[#141416]">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">
+                          <div className="w-8 h-8 rounded-lg bg-[#F9EBE6] border border-[#F2D7CE] flex items-center justify-center text-[#B84A2A] font-bold text-xs shrink-0">
                             {displayName.charAt(0).toUpperCase()}
                           </div>
-                          <div>
-                            <p className="font-bold text-foreground text-xs leading-tight">
+                          <div className="min-w-0">
+                            <p className="font-bold text-[#141416] text-xs leading-tight truncate">
                               {displayName}
                             </p>
                             {fullName && u.username && u.username !== fullName && (
-                              <p className="text-[10px] text-text-muted font-mono leading-tight">
+                              <p className="text-[10px] text-[#68645E] font-mono leading-tight truncate">
                                 @{u.username}
+                              </p>
+                            )}
+                            {/* Sur mobile : affichage inline de l'email sous le nom pour fluidifier la vue sans scroll obligatoire */}
+                            {u.email && (
+                              <p className="sm:hidden text-[10px] text-[#68645E] font-mono truncate max-w-[140px] mt-0.5">
+                                {u.email}
                               </p>
                             )}
                           </div>
                         </div>
                       </td>
 
-                      {/* Email */}
-                      <td className="py-3 px-4 text-text-muted font-mono text-[11px]">
-                        {u.email || <span className="text-text-muted/50 italic">Non renseigné</span>}
+                      {/* Email (Desktop) */}
+                      <td className="py-3.5 px-4 text-[#68645E] font-mono text-xs hidden sm:table-cell">
+                        {u.email || <span className="text-[#68645E]/50 italic">Non renseigné</span>}
                       </td>
 
-                      {/* Rôle actuel */}
-                      <td className="py-3 px-4">
+                      {/* Rôle actuel (Identité Corafric) */}
+                      <td className="py-3.5 px-4">
                         <span
-                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${
                             role === "super_admin"
-                              ? "bg-purple-100 text-purple-800"
-                              : role === "admin"
-                              ? "bg-red-100 text-red-800"
+                              ? "bg-[#F9EBE6] text-[#B84A2A] border border-[#F2D7CE]"
                               : role === "operator"
-                              ? "bg-amber-100 text-amber-800"
-                              : "bg-slate-100 text-slate-700"
+                              ? "bg-amber-50 text-amber-800 border border-amber-200"
+                              : role === "admin"
+                              ? "bg-[#F9EBE6] text-[#B84A2A] border border-[#F2D7CE]"
+                              : "bg-[#FAF9F6] text-[#68645E] border border-[#E8E5DF]"
                           }`}
                         >
-                          {role === "super_admin" && <Shield className="w-2.5 h-2.5 text-purple-600" />}
-                          {role === "operator" && <Headphones className="w-2.5 h-2.5 text-amber-600" />}
-                          {role === "admin" && <Shield className="w-2.5 h-2.5 text-red-600" />}
-                          {role === "contributor" && <User className="w-2.5 h-2.5 text-slate-500" />}
+                          {role === "super_admin" && <Shield className="w-3 h-3 text-[#B84A2A]" />}
+                          {role === "operator" && <Headphones className="w-3 h-3 text-amber-600" />}
+                          {role === "admin" && <Shield className="w-3 h-3 text-[#B84A2A]" />}
+                          {role === "contributor" && <User className="w-3 h-3 text-[#68645E]" />}
                           {role === "super_admin"
                             ? "Super Admin"
                             : role === "operator"
@@ -418,16 +432,16 @@ export function AdminDashboardClient() {
                         </span>
                       </td>
 
-                      {/* Action */}
-                      <td className="py-3 px-4 text-right">
-                        {role === "super_admin" ? (
-                          <span className="text-[10px] text-text-muted font-medium italic">
+                      {/* Action sélecteur */}
+                      <td className="py-3.5 px-4 text-right">
+                        {isUserSuperAdmin ? (
+                          <span className="text-[11px] text-[#68645E] font-medium italic">
                             Verrouillé
                           </span>
                         ) : (
                           <div className="inline-flex items-center gap-1.5">
                             {isRowUpdating && (
-                              <RefreshCw className="w-3 h-3 animate-spin text-primary" />
+                              <RefreshCw className="w-3 h-3 animate-spin text-[#B84A2A]" />
                             )}
                             <select
                               value={role}
@@ -438,7 +452,7 @@ export function AdminDashboardClient() {
                                   setPendingChange({ user: u, newRole: nextRole });
                                 }
                               }}
-                              className="text-xs bg-white border border-border rounded-lg px-2 py-1 text-foreground focus:border-primary outline-none cursor-pointer hover:border-primary/50 transition disabled:opacity-50"
+                              className="text-xs bg-white border border-[#E8E5DF] rounded-lg px-2.5 py-1.5 text-[#141416] focus:border-[#B84A2A] focus:outline-none cursor-pointer hover:border-[#B84A2A]/60 transition disabled:opacity-50"
                             >
                               <option value="contributor">Contributeur</option>
                               <option value="operator">Opérateur Studio</option>
@@ -456,7 +470,7 @@ export function AdminDashboardClient() {
         )}
       </div>
 
-      {/* Modale de confirmation minimale */}
+      {/* ─── Modale de Confirmation (Crisp, Rounded-xl, Corafric Identity) ─── */}
       {pendingChange && (
         <div
           role="dialog"
@@ -465,25 +479,25 @@ export function AdminDashboardClient() {
           onClick={() => !isSubmitting && setPendingChange(null)}
         >
           <div
-            className="bg-white rounded-2xl max-w-sm w-full p-5 shadow-xl border border-border space-y-4 animate-in zoom-in-95 duration-100"
+            className="bg-white rounded-xl max-w-sm w-full p-5 shadow-lg border border-[#E8E5DF] space-y-4 animate-in zoom-in-95 duration-100"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between pb-2 border-b border-border">
-              <h3 className="font-bold font-display text-foreground text-sm">
+            <div className="flex items-center justify-between pb-2 border-b border-[#E8E5DF]">
+              <h3 className="font-bold font-display text-[#141416] text-sm">
                 Confirmer l&apos;attribution
               </h3>
               <button
                 onClick={() => setPendingChange(null)}
                 disabled={isSubmitting}
-                className="text-text-muted hover:text-foreground cursor-pointer"
+                className="text-[#68645E] hover:text-[#141416] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <p className="text-xs text-text-muted">
+            <p className="text-xs text-[#68645E] leading-relaxed">
               Attribuer le rôle{" "}
-              <strong className="text-foreground">
+              <strong className="text-[#141416]">
                 {pendingChange.newRole === "operator"
                   ? "Opérateur Studio"
                   : pendingChange.newRole === "admin"
@@ -491,14 +505,14 @@ export function AdminDashboardClient() {
                   : "Contributeur"}
               </strong>{" "}
               à{" "}
-              <strong className="text-foreground">
+              <strong className="text-[#141416]">
                 {[pendingChange.user.firstName, pendingChange.user.lastName].filter(Boolean).join(" ") ||
                   pendingChange.user.username}
               </strong>
               {pendingChange.user.email ? ` (${pendingChange.user.email})` : ""}?
             </p>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#E8E5DF]">
               <Button
                 variant="outline"
                 size="sm"
