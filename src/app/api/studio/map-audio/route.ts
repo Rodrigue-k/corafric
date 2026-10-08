@@ -12,13 +12,70 @@ export async function POST(request: Request) {
 
     const { userId } = await auth();
     const body = await request.json();
-    const { wordId, audioUrl } = body;
+    const { wordId, audioUrl, action, force } = body;
 
-    if (!wordId || !audioUrl) {
-      return NextResponse.json({ error: "wordId et audioUrl sont requis" }, { status: 400 });
+    if (!wordId) {
+      return NextResponse.json({ error: "wordId est requis" }, { status: 400 });
     }
 
-    // Map the audio and validate the word
+    // Unlink action: resets audio on word so it returns to unassigned pool
+    if (action === "unlink") {
+      await sql`
+        UPDATE dictionary_words 
+        SET 
+          audio_url = NULL,
+          validation_status = 'pending',
+          is_validated = FALSE,
+          updated_at = NOW()
+        WHERE id = ${wordId}
+      `;
+
+      await sql`
+        UPDATE studio_word_status
+        SET status = 'pending', updated_at = NOW()
+        WHERE id = ${wordId}
+      `;
+
+      return NextResponse.json({ success: true, message: "Audio délié avec succès." });
+    }
+
+    if (!audioUrl) {
+      return NextResponse.json({ error: "audioUrl est requis" }, { status: 400 });
+    }
+
+    const decodedUrl = decodeURI(audioUrl);
+    const encodedUrl = encodeURI(audioUrl);
+
+    // 1. Anti-collision: check if audio is already claimed by another word
+    if (!force) {
+      const existingWithAudio = await sql`
+        SELECT id, word_ewe FROM dictionary_words 
+        WHERE (audio_url = ${audioUrl} OR audio_url = ${decodedUrl} OR audio_url = ${encodedUrl}) 
+          AND id != ${wordId}
+        LIMIT 1
+      `;
+
+      if (existingWithAudio.length > 0) {
+        return NextResponse.json({ 
+          conflict: true,
+          error: `Cette piste audio a déjà été liée au mot « ${existingWithAudio[0].word_ewe} » par un autre membre de l'équipe.`
+        }, { status: 409 });
+      }
+    }
+
+    // 2. Fetch target word
+    const targetWords = await sql`
+      SELECT id, word_ewe, audio_url, validation_status, validated_by 
+      FROM dictionary_words 
+      WHERE id = ${wordId}
+      LIMIT 1
+    `;
+
+    if (targetWords.length === 0) {
+      return NextResponse.json({ error: "Mot introuvable dans le lexique" }, { status: 404 });
+    }
+
+    // 3. Map the audio and validate the word atomically
     await sql`
       UPDATE dictionary_words 
       SET 
@@ -41,7 +98,12 @@ export async function POST(request: Request) {
         updated_at = NOW()
     `;
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ 
+      success: true, 
+      wordId, 
+      wordEwe: targetWords[0].word_ewe,
+      audioUrl 
+    });
   } catch (error) {
     console.error("Error in map-audio:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

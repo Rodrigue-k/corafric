@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { sql } from "@/lib/db";
 import { isCurrentUserAdmin } from "@/lib/admin";
+import stemsManifest from "@/lib/stemsManifest.json";
 
 export const dynamic = "force-dynamic";
 
@@ -13,23 +14,36 @@ export async function GET() {
       return NextResponse.json({ error: "Accès non autorisé" }, { status: 403 });
     }
 
-    const stemsDir = path.join(process.cwd(), "public", "audios", "Stems");
-    let files: string[] = [];
-    if (fs.existsSync(stemsDir)) {
-      files = fs.readdirSync(stemsDir).filter(f => f.endsWith('.wav') || f.endsWith('.mp3'));
+    // 1. Get files from static manifest first (guaranteed on Vercel Serverless)
+    let files: string[] = Array.isArray(stemsManifest) ? [...stemsManifest] : [];
+
+    // 2. Fallback / supplement with disk if available
+    try {
+      const stemsDir = path.join(process.cwd(), "public", "audios", "Stems");
+      if (fs.existsSync(stemsDir)) {
+        const diskFiles = fs.readdirSync(stemsDir).filter(f => f.endsWith('.wav') || f.endsWith('.mp3'));
+        if (diskFiles.length > 0) {
+          files = Array.from(new Set([...files, ...diskFiles]));
+        }
+      }
+    } catch {
+      // Ignore disk error in read-only / serverless environment
     }
 
+    // 3. Query all currently assigned audios from DB
     const assignedRows = await sql`
-      SELECT audio_url FROM dictionary_words WHERE audio_url IS NOT NULL
+      SELECT audio_url FROM dictionary_words WHERE audio_url IS NOT NULL AND audio_url != ''
     `;
-    const assignedUrls = new Set(assignedRows.map(r => String(r.audio_url).trim()));
+    const assignedUrls = new Set(assignedRows.map(r => decodeURI(String(r.audio_url).trim())));
 
+    // 4. Filter out assigned stems
     const unassigned = files.map(filename => {
       const url = `/audios/Stems/${filename}`;
+      const isAssigned = assignedUrls.has(url) || assignedUrls.has(encodeURI(url));
       return {
         filename,
         url,
-        isAssigned: assignedUrls.has(url)
+        isAssigned
       };
     }).filter(f => !f.isAssigned);
 

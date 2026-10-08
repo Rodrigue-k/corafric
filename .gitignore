@@ -53,7 +53,9 @@ corafric-cdc.md
 
 # scratch test files & raw audio
 test-*.js
+merge-users.ts
 *.wav
+!public/audios/Stems/*.wav
 ewe_dataset_raw.json
 /public/audios/unused/
 # database backups

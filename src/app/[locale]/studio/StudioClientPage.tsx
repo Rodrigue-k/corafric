@@ -19,7 +19,9 @@ import {
   Loader2,
   Sparkles,
   Info,
-  Radio
+  Radio,
+  Unlink,
+  AlertCircle
 } from "lucide-react";
 
 interface WordItem {
@@ -129,6 +131,7 @@ export function StudioClientPage() {
   const [stemWordSuggestions, setStemWordSuggestions] = useState<WordItem[]>([]);
   const [selectedWordForStem, setSelectedWordForStem] = useState<WordItem | null>(null);
   const [isMappingStem, setIsMappingStem] = useState<boolean>(false);
+  const [stemConflictMessage, setStemConflictMessage] = useState<string | null>(null);
 
   // Clean up audio on unmount
   useEffect(() => {
@@ -395,7 +398,19 @@ export function StudioClientPage() {
         }),
       });
 
+      if (res.status === 409) {
+        const errorData = await res.json().catch(() => ({}));
+        setStemConflictMessage(
+          errorData.error || "Ce fichier audio a déjà été associé par un autre collaborateur."
+        );
+        // Retirer immédiatement ce stem de la liste locale
+        setStems((prev) => prev.filter((_, idx) => idx !== currentStemIndex));
+        setSelectedWordForStem(null);
+        return;
+      }
+
       if (res.ok) {
+        setStemConflictMessage(null);
         // Update local word status
         setWords((prev) =>
           prev.map((w) =>
@@ -425,6 +440,50 @@ export function StudioClientPage() {
       console.error("Mapping error:", err);
     } finally {
       setIsMappingStem(false);
+    }
+  };
+
+  // Unlink Audio from Word (Restores audio to unassigned pool)
+  const handleUnlinkAudio = async (word: WordItem) => {
+    if (!word.audioUrl) return;
+    const confirmUnlink = window.confirm(
+      `Délier l'audio de "${word.wordEwe}" ? La piste retournera dans la réserve studio et le mot repassera en attente.`
+    );
+    if (!confirmUnlink) return;
+
+    setIsUpdatingWordId(word.id);
+    try {
+      const res = await fetch("/api/studio/map-audio", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          wordId: word.id,
+          action: "unlink",
+        }),
+      });
+
+      if (res.ok) {
+        setWords((prev) =>
+          prev.map((w) =>
+            w.id === word.id
+              ? { ...w, hasAudio: false, audioUrl: null, status: "pending" }
+              : w
+          )
+        );
+        setStats((prev) => ({
+          ...prev,
+          withAudio: Math.max(0, prev.withAudio - 1),
+          validated: word.status === "validated" ? Math.max(0, prev.validated - 1) : prev.validated,
+          pending: word.status === "validated" ? prev.pending + 1 : prev.pending,
+        }));
+        if (stems.length > 0) {
+          fetchStems();
+        }
+      }
+    } catch (err) {
+      console.error("Failed to unlink audio:", err);
+    } finally {
+      setIsUpdatingWordId(null);
     }
   };
 
@@ -789,26 +848,36 @@ export function StudioClientPage() {
                           <td className="py-2.5 px-3">
                             {word.hasAudio && word.audioUrl ? (
                               <div className="flex flex-col gap-1 items-start">
-                                <button
-                                  onClick={() => handleTogglePlay(word.audioUrl!)}
-                                  className={`px-2.5 py-1 rounded-md border text-[11px] font-semibold flex items-center gap-1.5 transition ${
-                                    isPlayingThis
-                                      ? "bg-[#B84A2A] text-white border-[#B84A2A]"
-                                      : "bg-white border-[#E8E5DF] text-[#141416] hover:border-[#B84A2A]"
-                                  }`}
-                                >
-                                  {isPlayingThis ? (
-                                    <>
-                                      <Pause className="w-3 h-3 fill-current" />
-                                      <span>Pause</span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Play className="w-3 h-3 fill-current text-[#B84A2A]" />
-                                      <span>Écouter</span>
-                                    </>
-                                  )}
-                                </button>
+                                <div className="flex items-center gap-1.5">
+                                  <button
+                                    onClick={() => handleTogglePlay(word.audioUrl!)}
+                                    className={`px-2.5 py-1 rounded-md border text-[11px] font-semibold flex items-center gap-1.5 transition ${
+                                      isPlayingThis
+                                        ? "bg-[#B84A2A] text-white border-[#B84A2A]"
+                                        : "bg-white border-[#E8E5DF] text-[#141416] hover:border-[#B84A2A]"
+                                    }`}
+                                  >
+                                    {isPlayingThis ? (
+                                      <>
+                                        <Pause className="w-3 h-3 fill-current" />
+                                        <span>Pause</span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Play className="w-3 h-3 fill-current text-[#B84A2A]" />
+                                        <span>Écouter</span>
+                                      </>
+                                    )}
+                                  </button>
+                                  <button
+                                    disabled={isUpdating}
+                                    onClick={() => handleUnlinkAudio(word)}
+                                    className="p-1.5 rounded-md border border-[#E8E5DF] bg-white hover:bg-rose-50 hover:border-rose-300 text-[#68645E] hover:text-rose-700 transition"
+                                    title="Délier la piste audio (remettre le fichier en réserve)"
+                                  >
+                                    <Unlink className="w-3 h-3" />
+                                  </button>
+                                </div>
                                 {badgeInfo && (
                                   <span className={`text-[9px] font-semibold px-1.5 py-0.2 rounded border ${badgeInfo.badgeClass}`}>
                                     {badgeInfo.label}
@@ -919,7 +988,7 @@ export function StudioClientPage() {
 
               <div className="flex items-center gap-2 self-start sm:self-auto">
                 <span className="text-[11px] text-[#68645E] hidden md:inline">
-                  Raccourcis : <kbd className="px-1.5 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded font-mono text-[10px]">Espace</kbd> Écouter • <kbd className="px-1.5 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded font-mono text-[10px]">Entrée</kbd> Valider • <kbd className="px-1.5 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded font-mono text-[10px]">➔</kbd> Passer
+                  Raccourcis : <kbd className="px-1.5 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded font-mono text-[10px]">Espace</kbd> Écouter • <kbd className="px-1.5 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded font-mono text-[10px]">Entrée</kbd> Valider • <kbd className="px-1.5 py-0.5 bg-[#FAF9F6] border border-[#E8E5DF] rounded font-mono text-[10px]">→</kbd> Passer
                 </span>
                 <button
                   onClick={fetchStems}
@@ -931,14 +1000,34 @@ export function StudioClientPage() {
               </div>
             </div>
 
+            {stemConflictMessage && (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-md flex items-center justify-between text-xs text-amber-900">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
+                  <span>{stemConflictMessage}</span>
+                </div>
+                <button
+                  onClick={() => setStemConflictMessage(null)}
+                  className="text-amber-700 hover:text-amber-900 text-xs font-semibold px-1.5 py-0.5"
+                >
+                  Fermer
+                </button>
+              </div>
+            )}
+
             {isLoadingStems ? (
               <div className="py-16 flex flex-col items-center justify-center gap-2 text-[#68645E]">
                 <Loader2 className="w-5 h-5 animate-spin text-[#B84A2A]" />
                 <span className="text-xs">Chargement et mise en mémoire tampon des fichiers studio...</span>
               </div>
             ) : stems.length === 0 ? (
-              <div className="py-16 text-center text-xs text-emerald-800">
-                🎉 Toutes les pistes audio du studio ont été associées et validées !
+              <div className="py-16 flex flex-col items-center justify-center gap-1.5 text-center">
+                <span className="text-xs font-semibold text-[#141416]">
+                  Toutes les pistes audio du studio ont été associées et validées.
+                </span>
+                <span className="text-[11px] text-[#68645E]">
+                  Aucun fichier non attribué en attente dans la réserve audio.
+                </span>
               </div>
             ) : !currentStem ? null : (
               <div className="flex flex-col gap-5">
