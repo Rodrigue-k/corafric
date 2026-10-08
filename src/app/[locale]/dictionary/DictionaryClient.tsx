@@ -34,6 +34,7 @@ export default function DictionaryClient() {
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [suggestingWord, setSuggestingWord] = useState<DictionaryWord | null>(null);
+  const isFirstMountRef = React.useRef(true);
   const limit = 24;
 
   useEffect(() => {
@@ -62,6 +63,12 @@ export default function DictionaryClient() {
         setIsLoading(false);
       }
     };
+
+    if (isFirstMountRef.current) {
+      isFirstMountRef.current = false;
+      void fetchWords();
+      return;
+    }
 
     const debounceTimer = setTimeout(fetchWords, 250);
     return () => clearTimeout(debounceTimer);
@@ -294,11 +301,29 @@ export default function DictionaryClient() {
             </div>
           ))}
         </div>
-      ) : !isLoading ? (
+      ) : isLoading ? (
+        <div className="flex flex-col border-t border-border/60">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div
+              key={i}
+              className="flex flex-col sm:flex-row sm:items-baseline justify-between py-6 sm:py-8 border-b border-border/60 gap-4 sm:gap-8 animate-pulse"
+            >
+              <div className="flex flex-col sm:w-1/3 shrink-0 space-y-2">
+                <div className="h-9 w-36 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md" />
+                <div className="h-4 w-20 bg-[#FAF9F6] rounded" />
+              </div>
+              <div className="flex-grow flex flex-col justify-center space-y-2">
+                <div className="h-5 w-48 bg-[#FAF9F6] rounded" />
+                <div className="h-4 w-32 bg-[#FAF9F6] rounded" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
         <div className="py-24 text-center border-y border-border/50">
           <p className="text-xl font-display text-text-muted/70 tracking-tight">{t("noResults")}</p>
         </div>
-      ) : null}
+      )}
 
       {/* Suggest / Correction Modal */}
       {suggestingWord && (

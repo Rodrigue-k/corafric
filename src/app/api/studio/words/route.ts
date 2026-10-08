@@ -30,13 +30,12 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Accès non autorisé" }, { status: 403 });
     }
 
-    await ensureStudioTable();
-
     const { searchParams } = new URL(request.url);
     const filter = searchParams.get("filter") || "all";
     const search = (searchParams.get("q") || "").trim();
     const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
-    const limit = Math.min(100, Math.max(10, parseInt(searchParams.get("limit") || "50", 10)));
+    const rawLimit = parseInt(searchParams.get("limit") || "50", 10);
+    const limit = Math.min(1500, Math.max(10, isNaN(rawLimit) ? 50 : rawLimit));
     const offset = (page - 1) * limit;
 
     // 1. Fetch Global Stats for HUD

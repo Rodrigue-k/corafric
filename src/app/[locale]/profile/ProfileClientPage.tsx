@@ -97,11 +97,25 @@ export default function ProfileClientPage() {
     }
   };
 
-  if (!isLoaded || loading) {
+  // Auth loading skeleton
+  if (!isLoaded) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] gap-3">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-        <p className="text-xs text-text-muted font-display uppercase tracking-wider">{t("loading")}</p>
+      <div className="max-w-4xl mx-auto space-y-10 sm:space-y-12 py-2 sm:py-4 animate-pulse">
+        <div className="flex items-center gap-4 pb-8 border-b border-border/60">
+          <div className="w-14 h-14 rounded-full bg-[#FAF9F6] border border-[#E8E5DF]" />
+          <div className="space-y-2">
+            <div className="h-6 w-44 bg-[#FAF9F6] rounded" />
+            <div className="h-4 w-28 bg-[#FAF9F6] rounded" />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pb-8 border-b border-border/60">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="space-y-2">
+              <div className="h-3 w-20 bg-[#FAF9F6] rounded" />
+              <div className="h-8 w-16 bg-[#FAF9F6] rounded" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -136,8 +150,8 @@ export default function ProfileClientPage() {
       {/* Profile Header — Clean, Flat, Responsive */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-b border-border/60 pb-6 sm:pb-8">
         <div className="flex items-center gap-3.5 sm:gap-4 w-full sm:w-auto min-w-0">
-          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0">
-            <span className="text-lg sm:text-xl font-display font-bold text-primary">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#F9EBE6] flex items-center justify-center border border-[#F2D7CE] shrink-0">
+            <span className="text-lg sm:text-xl font-display font-bold text-[#B84A2A]">
               {(currentDisplayName || "?")[0]?.toUpperCase()}
             </span>
           </div>
@@ -146,17 +160,26 @@ export default function ProfileClientPage() {
               <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-foreground tracking-tight truncate max-w-full">
                 {currentDisplayName}
               </h1>
-              {publicUsername && (
+              {(publicUsername || user.username) && (
                 <span className="text-[10px] sm:text-[11px] font-mono text-text-muted px-2 py-0.5 rounded-full border border-border/60 max-w-[160px] truncate shrink-0">
-                  @{publicUsername}
+                  @{publicUsername || user.username}
                 </span>
               )}
             </div>
-            {memberYear && <p className="text-xs text-text-muted mt-0.5">{t("memberSince")} {memberYear}</p>}
+            {memberYear ? (
+              <p className="text-xs text-text-muted mt-0.5">{t("memberSince")} {memberYear}</p>
+            ) : (
+              <p className="text-xs text-text-muted mt-0.5">Membre de la communauté Corafric</p>
+            )}
           </div>
         </div>
 
-        {stats && (
+        {loading ? (
+          <div className="text-left sm:text-right space-y-1 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-border/40 animate-pulse">
+            <div className="h-3 w-28 bg-[#FAF9F6] rounded sm:ml-auto" />
+            <div className="h-6 w-32 bg-[#FAF9F6] border border-[#E8E5DF] rounded sm:ml-auto" />
+          </div>
+        ) : stats ? (
           <div className="text-left sm:text-right space-y-0.5 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-border/40">
             <span className="text-[10px] font-bold font-display uppercase tracking-widest text-text-muted block">
               {t("leaderboardAndScore")}
@@ -170,7 +193,7 @@ export default function ProfileClientPage() {
               </span>
             </div>
           </div>
-        )}
+        ) : null}
       </div>
 
       {/* Public Username Settings — Clean Minimalist Form */}
@@ -179,33 +202,35 @@ export default function ProfileClientPage() {
           <span className="text-[10px] font-bold font-display uppercase tracking-widest text-primary block">
             {t("publicIdentityTitle")}
           </span>
-          <p className="text-xs text-text-muted mt-1">
+          <p className="text-xs sm:text-sm text-text-muted mt-0.5">
             {t("publicIdentityDesc")}
           </p>
         </div>
 
-        <form onSubmit={handleSaveUsername} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 max-w-xl">
+        <form onSubmit={handleSaveUsername} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 max-w-md">
           <div className="relative flex-1">
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-sm font-mono">@</span>
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-mono text-text-muted/60">@</span>
             <input
               type="text"
               value={publicUsername}
-              onChange={(e) => setPublicUsername(e.target.value)}
-              placeholder={t("pseudoPlaceholder")}
-              maxLength={30}
-              className="w-full pl-8 pr-4 py-2 bg-transparent border border-border/80 rounded-lg text-sm font-mono text-foreground focus:outline-none focus:border-primary transition-colors"
+              onChange={(e) => setPublicUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ""))}
+              placeholder="pseudo_public"
+              maxLength={24}
+              className="w-full pl-8 pr-3 py-2 text-xs bg-white border border-[#E8E5DF] rounded-lg text-foreground font-mono focus:outline-none focus:border-primary transition"
             />
           </div>
+
           <button
             type="submit"
             disabled={isSavingUsername || !publicUsername.trim()}
-            className="px-5 py-2 rounded-lg bg-primary text-white text-xs font-bold font-display uppercase tracking-wider hover:bg-primary/90 transition-colors disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 shrink-0"
+            className="px-4 py-2 text-xs font-semibold rounded-lg bg-foreground text-background hover:bg-foreground/90 disabled:opacity-40 transition-colors cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
           >
             {isSavingUsername ? (
               t("saving")
             ) : usernameSavedSuccess ? (
               <>
-                <Check className="w-3.5 h-3.5" /> {t("saved")}
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                <span>{t("saved")}</span>
               </>
             ) : (
               t("savePseudo")
@@ -218,88 +243,84 @@ export default function ProfileClientPage() {
         )}
       </div>
 
-      {stats ? (
-        <>
-          {/* Stats Metrics — Editorial Flat Split */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 border-b border-border/60 pb-8">
-            <div className="space-y-1">
-              <span className="text-[10px] font-bold font-display uppercase tracking-widest text-text-muted block">
-                {t("contributions")}
-              </span>
-              <p className="text-3xl font-display font-bold text-foreground">
-                {stats.totalContributions}
-              </p>
-              <p className="text-xs text-text-muted">{t("contributionsDesc")}</p>
-            </div>
+      {/* Stats Metrics — Editorial Flat Split */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 border-b border-border/60 pb-8">
+        <div className="space-y-1">
+          <span className="text-[10px] font-bold font-display uppercase tracking-widest text-text-muted block">
+            {t("contributions")}
+          </span>
+          {loading ? (
+            <div className="h-8 w-16 bg-[#FAF9F6] border border-[#E8E5DF] rounded animate-pulse" />
+          ) : (
+            <p className="text-3xl font-display font-bold text-foreground">
+              {stats?.totalContributions || 0}
+            </p>
+          )}
+          <p className="text-xs text-text-muted">{t("contributionsDesc")}</p>
+        </div>
 
-            <div className="space-y-1">
-              <span className="text-[10px] font-bold font-display uppercase tracking-widest text-text-muted block">
-                {t("validations")}
-              </span>
-              <p className="text-3xl font-display font-bold text-foreground">
-                {stats.totalValidations}
-              </p>
-              <p className="text-xs text-text-muted">{t("validationsDesc")}</p>
-            </div>
+        <div className="space-y-1">
+          <span className="text-[10px] font-bold font-display uppercase tracking-widest text-text-muted block">
+            {t("validations")}
+          </span>
+          {loading ? (
+            <div className="h-8 w-16 bg-[#FAF9F6] border border-[#E8E5DF] rounded animate-pulse" />
+          ) : (
+            <p className="text-3xl font-display font-bold text-foreground">
+              {stats?.totalValidations || 0}
+            </p>
+          )}
+          <p className="text-xs text-text-muted">{t("validationsDesc")}</p>
+        </div>
 
-            <div className="space-y-1">
-              <span className="text-[10px] font-bold font-display uppercase tracking-widest text-text-muted block">
-                {t("wordsWon")}
-              </span>
-              <p className="text-3xl font-display font-bold text-primary">
-                {stats.wordsWon.length}
-              </p>
-              <p className="text-xs text-text-muted">{t("wordsWonDesc")}</p>
-            </div>
+        <div className="space-y-1">
+          <span className="text-[10px] font-bold font-display uppercase tracking-widest text-text-muted block">
+            {t("wordsWon")}
+          </span>
+          {loading ? (
+            <div className="h-8 w-16 bg-[#FAF9F6] border border-[#E8E5DF] rounded animate-pulse" />
+          ) : (
+            <p className="text-3xl font-display font-bold text-primary">
+              {stats?.wordsWon?.length || 0}
+            </p>
+          )}
+          <p className="text-xs text-text-muted">{t("wordsWonDesc")}</p>
+        </div>
 
-            <div className="space-y-1">
-              <span className="text-[10px] font-bold font-display uppercase tracking-widest text-text-muted block">
-                {t("avgScore")}
-              </span>
-              <p className="text-3xl font-display font-bold text-foreground font-mono">
-                {stats.avgScoreReceived > 0 ? `${stats.avgScoreReceived.toFixed(1)}/5` : "—"}
-              </p>
-              <p className="text-xs text-text-muted">{t("avgScoreDesc")}</p>
-            </div>
-          </div>
+        <div className="space-y-1">
+          <span className="text-[10px] font-bold font-display uppercase tracking-widest text-text-muted block">
+            {t("avgScore")}
+          </span>
+          {loading ? (
+            <div className="h-8 w-16 bg-[#FAF9F6] border border-[#E8E5DF] rounded animate-pulse" />
+          ) : (
+            <p className="text-3xl font-display font-bold text-foreground font-mono">
+              {(stats?.avgScoreReceived || 0) > 0 ? `${stats!.avgScoreReceived.toFixed(1)}/5` : "—"}
+            </p>
+          )}
+          <p className="text-xs text-text-muted">{t("avgScoreDesc")}</p>
+        </div>
+      </div>
 
-          {/* Words Won Section */}
-          {stats.wordsWon.length > 0 && (
-            <div className="space-y-4">
-              <h2 className="text-sm font-bold font-display uppercase tracking-wider text-foreground">
-                {t("wordsWonTitle")}
-              </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                {stats.wordsWon.map(({ word, translation }) => (
-                  <div
-                    key={word}
-                    className="border border-border/60 p-3 rounded-lg space-y-0.5"
-                  >
-                    <p className="text-sm font-display font-bold text-foreground">{word}</p>
-                    {translation && (
-                      <p className="text-xs text-text-muted truncate">{translation}</p>
-                    )}
-                  </div>
-                ))}
+      {/* Words Won Section */}
+      {stats && stats.wordsWon.length > 0 && (
+        <div className="space-y-4">
+          <h2 className="text-sm font-bold font-display uppercase tracking-wider text-foreground">
+            {t("wordsWonTitle")}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            {stats.wordsWon.map((item, idx) => (
+              <div
+                key={idx}
+                className="p-3.5 rounded-lg border border-[#E8E5DF] bg-white hover:border-primary/40 transition-colors"
+              >
+                <p className="text-sm font-bold font-display text-foreground">{item.word}</p>
+                {item.translation && (
+                  <p className="text-xs text-text-muted truncate mt-0.5">{item.translation}</p>
+                )}
               </div>
-            </div>
-          )}
-
-          {/* Empty state */}
-          {stats.totalContributions === 0 && (
-            <div className="text-center py-12 space-y-2">
-              <h3 className="text-lg font-display font-bold text-foreground">
-                {t("emptyTitle")}
-              </h3>
-              <p className="text-xs text-text-muted max-w-sm mx-auto leading-relaxed">
-                {t("emptyDesc")}
-              </p>
-            </div>
-          )}
-        </>
-      ) : (
-        <div className="text-center py-16 text-text-muted text-sm">
-          {t("noData")}
+            ))}
+          </div>
         </div>
       )}
     </div>

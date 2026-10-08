@@ -11,6 +11,8 @@ function cleanWordResults(rows: unknown[]) {
   }));
 }
 
+let cachedTotalCount: { count: number; timestamp: number } | null = null;
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -20,13 +22,18 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get("limit") || "30", 10);
     const offset = (page - 1) * limit;
 
-    // Get total count of active words in dictionary (excluding rejected)
-    const countResult = (await sql`
-      SELECT COUNT(*)::int as count 
-      FROM dictionary_words 
-      WHERE (is_rejected IS NOT TRUE OR is_rejected IS NULL)
-    `) as { count: number }[];
-    const totalCount = countResult[0]?.count || 0;
+    // Fast cached total count (60s TTL)
+    const now = Date.now();
+    let totalCount = cachedTotalCount && now - cachedTotalCount.timestamp < 60_000 ? cachedTotalCount.count : 0;
+    if (!totalCount) {
+      const countResult = (await sql`
+        SELECT COUNT(*)::int as count 
+        FROM dictionary_words 
+        WHERE (is_rejected IS NOT TRUE OR is_rejected IS NULL)
+      `) as { count: number }[];
+      totalCount = countResult[0]?.count || 0;
+      cachedTotalCount = { count: totalCount, timestamp: now };
+    }
 
     // Search Mode
     if (query) {
@@ -57,7 +64,8 @@ export async function GET(request: Request) {
           LOWER(w.word_ewe) ASC
         LIMIT ${limit} OFFSET ${offset}
       `;
-      return NextResponse.json({ words: cleanWordResults(results), totalCount, page, limit });
+      const headers = { "Cache-Control": "public, s-maxage=10, stale-while-revalidate=30" };
+      return NextResponse.json({ words: cleanWordResults(results), totalCount, page, limit }, { headers });
     }
 
     // Letter Filter Mode
@@ -87,13 +95,14 @@ export async function GET(request: Request) {
           AND LOWER(word_ewe) LIKE ${letterPattern}
       `) as { count: number }[];
 
+      const headers = { "Cache-Control": "public, s-maxage=10, stale-while-revalidate=30" };
       return NextResponse.json({ 
         words: cleanWordResults(results), 
         totalCount, 
         filteredCount: letterCountResult[0]?.count || 0,
         page, 
         limit 
-      });
+      }, { headers });
     }
 
     // Default Alphabetical Mode: Prioritize validated words, then words with audio, then translations first, then alphabetical A-Z
@@ -113,7 +122,8 @@ export async function GET(request: Request) {
       LIMIT ${limit} OFFSET ${offset}
     `;
 
-    return NextResponse.json({ words: cleanWordResults(words), totalCount, page, limit });
+    const headers = { "Cache-Control": "public, s-maxage=10, stale-while-revalidate=30" };
+    return NextResponse.json({ words: cleanWordResults(words), totalCount, page, limit }, { headers });
   } catch (error) {
     console.error("Error fetching dictionary words:", error);
     return NextResponse.json({ error: "Failed to fetch words" }, { status: 500 });

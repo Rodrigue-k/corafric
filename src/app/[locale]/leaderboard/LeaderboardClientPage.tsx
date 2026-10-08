@@ -56,23 +56,63 @@ export const LeaderboardClientPage: React.FC = () => {
         </p>
 
         <div className="flex items-center justify-center gap-3 pt-1 text-xs font-display tracking-wider uppercase text-text-muted">
-          <span>
-            <strong className="text-foreground">{totalAudios.toLocaleString()}</strong> {t("contributions").toLowerCase()}
-          </span>
-          <span className="text-border">·</span>
-          <span>
-            <strong className="text-foreground">{totalContributors.toLocaleString()}</strong> contributeurs
-          </span>
+          {loading ? (
+            <div className="flex items-center gap-3 animate-pulse">
+              <span className="h-4 w-32 bg-[#FAF9F6] border border-[#E8E5DF] rounded" />
+              <span className="text-border">·</span>
+              <span className="h-4 w-28 bg-[#FAF9F6] border border-[#E8E5DF] rounded" />
+            </div>
+          ) : (
+            <>
+              <span>
+                <strong className="text-foreground">{totalAudios.toLocaleString()}</strong> {t("contributions").toLowerCase()}
+              </span>
+              <span className="text-border">·</span>
+              <span>
+                <strong className="text-foreground">{totalContributors.toLocaleString()}</strong> contributeurs
+              </span>
+            </>
+          )}
         </div>
       </div>
 
       {loading ? (
-        <div className="flex flex-col items-center justify-center min-h-[220px] border-y border-border/40 py-12">
-          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        /* Skeletons: Podium + Ranked Rows */
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="border border-border/70 rounded-xl p-5 sm:p-6 bg-white animate-pulse space-y-4"
+              >
+                <div className="h-5 w-14 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md" />
+                <div className="space-y-1.5">
+                  <div className="h-6 w-32 bg-[#FAF9F6] rounded" />
+                  <div className="h-4 w-20 bg-[#FAF9F6] rounded" />
+                </div>
+                <div className="mt-4 pt-3 border-t border-border/40 flex justify-between">
+                  <div className="h-4 w-12 bg-[#FAF9F6] rounded" />
+                  <div className="h-4 w-12 bg-[#FAF9F6] rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="divide-y divide-border/40 pt-2">
+            {[4, 5, 6, 7, 8].map((i) => (
+              <div key={i} className="flex items-center justify-between py-3.5 px-3 animate-pulse">
+                <div className="flex items-center gap-4 sm:gap-6">
+                  <span className="text-xs font-mono text-text-muted/40 w-6">0{i}</span>
+                  <div className="h-4 w-36 bg-[#FAF9F6] border border-[#E8E5DF] rounded" />
+                </div>
+                <div className="h-4 w-16 bg-[#FAF9F6] rounded" />
+              </div>
+            ))}
+          </div>
         </div>
       ) : leaderboard.length === 0 ? (
         /* Empty State: Clean Editorial Invitation */
-        <div className="border border-border/70 rounded-2xl p-8 sm:p-12 text-center space-y-4 max-w-xl mx-auto bg-[#FAF8F5]/50">
+        <div className="border border-border/70 rounded-xl p-8 sm:p-12 text-center space-y-4 max-w-xl mx-auto bg-[#FAF8F5]/50">
           <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
             <Trophy className="w-6 h-6" />
           </div>
@@ -95,7 +135,7 @@ export const LeaderboardClientPage: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-8">
-          {/* Top 3 Podium — Flat, Cardless Structure with Score Emphasis */}
+          {/* Top 3 Podium — Flat, Crisp Structure with Score Emphasis */}
           {top3.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
               {top3.map((entry, index) => {
@@ -109,11 +149,11 @@ export const LeaderboardClientPage: React.FC = () => {
                 return (
                   <div
                     key={entry.username + index}
-                    className="border border-border/70 rounded-2xl p-5 sm:p-6 flex flex-col justify-between hover:border-primary/50 transition-colors bg-transparent group"
+                    className="border border-border/70 rounded-xl p-5 sm:p-6 flex flex-col justify-between hover:border-primary/50 transition-colors bg-white group shadow-2xs"
                   >
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${rankPillStyles[index]}`}>
+                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border ${rankPillStyles[index]}`}>
                           {rankLabels[index]}
                         </span>
                         {index === 0 && <Trophy className="w-4 h-4 text-amber-600" />}
@@ -161,11 +201,11 @@ export const LeaderboardClientPage: React.FC = () => {
                 {rest.map((user, idx) => (
                   <div 
                     key={user.username + idx} 
-                    className="flex items-center justify-between py-3.5 hover:bg-[#FAF8F5] -mx-3 px-3 rounded-xl transition-colors"
+                    className="flex items-center justify-between py-3.5 hover:bg-[#FAF8F5] -mx-3 px-3 rounded-lg transition-colors"
                   >
                     <div className="flex items-center gap-4 sm:gap-6">
                       <span className="text-xs sm:text-sm font-mono text-text-muted/60 w-6 font-semibold">
-                        {(idx + 4).toString().padStart(2, '0')}
+                        {(idx + 4).toString().padStart(2, "0")}
                       </span>
                       <span className="text-sm sm:text-base font-display text-foreground font-semibold truncate max-w-[140px] sm:max-w-[240px]">
                         {user.username}

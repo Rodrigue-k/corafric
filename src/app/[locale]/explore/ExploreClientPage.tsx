@@ -58,149 +58,175 @@ export default function ExploreClientPage() {
         </p>
       </div>
 
-      {isLoading ? (
-        <div className="flex flex-col items-center justify-center min-h-[260px] border-y border-border/40 py-16">
-          <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+      {/* Stats Counters Grid — Editorial, Flat with Progressive Skeletons */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-10 border-y border-border/50">
+        <div className="border-l-2 border-primary/40 pl-4 sm:pl-5">
+          <p className="text-xs text-text-muted uppercase tracking-widest font-medium mb-1">{t("audios")}</p>
+          {isLoading ? (
+            <div className="h-8 w-24 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md animate-pulse my-1" />
+          ) : (
+            <p className="text-2xl sm:text-4xl font-display font-bold text-foreground">
+              {stats?.totalRecordings.toLocaleString() || "0"}
+            </p>
+          )}
         </div>
-      ) : stats ? (
-        <>
-          {/* Stats Counters Grid — Editorial, flat */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-10 border-y border-border/50">
-            <div className="border-l-2 border-primary/40 pl-4 sm:pl-5">
-              <p className="text-xs text-text-muted uppercase tracking-widest font-medium mb-1">{t("audios")}</p>
-              <p className="text-2xl sm:text-4xl font-display font-bold text-foreground">{stats.totalRecordings.toLocaleString()}</p>
-            </div>
-            <div className="border-l-2 border-border/60 pl-4 sm:pl-5">
-              <p className="text-xs text-text-muted uppercase tracking-widest font-medium mb-1">{t("validated")}</p>
-              <p className="text-2xl sm:text-4xl font-display font-bold text-foreground">{stats.approvedRecordings.toLocaleString()}</p>
-            </div>
-            <div className="border-l-2 border-border/60 pl-4 sm:pl-5">
-              <p className="text-xs text-text-muted uppercase tracking-widest font-medium mb-1">{t("hours")}</p>
-              <p className="text-2xl sm:text-4xl font-display font-bold text-foreground">{stats.totalHours.toFixed(1)}h</p>
-            </div>
-            <div className="border-l-2 border-border/60 pl-4 sm:pl-5">
-              <p className="text-xs text-text-muted uppercase tracking-widest font-medium mb-1">{t("contributors")}</p>
-              <p className="text-2xl sm:text-4xl font-display font-bold text-foreground">{stats.totalUsers.toLocaleString()}</p>
-            </div>
+        <div className="border-l-2 border-border/60 pl-4 sm:pl-5">
+          <p className="text-xs text-text-muted uppercase tracking-widest font-medium mb-1">{t("validated")}</p>
+          {isLoading ? (
+            <div className="h-8 w-24 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md animate-pulse my-1" />
+          ) : (
+            <p className="text-2xl sm:text-4xl font-display font-bold text-foreground">
+              {stats?.approvedRecordings.toLocaleString() || "0"}
+            </p>
+          )}
+        </div>
+        <div className="border-l-2 border-border/60 pl-4 sm:pl-5">
+          <p className="text-xs text-text-muted uppercase tracking-widest font-medium mb-1">{t("hours")}</p>
+          {isLoading ? (
+            <div className="h-8 w-20 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md animate-pulse my-1" />
+          ) : (
+            <p className="text-2xl sm:text-4xl font-display font-bold text-foreground">
+              {stats ? `${stats.totalHours.toFixed(1)}h` : "0h"}
+            </p>
+          )}
+        </div>
+        <div className="border-l-2 border-border/60 pl-4 sm:pl-5">
+          <p className="text-xs text-text-muted uppercase tracking-widest font-medium mb-1">{t("contributors")}</p>
+          {isLoading ? (
+            <div className="h-8 w-20 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md animate-pulse my-1" />
+          ) : (
+            <p className="text-2xl sm:text-4xl font-display font-bold text-foreground">
+              {stats?.totalUsers.toLocaleString() || "0"}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Main Content Layout Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        {/* Left Side: Leaderboard */}
+        <div className="lg:col-span-7 space-y-6">
+          <div className="flex items-center gap-3 border-b border-border/50 pb-4">
+            <Trophy className="w-5 h-5 text-primary" />
+            <h2 className="text-xl sm:text-2xl font-display font-bold text-foreground">{t("leaderboardTitle")}</h2>
           </div>
 
-          {/* Main Content Layout Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-            {/* Left Side: Leaderboard */}
-            <div className="lg:col-span-7 space-y-6">
-              <div className="flex items-center gap-3 border-b border-border/50 pb-4">
-                <Trophy className="w-5 h-5 text-primary" />
-                <h2 className="text-xl sm:text-2xl font-display font-bold text-foreground">{t("leaderboardTitle")}</h2>
-              </div>
-
-              <div className="divide-y divide-border/40">
-                {stats.leaderboard?.map((user, index) => {
-                  return (
-                    <div
-                      key={user.username}
-                      className="group flex items-center justify-between py-4 hover:bg-[#FAF8F5] -mx-4 px-4 rounded-xl transition-colors"
-                    >
-                      <div className="flex items-center gap-4">
-                        <span className="text-xs font-mono text-text-muted/60 font-semibold w-6">
-                          {(index + 1).toString().padStart(2, '0')}
-                        </span>
-
-                        <div>
-                          <p className="text-sm sm:text-base font-bold font-display text-foreground flex items-center gap-1.5">
-                            {user.username}
-                            {index === 0 && <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />}
-                          </p>
-                          <p className="text-[11px] text-text-muted font-medium">
-                            {t("validationsCount", { count: user.total_validations })}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="text-right">
-                        <span className="text-xl font-bold font-display text-primary">
-                          {user.total_contributions}
-                        </span>
-                        <span className="text-[10px] text-text-muted ml-1.5 uppercase tracking-wider font-medium">{t("audiosCount")}</span>
-                      </div>
+          <div className="divide-y divide-border/40">
+            {isLoading ? (
+              [1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="flex items-center justify-between py-4 animate-pulse">
+                  <div className="flex items-center gap-4">
+                    <span className="text-xs font-mono text-text-muted/40 font-semibold w-6">0{i}</span>
+                    <div className="space-y-1.5">
+                      <div className="h-4 w-28 bg-[#FAF9F6] border border-[#E8E5DF] rounded" />
+                      <div className="h-3 w-20 bg-[#FAF9F6] rounded" />
                     </div>
-                  );
-                })}
-
-                {(!stats.leaderboard || stats.leaderboard.length === 0) && (
-                  <div className="py-8 text-center text-xs text-text-muted">
-                    {t("noContributors")}
                   </div>
-                )}
-              </div>
-            </div>
-
-            {/* Right Side: Download & Languages */}
-            <div className="lg:col-span-5 space-y-10">
-              {/* Download Section */}
-              <div className="space-y-4">
-                <h2 className="text-lg sm:text-xl font-display font-bold text-foreground flex items-center gap-2.5 border-b border-border/50 pb-3">
-                  <Download className="w-4 h-4 text-primary" />
-                  {t("downloadTitle")}
-                </h2>
-
-                <p className="text-xs sm:text-sm text-text-muted leading-relaxed">
-                  {t("downloadDesc")}
-                </p>
-
-                <div className="space-y-2 text-xs text-text-muted">
-                  <div className="flex justify-between items-center py-1.5 border-b border-border/40">
-                    <span>{t("license")}</span>
-                    <span className="font-semibold text-foreground">{t("licenseFree")}</span>
-                  </div>
-                  <div className="flex justify-between items-center py-1.5 border-b border-border/40">
-                    <span>{t("audioFormat")}</span>
-                    <span className="font-semibold text-foreground">{t("audioFormatOpus")}</span>
-                  </div>
+                  <div className="h-6 w-12 bg-[#FAF9F6] rounded" />
                 </div>
+              ))
+            ) : (
+              stats?.leaderboard?.map((user, index) => {
+                return (
+                  <div
+                    key={user.username}
+                    className="group flex items-center justify-between py-4 hover:bg-[#FAF8F5] -mx-4 px-4 rounded-xl transition-colors"
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="text-xs font-mono text-text-muted/60 font-semibold w-6">
+                        {(index + 1).toString().padStart(2, "0")}
+                      </span>
 
-                <Button variant="primary" disabled className="w-full h-11 text-xs uppercase tracking-wider font-display rounded-full">
-                  {t("downloadBtn")}
-                </Button>
-              </div>
-
-              {/* Languages Section */}
-              <div className="space-y-4">
-                <h2 className="text-lg sm:text-xl font-display font-bold text-foreground flex items-center gap-2.5 border-b border-border/50 pb-3">
-                  <Globe className="w-4 h-4 text-primary" />
-                  {t("languages")}
-                </h2>
-
-                <div className="space-y-2">
-                  {languages.map((lang) => (
-                    <div
-                      key={lang.name}
-                      className="flex items-center justify-between py-2.5 border-b border-border/40 last:border-b-0 text-xs sm:text-sm"
-                    >
                       <div>
-                        <p className="font-semibold text-foreground">{lang.name}</p>
-                        {lang.status === "active" && (
-                          <p className="text-[11px] text-text-muted">
-                            {t("recordingsCount", { count: lang.count.toLocaleString() })}
-                          </p>
-                        )}
+                        <p className="text-sm sm:text-base font-bold font-display text-foreground flex items-center gap-1.5">
+                          {user.username}
+                          {index === 0 && <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />}
+                        </p>
+                        <p className="text-[11px] text-text-muted font-medium">
+                          {t("validationsCount", { count: user.total_validations })}
+                        </p>
                       </div>
-
-                      <Badge variant={lang.status === "active" ? "success" : "outline"} className="px-2.5 py-0.5 text-[10px]">
-                        {lang.status === "active" ? t("active") : t("soon")}
-                      </Badge>
                     </div>
-                  ))}
-                </div>
+
+                    <div className="text-right">
+                      <span className="text-xl font-bold font-display text-primary">
+                        {user.total_contributions}
+                      </span>
+                      <span className="text-[10px] text-text-muted ml-1.5 uppercase tracking-wider font-medium">{t("audiosCount")}</span>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+
+            {!isLoading && (!stats?.leaderboard || stats.leaderboard.length === 0) && (
+              <div className="py-8 text-center text-xs text-text-muted">
+                {t("noContributors")}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Side: Download & Languages */}
+        <div className="lg:col-span-5 space-y-10">
+          {/* Download Section */}
+          <div className="space-y-4">
+            <h2 className="text-lg sm:text-xl font-display font-bold text-foreground flex items-center gap-2.5 border-b border-border/50 pb-3">
+              <Download className="w-4 h-4 text-primary" />
+              {t("downloadTitle")}
+            </h2>
+
+            <p className="text-xs sm:text-sm text-text-muted leading-relaxed">
+              {t("downloadDesc")}
+            </p>
+
+            <div className="space-y-2 text-xs text-text-muted">
+              <div className="flex justify-between items-center py-1.5 border-b border-border/40">
+                <span>{t("license")}</span>
+                <span className="font-semibold text-foreground">{t("licenseFree")}</span>
+              </div>
+              <div className="flex justify-between items-center py-1.5 border-b border-border/40">
+                <span>{t("audioFormat")}</span>
+                <span className="font-semibold text-foreground">{t("audioFormatOpus")}</span>
               </div>
             </div>
+
+            <Button variant="primary" disabled className="w-full h-11 text-xs uppercase tracking-wider font-display rounded-full">
+              {t("downloadBtn")}
+            </Button>
           </div>
-        </>
-      ) : (
-        <div className="text-center py-12">
-          <p className="text-text-muted">{t("error")}</p>
+
+          {/* Languages Section */}
+          <div className="space-y-4">
+            <h2 className="text-lg sm:text-xl font-display font-bold text-foreground flex items-center gap-2.5 border-b border-border/50 pb-3">
+              <Globe className="w-4 h-4 text-primary" />
+              {t("languages")}
+            </h2>
+
+            <div className="space-y-2">
+              {languages.map((lang) => (
+                <div
+                  key={lang.name}
+                  className="flex items-center justify-between py-2.5 border-b border-border/40 last:border-b-0 text-xs sm:text-sm"
+                >
+                  <div>
+                    <p className="font-semibold text-foreground">{lang.name}</p>
+                    {lang.status === "active" && (
+                      <p className="text-[11px] text-text-muted">
+                        {t("recordingsCount", { count: lang.count.toLocaleString() })}
+                      </p>
+                    )}
+                  </div>
+
+                  <Badge variant={lang.status === "active" ? "success" : "outline"} className="px-2.5 py-0.5 text-[10px]">
+                    {lang.status === "active" ? t("active") : t("soon")}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
-

@@ -93,12 +93,14 @@ export function StudioGrilleClient() {
     }
   }, []);
 
-  // Initial load and periodic 8-second background synchronization for multiple studio devices
+  // Initial load and periodic background synchronization for studio devices (paused when tab hidden)
   useEffect(() => {
     fetchWords(true);
     const interval = setInterval(() => {
-      fetchWords(false);
-    }, 8000);
+      if (document.visibilityState === "visible") {
+        fetchWords(false);
+      }
+    }, 25000);
     return () => clearInterval(interval);
   }, [fetchWords]);
 

@@ -171,11 +171,20 @@ export default function ValidateClientPage() {
       {/* Main Validation Area */}
       <div className="w-full">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center min-h-[220px] gap-2.5 border-y border-border/40 py-12">
-            <div className="w-7 h-7 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-            <p className="text-xs text-text-muted font-display uppercase tracking-wider">
-              Chargement de l&apos;audio...
-            </p>
+          <div className="border border-border/70 rounded-xl p-6 sm:p-8 bg-white animate-pulse space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-border/40">
+              <div className="h-4 w-24 bg-[#FAF9F6] border border-[#E8E5DF] rounded" />
+              <div className="h-4 w-16 bg-[#FAF9F6] rounded" />
+            </div>
+            <div className="space-y-3 py-4 text-center">
+              <div className="h-8 w-48 bg-[#FAF9F6] border border-[#E8E5DF] rounded-md mx-auto" />
+              <div className="h-4 w-32 bg-[#FAF9F6] rounded mx-auto" />
+            </div>
+            <div className="h-16 bg-[#FAF9F6] border border-[#E8E5DF] rounded-lg" />
+            <div className="flex justify-center gap-4 pt-2">
+              <div className="h-11 w-28 bg-[#FAF9F6] border border-[#E8E5DF] rounded-lg" />
+              <div className="h-11 w-28 bg-[#FAF9F6] border border-[#E8E5DF] rounded-lg" />
+            </div>
           </div>
         ) : errorMessage ? (
           <div className="max-w-md mx-auto py-12 text-center space-y-3 border-y border-border/40">
