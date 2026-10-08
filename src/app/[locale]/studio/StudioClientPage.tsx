@@ -55,7 +55,7 @@ interface UnassignedStem {
 // Audio provenance analyzer
 function getAudioBadge(url: string | null): { label: string; badgeClass: string; isLegacyVowel: boolean } | null {
   if (!url) return null;
-  if (url.includes("/Stems/")) {
+  if (url.includes("/Stems/") || url.includes("/stems/")) {
     return { 
       label: "Stem Studio HQ", 
       badgeClass: "text-[#B84A2A] bg-[#F9EBE6] border-[#F2D7CE]", 

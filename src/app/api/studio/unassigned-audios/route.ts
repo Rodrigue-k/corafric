@@ -38,8 +38,13 @@ export async function GET() {
 
     // 4. Filter out assigned stems
     const unassigned = files.map(filename => {
-      const url = `/audios/Stems/${filename}`;
-      const isAssigned = assignedUrls.has(url) || assignedUrls.has(encodeURI(url));
+      const url = `/api/audio/stems/${filename}`;
+      const legacyUrl = `/audios/Stems/${filename}`;
+      const isAssigned = 
+        assignedUrls.has(url) || 
+        assignedUrls.has(encodeURI(url)) ||
+        assignedUrls.has(legacyUrl) ||
+        assignedUrls.has(encodeURI(legacyUrl));
       return {
         filename,
         url,

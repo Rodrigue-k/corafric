@@ -45,12 +45,19 @@ export async function POST(request: Request) {
 
     const decodedUrl = decodeURI(audioUrl);
     const encodedUrl = encodeURI(audioUrl);
+    const rawFilename = audioUrl.split("/").pop();
+    const decodedFilename = rawFilename ? decodeURIComponent(rawFilename) : "";
 
     // 1. Anti-collision: check if audio is already claimed by another word
     if (!force) {
       const existingWithAudio = await sql`
         SELECT id, word_ewe FROM dictionary_words 
-        WHERE (audio_url = ${audioUrl} OR audio_url = ${decodedUrl} OR audio_url = ${encodedUrl}) 
+        WHERE (
+          audio_url = ${audioUrl} 
+          OR audio_url = ${decodedUrl} 
+          OR audio_url = ${encodedUrl}
+          ${decodedFilename ? sql`OR audio_url LIKE ${'%' + decodedFilename}` : sql``}
+        )
           AND id != ${wordId}
         LIMIT 1
       `;
