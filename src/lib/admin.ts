@@ -3,6 +3,7 @@ import { sql } from "./db";
 
 export const SUPER_ADMIN_EMAILS = [
   "koudakporodrigue03@gmail.com",
+  "gabirusamaa@gmail.com",
 ];
 
 /**
