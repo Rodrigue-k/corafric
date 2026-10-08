@@ -23,14 +23,15 @@ export async function GET() {
       return NextResponse.json({ error: "Accès refusé. Réservé au Super Administrateur." }, { status: 403 });
     }
 
-    // 1. Ensure required columns exist with a single valid Postgres statement
+    // 1. Ensure required columns exist
     try {
       await sql`
         ALTER TABLE users 
           ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'contributor',
           ADD COLUMN IF NOT EXISTS email TEXT,
           ADD COLUMN IF NOT EXISTS first_name TEXT,
-          ADD COLUMN IF NOT EXISTS last_name TEXT;
+          ADD COLUMN IF NOT EXISTS last_name TEXT,
+          ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
       `;
     } catch {
       // Ignore if columns already exist
@@ -89,25 +90,36 @@ export async function GET() {
           cUser.username ||
           [firstName, lastName].filter(Boolean).join(" ") ||
           dbUser?.username ||
-          "Utilisateur";
+          `user_${cUser.id.slice(-6)}`;
 
         const isSuperAdminEmail = email && SUPER_ADMIN_EMAILS.includes(email.toLowerCase());
         const role = isSuperAdminEmail
           ? "super_admin"
           : ((cUser.publicMetadata?.role as string) || dbUser?.role || "contributor");
 
-        // Sync into PostgreSQL in parallel
+        // Sync into PostgreSQL in parallel safely without crashing on username conflicts
         syncPromises.push(
           sql`
-            INSERT INTO users (id, username, email, first_name, last_name, role, country, native_language)
-            VALUES (${cUser.id}, ${username}, ${email}, ${firstName}, ${lastName}, ${role}, 'Togo', 'ewe')
-            ON CONFLICT (id) DO UPDATE SET
-              email = COALESCE(EXCLUDED.email, users.email),
-              first_name = COALESCE(EXCLUDED.first_name, users.first_name),
-              last_name = COALESCE(EXCLUDED.last_name, users.last_name),
-              username = COALESCE(EXCLUDED.username, users.username),
-              role = EXCLUDED.role
-          `.catch(() => {})
+            UPDATE users 
+            SET 
+              role = ${role},
+              email = COALESCE(${email}, email),
+              first_name = COALESCE(${firstName}, first_name),
+              last_name = COALESCE(${lastName}, last_name),
+              updated_at = NOW()
+            WHERE id = ${cUser.id}
+          `.then(async (res) => {
+            if (res.count === 0) {
+              await sql`
+                INSERT INTO users (id, username, email, first_name, last_name, role, country, native_language, updated_at)
+                VALUES (${cUser.id}, ${username}, ${email}, ${firstName}, ${lastName}, ${role}, 'Togo', 'ewe', NOW())
+                ON CONFLICT (id) DO UPDATE SET
+                  email = COALESCE(EXCLUDED.email, users.email),
+                  role = EXCLUDED.role,
+                  updated_at = NOW()
+              `.catch(() => {});
+            }
+          }).catch(() => {})
         );
 
         usersList.push({
@@ -193,7 +205,7 @@ export async function POST(request: Request) {
         null;
       firstName = clerkUser.firstName || "";
       lastName = clerkUser.lastName || "";
-      username = clerkUser.username || [firstName, lastName].filter(Boolean).join(" ") || "";
+      username = clerkUser.username || [firstName, lastName].filter(Boolean).join(" ") || `user_${targetUserId.slice(-6)}`;
 
       if (userEmail && SUPER_ADMIN_EMAILS.includes(userEmail.toLowerCase())) {
         return NextResponse.json(
@@ -211,25 +223,47 @@ export async function POST(request: Request) {
       console.warn("Clerk update metadata warning:", clerkErr?.message);
     }
 
-    // 2. Upsert in PostgreSQL users table
-    await sql`
-      INSERT INTO users (id, role, email, first_name, last_name, username, updated_at)
-      VALUES (${targetUserId}, ${newRole}, ${userEmail}, ${firstName}, ${lastName}, ${username || 'Utilisateur'}, NOW())
-      ON CONFLICT (id) DO UPDATE SET
+    // 2. Update existing user in PostgreSQL users table
+    const updateResult = await sql`
+      UPDATE users 
+      SET 
         role = ${newRole},
-        email = COALESCE(EXCLUDED.email, users.email),
-        first_name = COALESCE(EXCLUDED.first_name, users.first_name),
-        last_name = COALESCE(EXCLUDED.last_name, users.last_name),
+        email = COALESCE(${userEmail}, email),
+        first_name = COALESCE(${firstName}, first_name),
+        last_name = COALESCE(${lastName}, last_name),
         updated_at = NOW()
+      WHERE id = ${targetUserId}
+      RETURNING id
     `;
+
+    // If user does not exist in DB yet, insert safely with fallback unique username
+    if (updateResult.length === 0) {
+      const safeUsername = username || `user_${targetUserId.slice(-6)}`;
+      await sql`
+        INSERT INTO users (id, role, email, first_name, last_name, username, updated_at)
+        VALUES (${targetUserId}, ${newRole}, ${userEmail}, ${firstName}, ${lastName}, ${safeUsername}, NOW())
+        ON CONFLICT (id) DO UPDATE SET
+          role = EXCLUDED.role,
+          updated_at = NOW()
+      `.catch(async () => {
+        // Fallback with randomized suffix in case username was already taken
+        await sql`
+          INSERT INTO users (id, role, email, first_name, last_name, username, updated_at)
+          VALUES (${targetUserId}, ${newRole}, ${userEmail}, ${firstName}, ${lastName}, ${safeUsername + '_' + Date.now().toString().slice(-4)}, NOW())
+          ON CONFLICT (id) DO UPDATE SET
+            role = EXCLUDED.role,
+            updated_at = NOW()
+        `.catch(() => {});
+      });
+    }
 
     // Also update by email in case of multiple DB aliases
     if (userEmail) {
       await sql`
         UPDATE users
-        SET role = ${newRole}
+        SET role = ${newRole}, updated_at = NOW()
         WHERE LOWER(email) = ${userEmail.toLowerCase()}
-      `;
+      `.catch(() => {});
     }
 
     return NextResponse.json({

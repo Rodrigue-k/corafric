@@ -2,11 +2,16 @@
 CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY,
   username TEXT UNIQUE NOT NULL,
+  email TEXT,
+  first_name TEXT,
+  last_name TEXT,
+  role TEXT DEFAULT 'contributor',
   country TEXT,
   native_language TEXT DEFAULT 'ewe',
   total_contributions INTEGER DEFAULT 0,
   total_validations INTEGER DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Table des phrases
