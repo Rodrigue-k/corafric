@@ -68,16 +68,18 @@ export async function GET() {
       console.warn("Could not fetch Clerk user list:", err);
     }
 
-    // 4. Build combined users list
-    const usersList: any[] = [];
-    const seenUserIds = new Set<string>();
+    // 4. Build combined users list with strict email-based deduplication
+    const usersByEmailOrId = new Map<string, any>();
+
+    const getDedupKey = (email: string | null | undefined, id: string) => {
+      return email && email.trim() ? email.trim().toLowerCase() : `id:${id}`;
+    };
 
     // A. Add Clerk users (if available)
     if (clerkUsers.length > 0) {
       const syncPromises: Promise<any>[] = [];
 
       for (const cUser of clerkUsers) {
-        seenUserIds.add(cUser.id);
         const email =
           cUser.emailAddresses?.find((e: any) => e.id === cUser.primaryEmailAddressId)?.emailAddress ||
           cUser.emailAddresses?.[0]?.emailAddress ||
@@ -122,7 +124,8 @@ export async function GET() {
           }).catch(() => {})
         );
 
-        usersList.push({
+        const key = getDedupKey(email, cUser.id);
+        usersByEmailOrId.set(key, {
           id: cUser.id,
           firstName,
           lastName,
@@ -141,12 +144,12 @@ export async function GET() {
 
     // B. Fallback/Complement from dbUsers for any users not present in Clerk list
     for (const dUser of dbUsers) {
-      if (!seenUserIds.has(dUser.id)) {
-        seenUserIds.add(dUser.id);
+      const key = getDedupKey(dUser.email, dUser.id);
+      if (!usersByEmailOrId.has(key)) {
         const isSuperAdminEmail = dUser.email && SUPER_ADMIN_EMAILS.includes(dUser.email.toLowerCase());
         const role = isSuperAdminEmail ? "super_admin" : (dUser.role || "contributor");
 
-        usersList.push({
+        usersByEmailOrId.set(key, {
           id: dUser.id,
           firstName: dUser.first_name || "",
           lastName: dUser.last_name || "",
@@ -157,8 +160,16 @@ export async function GET() {
           total_contributions: dUser.total_contributions || 0,
           created_at: safeIsoDate(dUser.created_at),
         });
+      } else {
+        // Retain highest contributions count from existing records
+        const existing = usersByEmailOrId.get(key);
+        if (Number(dUser.total_contributions || 0) > Number(existing.total_contributions || 0)) {
+          existing.total_contributions = Number(dUser.total_contributions);
+        }
       }
     }
+
+    const usersList = Array.from(usersByEmailOrId.values());
 
     // Sort: Super Admin first, then Operators, then Admins, then Contributors
     usersList.sort((a, b) => {

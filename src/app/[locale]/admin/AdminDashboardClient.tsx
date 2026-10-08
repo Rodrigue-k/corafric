@@ -140,8 +140,11 @@ export function AdminDashboardClient() {
         username.includes(query) ||
         email.includes(query);
 
-      const isSuperAdminEmail = u.email === "koudakporodrigue03@gmail.com";
-      const actualRole = isSuperAdminEmail ? "super_admin" : (u.role || "contributor");
+      const isSuperAdmin =
+        u.role === "super_admin" ||
+        u.email === "koudakporodrigue03@gmail.com" ||
+        u.email === "gabirusamaa@gmail.com";
+      const actualRole = isSuperAdmin ? "super_admin" : (u.role || "contributor");
 
       const matchesRole =
         roleFilter === "all" ||
@@ -343,8 +346,11 @@ export function AdminDashboardClient() {
                 </tr>
               ) : (
                 filteredUsers.map((u) => {
-                  const isSuperAdminEmail = u.email === "koudakporodrigue03@gmail.com";
-                  const role = isSuperAdminEmail ? "super_admin" : (u.role || "contributor");
+                  const isSuperAdmin =
+                    u.role === "super_admin" ||
+                    u.email === "koudakporodrigue03@gmail.com" ||
+                    u.email === "gabirusamaa@gmail.com";
+                  const role = isSuperAdmin ? "super_admin" : (u.role || "contributor");
                   const fullName = [u.firstName, u.lastName].filter(Boolean).join(" ");
                   const displayName = fullName || u.username || "Utilisateur";
 
@@ -414,7 +420,7 @@ export function AdminDashboardClient() {
 
                       {/* Action Dropdown with Confirmation Trigger */}
                       <td className="py-3 px-4 text-right">
-                        {isSuperAdminEmail ? (
+                        {role === "super_admin" ? (
                           <span className="text-[10px] text-purple-700 font-bold uppercase tracking-wider">
                             Super Admin (Verrouillé)
                           </span>
