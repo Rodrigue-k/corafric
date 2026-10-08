@@ -1,10 +1,20 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { sql } from "./db";
 
-export const SUPER_ADMIN_EMAILS = [
-  "koudakporodrigue03@gmail.com",
-  "gabirusamaa@gmail.com",
-];
+const envEmails = [
+  ...(process.env.ADMIN_EMAILS || "").split(","),
+  ...(process.env.SUPER_ADMIN_EMAILS || "").split(","),
+]
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean);
+
+export const SUPER_ADMIN_EMAILS = Array.from(
+  new Set([
+    "koudakporodrigue03@gmail.com",
+    "gabirusamaa@gmail.com",
+    ...envEmails,
+  ])
+);
 
 /**
  * Checks if the current user is the Super Administrator (Rodrigue).

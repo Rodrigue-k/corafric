@@ -4,6 +4,17 @@ import { isCurrentUserSuperAdmin, SUPER_ADMIN_EMAILS } from "@/lib/admin";
 import { sql } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30;
+
+function safeIsoDate(val: unknown): string {
+  try {
+    if (!val) return new Date().toISOString();
+    const d = new Date(val as string | number | Date);
+    return isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
+  } catch {
+    return new Date().toISOString();
+  }
+}
 
 export async function GET() {
   try {
@@ -12,25 +23,31 @@ export async function GET() {
       return NextResponse.json({ error: "Accès refusé. Réservé au Super Administrateur." }, { status: 403 });
     }
 
-    // 1. Ensure columns exist in DB
+    // 1. Ensure required columns exist with a single valid Postgres statement
     try {
       await sql`
-        ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'contributor';
-        ALTER TABLE users ADD COLUMN IF NOT EXISTS email TEXT;
-        ALTER TABLE users ADD COLUMN IF NOT EXISTS first_name TEXT;
-        ALTER TABLE users ADD COLUMN IF NOT EXISTS last_name TEXT;
+        ALTER TABLE users 
+          ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'contributor',
+          ADD COLUMN IF NOT EXISTS email TEXT,
+          ADD COLUMN IF NOT EXISTS first_name TEXT,
+          ADD COLUMN IF NOT EXISTS last_name TEXT;
       `;
     } catch {
       // Ignore if columns already exist
     }
 
     // 2. Fetch users from DB for contribution counts & metadata
-    const dbUsers = (await sql`
-      SELECT id, username, email, first_name, last_name, country, native_language, role, total_contributions, created_at
-      FROM users
-      ORDER BY created_at DESC
-      LIMIT 200
-    `) as any[];
+    let dbUsers: any[] = [];
+    try {
+      dbUsers = (await sql`
+        SELECT id, username, email, first_name, last_name, country, native_language, role, total_contributions, created_at
+        FROM users
+        ORDER BY created_at DESC
+        LIMIT 200
+      `) as any[];
+    } catch (dbErr) {
+      console.warn("Could not query users table:", dbErr);
+    }
 
     const dbUserById = new Map<string, any>();
     const dbUserByEmail = new Map<string, any>();
@@ -40,7 +57,7 @@ export async function GET() {
       if (u.email) dbUserByEmail.set(u.email.toLowerCase(), u);
     });
 
-    // 3. Fetch active users strictly from the current Clerk instance (Dev or Prod)
+    // 3. Fetch active users from Clerk instance
     let clerkUsers: any[] = [];
     try {
       const client = await clerkClient();
@@ -50,57 +67,85 @@ export async function GET() {
       console.warn("Could not fetch Clerk user list:", err);
     }
 
-    // 4. Map active Clerk users only
+    // 4. Build combined users list
     const usersList: any[] = [];
+    const seenUserIds = new Set<string>();
 
-    for (const cUser of clerkUsers) {
-      const email =
-        cUser.emailAddresses?.find((e: any) => e.id === cUser.primaryEmailAddressId)?.emailAddress ||
-        cUser.emailAddresses?.[0]?.emailAddress ||
-        null;
-      
-      const dbUser = dbUserById.get(cUser.id) || (email ? dbUserByEmail.get(email.toLowerCase()) : null);
-      const firstName = cUser.firstName || dbUser?.first_name || "";
-      const lastName = cUser.lastName || dbUser?.last_name || "";
-      const username =
-        cUser.username ||
-        [firstName, lastName].filter(Boolean).join(" ") ||
-        dbUser?.username ||
-        "Utilisateur";
+    // A. Add Clerk users (if available)
+    if (clerkUsers.length > 0) {
+      const syncPromises: Promise<any>[] = [];
 
-      const isSuperAdminEmail = email && SUPER_ADMIN_EMAILS.includes(email.toLowerCase());
-      
-      const role = isSuperAdminEmail 
-        ? "super_admin" 
-        : ((cUser.publicMetadata?.role as string) || dbUser?.role || "contributor");
+      for (const cUser of clerkUsers) {
+        seenUserIds.add(cUser.id);
+        const email =
+          cUser.emailAddresses?.find((e: any) => e.id === cUser.primaryEmailAddressId)?.emailAddress ||
+          cUser.emailAddresses?.[0]?.emailAddress ||
+          null;
 
-      // Auto-sync active user into PostgreSQL
-      try {
-        await sql`
-          INSERT INTO users (id, username, email, first_name, last_name, role, country, native_language)
-          VALUES (${cUser.id}, ${username}, ${email}, ${firstName}, ${lastName}, ${role}, 'Togo', 'ewe')
-          ON CONFLICT (id) DO UPDATE SET
-            email = COALESCE(EXCLUDED.email, users.email),
-            first_name = COALESCE(EXCLUDED.first_name, users.first_name),
-            last_name = COALESCE(EXCLUDED.last_name, users.last_name),
-            username = COALESCE(EXCLUDED.username, users.username),
-            role = EXCLUDED.role
-        `;
-      } catch {
-        // ignore auto-sync errors
+        const dbUser = dbUserById.get(cUser.id) || (email ? dbUserByEmail.get(email.toLowerCase()) : null);
+        const firstName = cUser.firstName || dbUser?.first_name || "";
+        const lastName = cUser.lastName || dbUser?.last_name || "";
+        const username =
+          cUser.username ||
+          [firstName, lastName].filter(Boolean).join(" ") ||
+          dbUser?.username ||
+          "Utilisateur";
+
+        const isSuperAdminEmail = email && SUPER_ADMIN_EMAILS.includes(email.toLowerCase());
+        const role = isSuperAdminEmail
+          ? "super_admin"
+          : ((cUser.publicMetadata?.role as string) || dbUser?.role || "contributor");
+
+        // Sync into PostgreSQL in parallel
+        syncPromises.push(
+          sql`
+            INSERT INTO users (id, username, email, first_name, last_name, role, country, native_language)
+            VALUES (${cUser.id}, ${username}, ${email}, ${firstName}, ${lastName}, ${role}, 'Togo', 'ewe')
+            ON CONFLICT (id) DO UPDATE SET
+              email = COALESCE(EXCLUDED.email, users.email),
+              first_name = COALESCE(EXCLUDED.first_name, users.first_name),
+              last_name = COALESCE(EXCLUDED.last_name, users.last_name),
+              username = COALESCE(EXCLUDED.username, users.username),
+              role = EXCLUDED.role
+          `.catch(() => {})
+        );
+
+        usersList.push({
+          id: cUser.id,
+          firstName,
+          lastName,
+          username,
+          email,
+          role,
+          country: dbUser?.country || "Togo",
+          total_contributions: dbUser?.total_contributions || 0,
+          created_at: safeIsoDate(cUser.createdAt || dbUser?.created_at),
+        });
       }
 
-      usersList.push({
-        id: cUser.id,
-        firstName,
-        lastName,
-        username,
-        email,
-        role,
-        country: dbUser?.country || "Togo",
-        total_contributions: dbUser?.total_contributions || 0,
-        created_at: cUser.createdAt ? new Date(cUser.createdAt).toISOString() : (dbUser?.created_at || new Date().toISOString()),
-      });
+      // Execute all sync queries concurrently without blocking if some fail
+      await Promise.allSettled(syncPromises);
+    }
+
+    // B. Fallback/Complement from dbUsers for any users not present in Clerk list
+    for (const dUser of dbUsers) {
+      if (!seenUserIds.has(dUser.id)) {
+        seenUserIds.add(dUser.id);
+        const isSuperAdminEmail = dUser.email && SUPER_ADMIN_EMAILS.includes(dUser.email.toLowerCase());
+        const role = isSuperAdminEmail ? "super_admin" : (dUser.role || "contributor");
+
+        usersList.push({
+          id: dUser.id,
+          firstName: dUser.first_name || "",
+          lastName: dUser.last_name || "",
+          username: dUser.username || "Utilisateur",
+          email: dUser.email || null,
+          role,
+          country: dUser.country || "Togo",
+          total_contributions: dUser.total_contributions || 0,
+          created_at: safeIsoDate(dUser.created_at),
+        });
+      }
     }
 
     // Sort: Super Admin first, then Operators, then Admins, then Contributors
